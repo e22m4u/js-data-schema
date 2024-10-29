@@ -52,7 +52,7 @@ typeCaster.cast('10', schema);  // returns 10 as number
 typeCaster.cast('foo', schema); // throws TypeCastError
 
 // cast type according to schema
-// or return value unchanged
+// or return value as is
 typeCaster.cast('10', schema, {noTypeCastError: true});  // returns 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // returns "foo"
 ```
