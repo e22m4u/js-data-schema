@@ -75,7 +75,7 @@ type DataSchema = {
 
 #### type
 
-Defines the data type using the constants listed below.
+Defines the value type using the constants listed below.
 
 - `DataType.ANY` - accepts any type
 - `DataType.STRING` - string values
@@ -85,6 +85,8 @@ Defines the data type using the constants listed below.
 - `DataType.OBJECT` - object values
 
 ```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+
 const schema = {
   type: DataSchema.STRING,
 }

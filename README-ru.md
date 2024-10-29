@@ -20,7 +20,7 @@ import {DataValidator} from '@e22m4u/ts-data-schema';
 
 const validator = new DataValidator();
 
-// определите схему
+// определение схемы
 const schema = {
   type: DataType.STRING,
   // дополнительные опции
@@ -39,7 +39,7 @@ import {DataTypeCaster} from '@e22m4u/ts-data-schema';
 
 const typeCaster = new DataTypeCaster();
 
-// определите схему
+// определение схемы
 const schema = {
   type: DataType.NUMBER,
   // дополнительные опции
@@ -74,7 +74,7 @@ type DataSchema = {
 
 #### type
 
-Определяет тип данных с помощью констант указанных ниже.
+Определяет тип значения с помощью констант указанных ниже.
 
 - `DataType.ANY` - принимает любой тип
 - `DataType.STRING` - строковые значения
@@ -84,6 +84,8 @@ type DataSchema = {
 - `DataType.OBJECT` - объекты
 
 ```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+
 const schema = {
   type: DataSchema.STRING,
 }
