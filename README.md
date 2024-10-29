@@ -6,12 +6,10 @@ Data validation and type casting for TypeScript.
 
 ## Key Features
 
-- **DataValidator** - Validation service with built-in validators
-  for strings, numbers, boolean values, arrays and objects.
-- **DataTypeCaster** - Flexible type casting mechanism supporting
-  all basic types.
+- **DataValidator** - Validation service with built-in type checking.
+- **DataTypeCaster** - Value conversion service according to data schema.
 - Extensible architecture allowing custom validators and type casters.
-- Detailed debugging capabilities.
+- Detailed debugging.
 
 ## Usage
 
