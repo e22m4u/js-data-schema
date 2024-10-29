@@ -23,11 +23,12 @@ const validator = new DataValidator();
 // определите схему
 const schema = {
   type: DataType.STRING,
-  // ...дополнительные опции
+  // дополнительные опции
 };
 
 // валидация значения согласно схеме
-validator.validate(value, schema);
+validator.validate('string', schema); // вернет undefined
+validator.validate(10, schema);       // ошибка ValidationError
 ```
 
 Приведение типов.
@@ -41,18 +42,18 @@ const typeCaster = new DataTypeCaster();
 // определите схему
 const schema = {
   type: DataType.NUMBER,
-  // ...дополнительные опции
+  // дополнительные опции
 };
 
-// приведение типа согласно схеме
+// приведение типа согласно схеме,
 // или выброс ошибки TypeCastError
-const result1 = typeCaster.cast(value, schema);
+typeCaster.cast('10', schema);  // вернет 10 как number
+typeCaster.cast('foo', schema); // ошибка TypeCastError
 
-// приведение типа согласно схеме
+// приведение типа согласно схеме,
 // или возврат значения без изменений
-const result2 = typeCaster.cast(value, schema, {
-  noTypeCastError: true,
-});
+typeCaster.cast('10', schema, {noTypeCastError: true});  // вернет 10
+typeCaster.cast('foo', schema, {noTypeCastError: true}); // вернет "foo"
 ```
 
 ## DataSchema

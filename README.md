@@ -24,11 +24,12 @@ const validator = new DataValidator();
 // define schema
 const schema = {
   type: DataType.STRING,
-  // ...additional options
+  // additional options
 };
 
 // validate value according to schema
-validator.validate(value, schema);
+validator.validate('string', schema); // returns undefined
+validator.validate(10, schema);       // throws ValidationError
 ```
 
 Type casting.
@@ -42,18 +43,18 @@ const typeCaster = new DataTypeCaster();
 // define schema
 const schema = {
   type: DataType.NUMBER,
-  // ...additional options
+  // additional options
 };
 
 // cast type according to schema
 // or throw TypeCastError
-const result1 = typeCaster.cast(value, schema);
+typeCaster.cast('10', schema);  // returns 10 as number
+typeCaster.cast('foo', schema); // throws TypeCastError
 
 // cast type according to schema
 // or return value unchanged
-const result2 = typeCaster.cast(value, schema, {
-  noTypeCastError: true,
-});
+typeCaster.cast('10', schema, {noTypeCastError: true});  // returns 10
+typeCaster.cast('foo', schema, {noTypeCastError: true}); // returns "foo"
 ```
 
 ## DataSchema
