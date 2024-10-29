@@ -1,0 +1,19 @@
+import { DataType } from '../data-schema.js';
+import { ValidationError } from '../errors/validation-error.js';
+/**
+ * Array type validator.
+ *
+ * @param value
+ * @param schema
+ * @param sourcePath
+ */
+export function arrayTypeValidator(value, schema, sourcePath) {
+    if (schema.type === DataType.ARRAY && !Array.isArray(value)) {
+        if (sourcePath) {
+            throw new ValidationError('Value of %v must be an Array, but %v given.', sourcePath, value);
+        }
+        else {
+            throw new ValidationError('Value must be an Array, but %v given.', value);
+        }
+    }
+}

@@ -1,0 +1,69 @@
+{
+  "name": "@e22m4u/ts-data-schema",
+  "version": "0.0.1",
+  "description": "Data validation and type casting for TypeScript",
+  "author": "e22m4u <e22m4u@yandex.ru>",
+  "keywords": [
+    "data",
+    "schema",
+    "definition",
+    "validation",
+    "standartization"
+  ],
+  "homepage": "https://github.com/e22m4u/ts-data-schema",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e22m4u/ts-data-schema.git"
+  },
+  "type": "module",
+  "module": "./dist/esm/index.js",
+  "main": "./dist/cjs/index.cjs",
+  "exports": {
+    "types": "./dist/esm/index.d.ts",
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.cjs"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "scripts": {
+    "build:esm": "tsc --build",
+    "build:cjs": "node build-cjs.js",
+    "build": "rimraf dist && npm run build:esm && npm run build:cjs",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "format": "prettier --write \"./src/**/*.ts\"",
+    "test": "npm run lint && c8 --reporter=text-summary mocha --bail",
+    "test:coverage": "npm run lint && c8 --reporter=text mocha --bail",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@e22m4u/js-format": "0.1.x",
+    "@e22m4u/js-service": "0.1.x",
+    "debug": "~4.3.7"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "~19.5.0",
+    "@commitlint/config-conventional": "~19.5.0",
+    "@eslint/js": "~9.13.0",
+    "@types/chai": "~5.0.1",
+    "@types/debug": "~4.1.12",
+    "@types/mocha": "~10.0.9",
+    "@types/node": "~22.8.2",
+    "c8": "~10.1.2",
+    "chai": "~5.1.2",
+    "esbuild": "~0.24.0",
+    "eslint": "~9.13.0",
+    "eslint-config-prettier": "~9.1.0",
+    "eslint-plugin-chai-expect": "~3.1.0",
+    "eslint-plugin-mocha": "~10.5.0",
+    "husky": "~9.1.6",
+    "mocha": "~10.7.3",
+    "prettier": "~3.3.3",
+    "rimraf": "~6.0.1",
+    "tsx": "~4.19.2",
+    "typescript": "~5.6.3",
+    "typescript-eslint": "~8.12.1"
+  },
+  "license": "MIT"
+}
