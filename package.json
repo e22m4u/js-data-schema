@@ -16,6 +16,7 @@
     "url": "git+https://github.com/e22m4u/ts-data-schema.git"
   },
   "type": "module",
+  "types": "./dist/esm/index.d.ts",
   "module": "./dist/esm/index.js",
   "main": "./dist/cjs/index.cjs",
   "exports": {
