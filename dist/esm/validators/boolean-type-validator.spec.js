@@ -12,7 +12,7 @@ describe('booleanTypeValidator', function () {
         booleanTypeValidator(NaN, { type: DataType.OBJECT });
         booleanTypeValidator(NaN, { type: DataType.ARRAY });
     });
-    it('throws ValidationError for non-boolean value in case of boolean schema', function () {
+    it('throws an error for non-boolean value in case of boolean schema', function () {
         const throwable = (v) => () => booleanTypeValidator(v, { type: DataType.BOOLEAN });
         const error = (v) => format('Value must be a Boolean, but %s given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
@@ -25,7 +25,7 @@ describe('booleanTypeValidator', function () {
         expect(throwable({})).to.throw(ValidationError, error('Object'));
     });
     describe('with sourcePath', function () {
-        it('throws ValidationError for non-boolean value in case of boolean schema', function () {
+        it('throws an error for non-boolean value in case of boolean schema', function () {
             const throwable = (v) => () => booleanTypeValidator(v, { type: DataType.BOOLEAN }, 'source.path');
             const error = (v) => format('Value of "source.path" must be a Boolean, but %s given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));

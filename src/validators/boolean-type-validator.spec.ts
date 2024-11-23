@@ -14,7 +14,7 @@ describe('booleanTypeValidator', function () {
     booleanTypeValidator(NaN, {type: DataType.ARRAY});
   });
 
-  it('throws ValidationError for non-boolean value in case of boolean schema', function () {
+  it('throws an error for non-boolean value in case of boolean schema', function () {
     const throwable = (v: unknown) => () =>
       booleanTypeValidator(v, {type: DataType.BOOLEAN});
     const error = (v: string) =>
@@ -30,7 +30,7 @@ describe('booleanTypeValidator', function () {
   });
 
   describe('with sourcePath', function () {
-    it('throws ValidationError for non-boolean value in case of boolean schema', function () {
+    it('throws an error for non-boolean value in case of boolean schema', function () {
       const throwable = (v: unknown) => () =>
         booleanTypeValidator(v, {type: DataType.BOOLEAN}, 'source.path');
       const error = (v: string) =>

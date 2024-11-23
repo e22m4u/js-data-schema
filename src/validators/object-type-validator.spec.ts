@@ -14,7 +14,7 @@ describe('objectTypeValidator', function () {
     objectTypeValidator(NaN, {type: DataType.ARRAY});
   });
 
-  it('throws ValidationError for non-object value in case of object schema', function () {
+  it('throws an error for non-object value', function () {
     const throwable = (v: unknown) => () =>
       objectTypeValidator(v, {type: DataType.OBJECT});
     const error = (v: string) =>
@@ -29,7 +29,7 @@ describe('objectTypeValidator', function () {
     expect(throwable([])).to.throw(ValidationError, error('Array'));
   });
 
-  it('throws ValidationError for an instance value in case of object schema', function () {
+  it('throws an error for a non-plain object', function () {
     const throwable = () =>
       objectTypeValidator(new Date(), {type: DataType.OBJECT});
     expect(throwable).to.throw(
@@ -38,8 +38,12 @@ describe('objectTypeValidator', function () {
     );
   });
 
+  it('does not throw an error for a plain object', function () {
+    objectTypeValidator(Object.create(null), {type: DataType.OBJECT});
+  });
+
   describe('with sourcePath', function () {
-    it('throws ValidationError for non-object value in case of object schema', function () {
+    it('throws an error for non-object value', function () {
       const throwable = (v: unknown) => () =>
         objectTypeValidator(v, {type: DataType.OBJECT}, 'source.path');
       const error = (v: string) =>
@@ -57,12 +61,20 @@ describe('objectTypeValidator', function () {
       expect(throwable([])).to.throw(ValidationError, error('Array'));
     });
 
-    it('throws ValidationError for an instance value in case of object schema', function () {
+    it('throws an error for a non-plain object', function () {
       const throwable = () =>
         objectTypeValidator(new Date(), {type: DataType.OBJECT}, 'source.path');
       expect(throwable).to.throw(
         ValidationError,
         'Value of "source.path" must be a plain Object, but Date given.',
+      );
+    });
+
+    it('does not throw an error for a plain object', function () {
+      objectTypeValidator(
+        Object.create(null),
+        {type: DataType.OBJECT},
+        'source.path',
       );
     });
   });

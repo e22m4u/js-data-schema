@@ -12,7 +12,7 @@ describe('arrayTypeValidator', function () {
         arrayTypeValidator(NaN, { type: DataType.BOOLEAN });
         arrayTypeValidator(NaN, { type: DataType.OBJECT });
     });
-    it('throws ValidationError for non-array value in case of array schema', function () {
+    it('throws an error for non-array value in case of array schema', function () {
         const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY });
         const error = (v) => format('Value must be an Array, but %s given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
@@ -25,7 +25,7 @@ describe('arrayTypeValidator', function () {
         expect(throwable({})).to.throw(ValidationError, error('Object'));
     });
     describe('with sourcePath', function () {
-        it('throws ValidationError for non-array value in case of array schema', function () {
+        it('throws an error for non-array value in case of array schema', function () {
             const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY }, 'source.path');
             const error = (v) => format('Value of "source.path" must be an Array, but %s given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));

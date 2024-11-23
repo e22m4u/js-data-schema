@@ -14,7 +14,7 @@ describe('numberTypeValidator', function () {
     numberTypeValidator(NaN, {type: DataType.ARRAY});
   });
 
-  it('throws ValidationError for non-number value in case of number schema', function () {
+  it('throws an error for non-number value in case of number schema', function () {
     const throwable = (v: unknown) => () =>
       numberTypeValidator(v, {type: DataType.NUMBER});
     const error = (v: string) =>
@@ -29,7 +29,7 @@ describe('numberTypeValidator', function () {
     expect(throwable({})).to.throw(ValidationError, error('Object'));
   });
 
-  it('throws ValidationError for NaN value in case of number schema', function () {
+  it('throws an error for NaN value in case of number schema', function () {
     const throwable = () => numberTypeValidator(NaN, {type: DataType.NUMBER});
     expect(throwable).to.throw(
       ValidationError,
@@ -38,7 +38,7 @@ describe('numberTypeValidator', function () {
   });
 
   describe('with sourcePath', function () {
-    it('throws ValidationError for non-number value in case of number schema', function () {
+    it('throws an error for non-number value in case of number schema', function () {
       const throwable = (v: unknown) => () =>
         numberTypeValidator(v, {type: DataType.NUMBER}, 'source.path');
       const error = (v: string) =>
@@ -56,7 +56,7 @@ describe('numberTypeValidator', function () {
       expect(throwable({})).to.throw(ValidationError, error('Object'));
     });
 
-    it('throws ValidationError for NaN value in case of number schema', function () {
+    it('throws an error for NaN value in case of number schema', function () {
       const throwable = () =>
         numberTypeValidator(NaN, {type: DataType.NUMBER}, 'source.path');
       expect(throwable).to.throw(

@@ -14,7 +14,7 @@ describe('arrayTypeValidator', function () {
     arrayTypeValidator(NaN, {type: DataType.OBJECT});
   });
 
-  it('throws ValidationError for non-array value in case of array schema', function () {
+  it('throws an error for non-array value in case of array schema', function () {
     const throwable = (v: unknown) => () =>
       arrayTypeValidator(v, {type: DataType.ARRAY});
     const error = (v: string) =>
@@ -30,7 +30,7 @@ describe('arrayTypeValidator', function () {
   });
 
   describe('with sourcePath', function () {
-    it('throws ValidationError for non-array value in case of array schema', function () {
+    it('throws an error for non-array value in case of array schema', function () {
       const throwable = (v: unknown) => () =>
         arrayTypeValidator(v, {type: DataType.ARRAY}, 'source.path');
       const error = (v: string) =>

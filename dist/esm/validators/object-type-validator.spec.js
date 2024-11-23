@@ -12,7 +12,7 @@ describe('objectTypeValidator', function () {
         objectTypeValidator(NaN, { type: DataType.BOOLEAN });
         objectTypeValidator(NaN, { type: DataType.ARRAY });
     });
-    it('throws ValidationError for non-object value in case of object schema', function () {
+    it('throws an error for non-object value', function () {
         const throwable = (v) => () => objectTypeValidator(v, { type: DataType.OBJECT });
         const error = (v) => format('Value must be a plain Object, but %s given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
@@ -24,12 +24,15 @@ describe('objectTypeValidator', function () {
         expect(throwable([1, 2, 3])).to.throw(ValidationError, error('Array'));
         expect(throwable([])).to.throw(ValidationError, error('Array'));
     });
-    it('throws ValidationError for an instance value in case of object schema', function () {
+    it('throws an error for a non-plain object', function () {
         const throwable = () => objectTypeValidator(new Date(), { type: DataType.OBJECT });
         expect(throwable).to.throw(ValidationError, 'Value must be a plain Object, but Date given.');
     });
+    it('does not throw an error for a plain object', function () {
+        objectTypeValidator(Object.create(null), { type: DataType.OBJECT });
+    });
     describe('with sourcePath', function () {
-        it('throws ValidationError for non-object value in case of object schema', function () {
+        it('throws an error for non-object value', function () {
             const throwable = (v) => () => objectTypeValidator(v, { type: DataType.OBJECT }, 'source.path');
             const error = (v) => format('Value of "source.path" must be a plain Object, but %s given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));
@@ -41,9 +44,12 @@ describe('objectTypeValidator', function () {
             expect(throwable([1, 2, 3])).to.throw(ValidationError, error('Array'));
             expect(throwable([])).to.throw(ValidationError, error('Array'));
         });
-        it('throws ValidationError for an instance value in case of object schema', function () {
+        it('throws an error for a non-plain object', function () {
             const throwable = () => objectTypeValidator(new Date(), { type: DataType.OBJECT }, 'source.path');
             expect(throwable).to.throw(ValidationError, 'Value of "source.path" must be a plain Object, but Date given.');
+        });
+        it('does not throw an error for a plain object', function () {
+            objectTypeValidator(Object.create(null), { type: DataType.OBJECT }, 'source.path');
         });
     });
 });

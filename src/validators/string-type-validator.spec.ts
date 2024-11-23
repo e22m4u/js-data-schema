@@ -14,7 +14,7 @@ describe('stringTypeValidator', function () {
     stringTypeValidator(NaN, {type: DataType.ARRAY});
   });
 
-  it('throws ValidationError for non-string value in case of string schema', function () {
+  it('throws an error for non-string value in case of string schema', function () {
     const throwable = (v: unknown) => () =>
       stringTypeValidator(v, {type: DataType.STRING});
     const error = (v: string) =>
@@ -30,7 +30,7 @@ describe('stringTypeValidator', function () {
   });
 
   describe('with sourcePath', function () {
-    it('throws ValidationError for non-string value in case of string schema', function () {
+    it('throws an error for non-string value in case of string schema', function () {
       const throwable = (v: unknown) => () =>
         stringTypeValidator(v, {type: DataType.STRING}, 'source.path');
       const error = (v: string) =>

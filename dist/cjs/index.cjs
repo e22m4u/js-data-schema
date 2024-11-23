@@ -140,9 +140,33 @@ function numberTypeValidator(value, schema, sourcePath) {
 }
 __name(numberTypeValidator, "numberTypeValidator");
 
+// dist/esm/utils/to-camel-case.js
+function toCamelCase(input) {
+  return input.replace(/(^\w|[A-Z]|\b\w)/g, (c) => c.toUpperCase()).replace(/\W+/g, "").replace(/(^\w)/g, (c) => c.toLowerCase());
+}
+__name(toCamelCase, "toCamelCase");
+
+// dist/esm/utils/create-debugger.js
+var import_debug = __toESM(require("debug"), 1);
+var import_js_format3 = require("@e22m4u/js-format");
+function createDebugger(name) {
+  const debug = (0, import_debug.default)(`tsDataSchema:${name}`);
+  return function(message, ...args) {
+    const interpolatedMessage = (0, import_js_format3.format)(message, ...args);
+    return debug(interpolatedMessage);
+  };
+}
+__name(createDebugger, "createDebugger");
+
+// dist/esm/utils/is-plain-object.js
+function isPlainObject(input) {
+  return !(input === null || typeof input !== "object" || Array.isArray(input) || input.constructor && input.constructor !== Object);
+}
+__name(isPlainObject, "isPlainObject");
+
 // dist/esm/validators/object-type-validator.js
 function objectTypeValidator(value, schema, sourcePath) {
-  if (schema.type === DataType.OBJECT && (value === null || typeof value !== "object" || Array.isArray(value) || value.constructor !== Object)) {
+  if (schema.type === DataType.OBJECT && !isPlainObject(value)) {
     if (sourcePath) {
       throw new ValidationError("Value of %v must be a plain Object, but %v given.", sourcePath, value);
     } else {
@@ -178,26 +202,6 @@ __name(booleanTypeValidator, "booleanTypeValidator");
 
 // dist/esm/debuggable-service.js
 var import_js_service = require("@e22m4u/js-service");
-
-// dist/esm/utils/to-camel-case.js
-function toCamelCase(input) {
-  return input.replace(/(^\w|[A-Z]|\b\w)/g, (c) => c.toUpperCase()).replace(/\W+/g, "").replace(/(^\w)/g, (c) => c.toLowerCase());
-}
-__name(toCamelCase, "toCamelCase");
-
-// dist/esm/utils/create-debugger.js
-var import_debug = __toESM(require("debug"), 1);
-var import_js_format3 = require("@e22m4u/js-format");
-function createDebugger(name) {
-  const debug = (0, import_debug.default)(`tsDataSchema:${name}`);
-  return function(message, ...args) {
-    const interpolatedMessage = (0, import_js_format3.format)(message, ...args);
-    return debug(interpolatedMessage);
-  };
-}
-__name(createDebugger, "createDebugger");
-
-// dist/esm/debuggable-service.js
 var _DebuggableService = class _DebuggableService extends import_js_service.Service {
   /**
    * Debug.

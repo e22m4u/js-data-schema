@@ -11,23 +11,23 @@ describe('isRequiredValidator', function () {
         isRequiredValidator(NaN, { type: DataType.OBJECT });
         isRequiredValidator(NaN, { type: DataType.ARRAY });
     });
-    it('throws ValidationError for undefined in case of required option', function () {
+    it('throws an error for undefined in case of required option', function () {
         const schema = { type: DataType.ANY, required: true };
         const throwable = () => isRequiredValidator(undefined, schema);
         expect(throwable).to.throw(ValidationError, 'Value is required, but undefined given.');
     });
-    it('throws ValidationError for null in case of required option', function () {
+    it('throws an error for null in case of required option', function () {
         const schema = { type: DataType.ANY, required: true };
         const throwable = () => isRequiredValidator(null, schema);
         expect(throwable).to.throw(ValidationError, 'Value is required, but null given.');
     });
     describe('with sourcePath', function () {
-        it('throws ValidationError for undefined in case of required option', function () {
+        it('throws an error for undefined in case of required option', function () {
             const schema = { type: DataType.ANY, required: true };
             const throwable = () => isRequiredValidator(undefined, schema, 'source');
             expect(throwable).to.throw(ValidationError, 'Value of "source" is required, but undefined given.');
         });
-        it('throws ValidationError for null in case of required option', function () {
+        it('throws an error for null in case of required option', function () {
             const schema = { type: DataType.ANY, required: true };
             const throwable = () => isRequiredValidator(null, schema, 'source');
             expect(throwable).to.throw(ValidationError, 'Value of "source" is required, but null given.');

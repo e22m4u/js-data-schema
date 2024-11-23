@@ -12,7 +12,7 @@ describe('numberTypeValidator', function () {
         numberTypeValidator(NaN, { type: DataType.OBJECT });
         numberTypeValidator(NaN, { type: DataType.ARRAY });
     });
-    it('throws ValidationError for non-number value in case of number schema', function () {
+    it('throws an error for non-number value in case of number schema', function () {
         const throwable = (v) => () => numberTypeValidator(v, { type: DataType.NUMBER });
         const error = (v) => format('Value must be a Number, but %s given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
@@ -24,12 +24,12 @@ describe('numberTypeValidator', function () {
         expect(throwable({ foo: 'bar' })).to.throw(ValidationError, error('Object'));
         expect(throwable({})).to.throw(ValidationError, error('Object'));
     });
-    it('throws ValidationError for NaN value in case of number schema', function () {
+    it('throws an error for NaN value in case of number schema', function () {
         const throwable = () => numberTypeValidator(NaN, { type: DataType.NUMBER });
         expect(throwable).to.throw(ValidationError, 'Value must be a Number, but NaN given.');
     });
     describe('with sourcePath', function () {
-        it('throws ValidationError for non-number value in case of number schema', function () {
+        it('throws an error for non-number value in case of number schema', function () {
             const throwable = (v) => () => numberTypeValidator(v, { type: DataType.NUMBER }, 'source.path');
             const error = (v) => format('Value of "source.path" must be a Number, but %s given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));
@@ -41,7 +41,7 @@ describe('numberTypeValidator', function () {
             expect(throwable({ foo: 'bar' })).to.throw(ValidationError, error('Object'));
             expect(throwable({})).to.throw(ValidationError, error('Object'));
         });
-        it('throws ValidationError for NaN value in case of number schema', function () {
+        it('throws an error for NaN value in case of number schema', function () {
             const throwable = () => numberTypeValidator(NaN, { type: DataType.NUMBER }, 'source.path');
             expect(throwable).to.throw(ValidationError, 'Value of "source.path" must be a Number, but NaN given.');
         });

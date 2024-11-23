@@ -12,7 +12,7 @@ describe('stringTypeValidator', function () {
         stringTypeValidator(NaN, { type: DataType.OBJECT });
         stringTypeValidator(NaN, { type: DataType.ARRAY });
     });
-    it('throws ValidationError for non-string value in case of string schema', function () {
+    it('throws an error for non-string value in case of string schema', function () {
         const throwable = (v) => () => stringTypeValidator(v, { type: DataType.STRING });
         const error = (v) => format('Value must be a String, but %s given.', v);
         expect(throwable(10)).to.throw(ValidationError, error('10'));
@@ -25,7 +25,7 @@ describe('stringTypeValidator', function () {
         expect(throwable({})).to.throw(ValidationError, error('Object'));
     });
     describe('with sourcePath', function () {
-        it('throws ValidationError for non-string value in case of string schema', function () {
+        it('throws an error for non-string value in case of string schema', function () {
             const throwable = (v) => () => stringTypeValidator(v, { type: DataType.STRING }, 'source.path');
             const error = (v) => format('Value of "source.path" must be a String, but %s given.', v);
             expect(throwable(10)).to.throw(ValidationError, error('10'));
