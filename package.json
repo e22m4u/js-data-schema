@@ -31,6 +31,7 @@
     "build:esm": "tsc --build",
     "build:cjs": "rimraf ./dist/cjs && node --no-warnings=ExperimentalWarning build-cjs.js",
     "build": "rimraf dist && npm run build:esm && npm run build:cjs",
+    "postbuild": "rimraf ./dist/**/*.spec.* --glob ./dist/tsconfig.tsbuildinfo",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "format": "prettier --write \"./src/**/*.ts\"",
