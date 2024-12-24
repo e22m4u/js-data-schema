@@ -29,8 +29,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // dist/esm/index.js
-var esm_exports = {};
-__export(esm_exports, {
+var index_exports = {};
+__export(index_exports, {
   DataType: () => DataType,
   DataTypeCaster: () => DataTypeCaster,
   DataValidator: () => DataValidator,
@@ -48,7 +48,7 @@ __export(esm_exports, {
   typeCastToPlainObject: () => typeCastToPlainObject,
   typeCastToString: () => typeCastToString
 });
-module.exports = __toCommonJS(esm_exports);
+module.exports = __toCommonJS(index_exports);
 
 // dist/esm/data-schema.js
 var DataType;
