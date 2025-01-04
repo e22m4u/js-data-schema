@@ -31,13 +31,28 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // dist/esm/index.js
 var index_exports = {};
 __export(index_exports, {
+  DATA_SCHEMA_CLASS_METADATA_KEY: () => DATA_SCHEMA_CLASS_METADATA_KEY,
+  DATA_SCHEMA_PROPERTIES_METADATA_KEY: () => DATA_SCHEMA_PROPERTIES_METADATA_KEY,
+  DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE: () => DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE,
+  DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE: () => DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE,
+  DataSchemaReflector: () => DataSchemaReflector,
   DataType: () => DataType,
   DataTypeCaster: () => DataTypeCaster,
   DataValidator: () => DataValidator,
+  DecoratorTargetError: () => DecoratorTargetError,
+  REDUNDANT_TYPE_OPTION_ERROR_MESSAGE: () => REDUNDANT_TYPE_OPTION_ERROR_MESSAGE,
   TypeCastError: () => TypeCastError,
   arrayTypeValidator: () => arrayTypeValidator,
   booleanTypeValidator: () => booleanTypeValidator,
+  dataSchema: () => dataSchema,
   dataTypeFrom: () => dataTypeFrom,
+  dsAny: () => dsAny,
+  dsArray: () => dsArray,
+  dsBoolean: () => dsBoolean,
+  dsNumber: () => dsNumber,
+  dsObject: () => dsObject,
+  dsProperty: () => dsProperty,
+  dsString: () => dsString,
   isRequiredValidator: () => isRequiredValidator,
   numberTypeValidator: () => numberTypeValidator,
   objectTypeValidator: () => objectTypeValidator,
@@ -94,12 +109,19 @@ var _TypeCastError = class _TypeCastError extends Error {
 __name(_TypeCastError, "TypeCastError");
 var TypeCastError = _TypeCastError;
 
+// dist/esm/errors/decorator-target-error.js
+var import_js_format2 = require("@e22m4u/js-format");
+var _DecoratorTargetError = class _DecoratorTargetError extends import_js_format2.Errorf {
+};
+__name(_DecoratorTargetError, "DecoratorTargetError");
+var DecoratorTargetError = _DecoratorTargetError;
+
 // dist/esm/data-validator.js
-var import_js_format4 = require("@e22m4u/js-format");
+var import_js_format7 = require("@e22m4u/js-format");
 
 // dist/esm/errors/validation-error.js
-var import_js_format2 = require("@e22m4u/js-format");
-var _ValidationError = class _ValidationError extends import_js_format2.Errorf {
+var import_js_format3 = require("@e22m4u/js-format");
+var _ValidationError = class _ValidationError extends import_js_format3.Errorf {
 };
 __name(_ValidationError, "ValidationError");
 var ValidationError = _ValidationError;
@@ -148,11 +170,11 @@ __name(toCamelCase, "toCamelCase");
 
 // dist/esm/utils/create-debugger.js
 var import_debug = __toESM(require("debug"), 1);
-var import_js_format3 = require("@e22m4u/js-format");
+var import_js_format4 = require("@e22m4u/js-format");
 function createDebugger(name) {
   const debug = (0, import_debug.default)(`tsDataSchema:${name}`);
   return function(message, ...args) {
-    const interpolatedMessage = (0, import_js_format3.format)(message, ...args);
+    const interpolatedMessage = (0, import_js_format4.format)(message, ...args);
     return debug(interpolatedMessage);
   };
 }
@@ -163,6 +185,164 @@ function isPlainObject(input) {
   return !(input === null || typeof input !== "object" || Array.isArray(input) || input.constructor && input.constructor !== Object);
 }
 __name(isPlainObject, "isPlainObject");
+
+// dist/esm/utils/get-data-schema-from-class.js
+var import_js_format6 = require("@e22m4u/js-format");
+
+// dist/esm/decorators/data-schema-metadata.js
+var import_ts_reflector = require("@e22m4u/ts-reflector");
+var DATA_SCHEMA_CLASS_METADATA_KEY = new import_ts_reflector.MetadataKey("dataSchemaClassMetadataKey");
+var DATA_SCHEMA_PROPERTIES_METADATA_KEY = new import_ts_reflector.MetadataKey("dataSchemaPropertiesMetadataKey");
+
+// dist/esm/decorators/data-schema-reflector.js
+var import_ts_reflector2 = require("@e22m4u/ts-reflector");
+var _DataSchemaReflector = class _DataSchemaReflector {
+  /**
+   * Set metadata.
+   *
+   * @param metadata
+   * @param target
+   * @param propertyKey
+   */
+  static setMetadata(metadata, target, propertyKey) {
+    if (propertyKey == null) {
+      import_ts_reflector2.Reflector.defineMetadata(DATA_SCHEMA_CLASS_METADATA_KEY, metadata, target);
+    } else {
+      const oldMap = import_ts_reflector2.Reflector.getOwnMetadata(DATA_SCHEMA_PROPERTIES_METADATA_KEY, target);
+      const newMap = new Map(oldMap);
+      newMap.set(propertyKey, metadata);
+      import_ts_reflector2.Reflector.defineMetadata(DATA_SCHEMA_PROPERTIES_METADATA_KEY, newMap, target);
+    }
+  }
+  /**
+   * Get class metadata.
+   *
+   * @param target
+   */
+  static getClassMetadata(target) {
+    return import_ts_reflector2.Reflector.getOwnMetadata(DATA_SCHEMA_CLASS_METADATA_KEY, target);
+  }
+  /**
+   * Get properties metadata.
+   *
+   * @param target
+   */
+  static getPropertiesMetadata(target) {
+    const metadata = import_ts_reflector2.Reflector.getOwnMetadata(DATA_SCHEMA_PROPERTIES_METADATA_KEY, target);
+    return metadata != null ? metadata : /* @__PURE__ */ new Map();
+  }
+};
+__name(_DataSchemaReflector, "DataSchemaReflector");
+var DataSchemaReflector = _DataSchemaReflector;
+
+// dist/esm/decorators/data-schema-decorators.js
+var import_js_format5 = require("@e22m4u/js-format");
+var import_ts_reflector3 = require("@e22m4u/ts-reflector");
+var import_ts_reflector4 = require("@e22m4u/ts-reflector");
+var DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE = "@%s decorator is only supported on an instance property.";
+var DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE = "@%s decorator is only supported on a class or an instance property.";
+var REDUNDANT_TYPE_OPTION_ERROR_MESSAGE = 'The option "type" is not supported in the @%s decorator.';
+function dataSchema(schema) {
+  return function(target, propertyKey, descriptor) {
+    const decoratorType = (0, import_ts_reflector4.getDecoratorTargetType)(target, propertyKey, descriptor);
+    if (decoratorType !== import_ts_reflector3.DecoratorTargetType.CONSTRUCTOR && decoratorType !== import_ts_reflector3.DecoratorTargetType.INSTANCE_PROPERTY) {
+      throw new DecoratorTargetError(DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE, "dataSchema");
+    }
+    const targetCtor = typeof target === "object" ? target.constructor : target;
+    DataSchemaReflector.setMetadata(schema, targetCtor, propertyKey);
+  };
+}
+__name(dataSchema, "dataSchema");
+function dsProperty(schema) {
+  return function(target, propertyKey, descriptor) {
+    const decoratorType = (0, import_ts_reflector4.getDecoratorTargetType)(target, propertyKey, descriptor);
+    if (decoratorType !== import_ts_reflector3.DecoratorTargetType.INSTANCE_PROPERTY)
+      throw new DecoratorTargetError(DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE, "dsProperty");
+    DataSchemaReflector.setMetadata(schema, target.constructor, propertyKey);
+  };
+}
+__name(dsProperty, "dsProperty");
+function checkDataSchemaDoesNotHaveSpecifiedTypeOption(decoratorName, schema) {
+  if (schema && typeof schema === "object" && !Array.isArray(schema) && schema.type) {
+    throw new import_js_format5.Errorf(REDUNDANT_TYPE_OPTION_ERROR_MESSAGE, decoratorName);
+  }
+}
+__name(checkDataSchemaDoesNotHaveSpecifiedTypeOption, "checkDataSchemaDoesNotHaveSpecifiedTypeOption");
+function wrapDataSchemaDecoratorToReplaceErrorMessage(decoratorName, schema) {
+  const dec = dataSchema(schema);
+  return function(target, propertyKey, descriptor) {
+    try {
+      return dec(target, propertyKey, descriptor);
+    } catch (error) {
+      if (error instanceof DecoratorTargetError)
+        throw new DecoratorTargetError(DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE, decoratorName);
+      throw error;
+    }
+  };
+}
+__name(wrapDataSchemaDecoratorToReplaceErrorMessage, "wrapDataSchemaDecoratorToReplaceErrorMessage");
+function wrapDataSchemaPropertyDecoratorToReplaceErrorMessage(decoratorName, schema) {
+  const dec = dsProperty(schema);
+  return function(target, propertyKey, descriptor) {
+    try {
+      return dec(target, propertyKey, descriptor);
+    } catch (error) {
+      if (error instanceof DecoratorTargetError)
+        throw new DecoratorTargetError(DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE, decoratorName);
+      throw error;
+    }
+  };
+}
+__name(wrapDataSchemaPropertyDecoratorToReplaceErrorMessage, "wrapDataSchemaPropertyDecoratorToReplaceErrorMessage");
+function createDataSchemaPropertyDecoratorWithDataType(decoratorName, dataType) {
+  return function(schema) {
+    checkDataSchemaDoesNotHaveSpecifiedTypeOption(decoratorName, schema);
+    return wrapDataSchemaPropertyDecoratorToReplaceErrorMessage(decoratorName, {
+      ...schema,
+      type: dataType
+    });
+  };
+}
+__name(createDataSchemaPropertyDecoratorWithDataType, "createDataSchemaPropertyDecoratorWithDataType");
+var dsAny = createDataSchemaPropertyDecoratorWithDataType("dsAny", DataType.ANY);
+var dsString = createDataSchemaPropertyDecoratorWithDataType("dsString", DataType.STRING);
+var dsNumber = createDataSchemaPropertyDecoratorWithDataType("dsNumber", DataType.NUMBER);
+var dsBoolean = createDataSchemaPropertyDecoratorWithDataType("dsBoolean", DataType.BOOLEAN);
+var dsArray = /* @__PURE__ */ __name((schemaOrItemType, schema) => {
+  let arraySchemaWithoutType;
+  if (typeof schemaOrItemType === "string") {
+    arraySchemaWithoutType = {
+      ...schema,
+      items: { type: schemaOrItemType }
+    };
+  } else if (schemaOrItemType && typeof schemaOrItemType === "object" && !Array.isArray(schemaOrItemType) && "type" in schemaOrItemType && schemaOrItemType.type) {
+    arraySchemaWithoutType = {
+      ...schema,
+      items: schemaOrItemType
+    };
+  } else {
+    arraySchemaWithoutType = schemaOrItemType || schema;
+  }
+  checkDataSchemaDoesNotHaveSpecifiedTypeOption("dsArray", arraySchemaWithoutType);
+  return wrapDataSchemaPropertyDecoratorToReplaceErrorMessage("dsArray", {
+    ...arraySchemaWithoutType,
+    type: DataType.ARRAY
+  });
+}, "dsArray");
+function dsObject(schemaOrCtor, schema) {
+  if (typeof schemaOrCtor === "function") {
+    schema = schema || {};
+    schema.properties = schemaOrCtor;
+  } else if (schemaOrCtor && typeof schemaOrCtor === "object" && !Array.isArray(schemaOrCtor)) {
+    schema = schemaOrCtor;
+  }
+  checkDataSchemaDoesNotHaveSpecifiedTypeOption("dsObject", schema);
+  return wrapDataSchemaDecoratorToReplaceErrorMessage("dsObject", {
+    ...schema,
+    type: DataType.OBJECT
+  });
+}
+__name(dsObject, "dsObject");
 
 // dist/esm/validators/object-type-validator.js
 function objectTypeValidator(value, schema, sourcePath) {
@@ -272,7 +452,7 @@ var _DataValidator = class _DataValidator extends DebuggableService {
       this.debug("Validator %v is removed.", fn.name);
       return this;
     }
-    throw new import_js_format4.Errorf("Unable to remove non-existent validator %v.", fn.name);
+    throw new import_js_format7.Errorf("Unable to remove non-existent validator %v.", fn.name);
   }
   /**
    * Remove all validators.
@@ -342,7 +522,7 @@ __name(_DataValidator, "DataValidator");
 var DataValidator = _DataValidator;
 
 // dist/esm/data-type-caster.js
-var import_js_format5 = require("@e22m4u/js-format");
+var import_js_format8 = require("@e22m4u/js-format");
 
 // dist/esm/type-casters/type-cast-to-array.js
 function typeCastToArray(value) {
@@ -464,7 +644,7 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
     const typeCaster = this.typeCasterMap.get(type);
     if (typeCaster)
       return typeCaster;
-    throw new import_js_format5.Errorf("No type caster found for %s type.", type);
+    throw new import_js_format8.Errorf("No type caster found for %s type.", type);
   }
   /**
    * Cast.
@@ -560,13 +740,28 @@ __name(_DataTypeCaster, "DataTypeCaster");
 var DataTypeCaster = _DataTypeCaster;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  DATA_SCHEMA_CLASS_METADATA_KEY,
+  DATA_SCHEMA_PROPERTIES_METADATA_KEY,
+  DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE,
+  DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE,
+  DataSchemaReflector,
   DataType,
   DataTypeCaster,
   DataValidator,
+  DecoratorTargetError,
+  REDUNDANT_TYPE_OPTION_ERROR_MESSAGE,
   TypeCastError,
   arrayTypeValidator,
   booleanTypeValidator,
+  dataSchema,
   dataTypeFrom,
+  dsAny,
+  dsArray,
+  dsBoolean,
+  dsNumber,
+  dsObject,
+  dsProperty,
+  dsString,
   isRequiredValidator,
   numberTypeValidator,
   objectTypeValidator,

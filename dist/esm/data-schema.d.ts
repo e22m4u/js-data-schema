@@ -17,7 +17,7 @@ export type DataSchema = {
     type: DataType;
     items?: DataSchema;
     properties?: {
-        [key: string]: DataSchema;
+        [key: string]: DataSchema | undefined;
     };
     required?: boolean;
     validate?: CallableValidator | CallableValidator[];

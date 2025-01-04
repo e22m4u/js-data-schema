@@ -18,7 +18,7 @@ export enum DataType {
 export type DataSchema = {
   type: DataType;
   items?: DataSchema;
-  properties?: {[key: string]: DataSchema};
+  properties?: {[key: string]: DataSchema | undefined};
   required?: boolean;
   validate?: CallableValidator | CallableValidator[];
 };

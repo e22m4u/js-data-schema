@@ -57,6 +57,67 @@ typeCaster.cast('10', schema, {noTypeCastError: true});  // returns 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // returns "foo"
 ```
 
+Meta-data and decorators.
+
+```ts
+import {dsNumber} from '@e22m4u/ts-data-schema';
+import {dsObject} from '@e22m4u/ts-data-schema';
+import {dsString} from '@e22m4u/ts-data-schema';
+import {DataSchema} from '@e22m4u/ts-data-schema';
+import {ClassToPlain} from '@e22m4u/ts-data-schema';
+import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+
+@dsObject()
+class Author {
+  @dsNumber({required: true})
+  id: number;
+
+  @dsString({validate: nonEmptyString})
+  name?: string;
+}
+
+@dsObject()
+class Post {
+  @dsNumber({required: true})
+  id: number;
+
+  @dsString()
+  title?: string;
+
+  @dsObject(() => Author, {required: true})
+  author?: ClassToPlain<Author>;
+}
+
+const postDataSchema = getDataSchemaFromClass(Post);
+console.log(postDataSchema);
+// {
+//   type: "object"
+//   properties: {
+//     id: {
+//       type: "number",
+//       required: true,
+//     },
+//     title: {
+//       type: "string",
+//       validate: myAmazingValidator() {...}
+//     },
+//     author: {
+//       type: "object",
+//       required: true,
+//       properties: {
+//         id: {
+//           type: "number",
+//           required: true,
+//         },
+//         name: {
+//           type: "string",
+//         },
+//       },
+//     }
+//   }
+// }
+```
+
 ## DataSchema
 
 `DataSchema` is an object that defines the structure for data validation
@@ -146,6 +207,55 @@ const schema = {
   },
 }
 ```
+
+Multiple validators usage.
+
+```ts
+const schema = {
+  type: DataSchema.ANY,
+  validate: [
+    myValidator1,
+    myValidator2,
+  ],
+}
+```
+
+Validator arguments usage.
+
+```ts
+import {DataSchema} from '@e22m4u/ts-data-schema';
+
+function noEmptyString(value: unknown, schema: DataSchema, sourcePath: string) {
+  if (!value || typeof value !== 'string') {
+    if (sourcePath)
+      throw new ValidationError(
+        'Value of %v must be a non-empty String, but %v given.',
+        sourcePath,
+        value,
+      );
+    throw new ValidationError(
+      'Value must be a non-empty String, but %v given.',
+      value,
+    );
+  }
+}
+```
+
+## Decorators
+
+Common:
+
+- `@dataSchema`
+- `@dsProperty`
+
+Псевдонимы:
+
+- `@dsAny`
+- `@dsString`
+- `@dsNumber`
+- `@dsBoolean`
+- `@dsArray`
+- `@dsObject`
 
 ## Debugging
 

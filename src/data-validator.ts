@@ -150,7 +150,7 @@ export class DataValidator extends DebuggableService {
       this.debug('Starting object properties validation.');
       const valueAsObject = value as PlainObject;
       for (const propName in schema.properties) {
-        const propSchema = schema.properties[propName];
+        const propSchema = schema.properties[propName]!;
         const propValue = valueAsObject[propName];
         const propSourcePath = sourcePath
           ? `${sourcePath}.${propName}`

@@ -168,7 +168,7 @@ export class DataTypeCaster extends DebuggableService {
       this.debug('Starting type casting of object properties.');
       const valueAsObject = newValue as PlainObject;
       for (const propName in schema.properties) {
-        const propSchema = schema.properties[propName];
+        const propSchema = schema.properties[propName]!;
         const propValue = valueAsObject[propName];
         const propSourcePath = sourcePath
           ? `${sourcePath}.${propName}`
