@@ -248,7 +248,7 @@ Common:
 - `@dataSchema`
 - `@dsProperty`
 
-Псевдонимы:
+Aliases:
 
 - `@dsAny`
 - `@dsString`
