@@ -57,7 +57,7 @@ typeCaster.cast('10', schema, {noTypeCastError: true});  // returns 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // returns "foo"
 ```
 
-Meta-data and decorators.
+Using decorators for data schema definition.
 
 ```ts
 import {dsNumber} from '@e22m4u/ts-data-schema';

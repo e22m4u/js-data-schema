@@ -56,7 +56,7 @@ typeCaster.cast('10', schema, {noTypeCastError: true});  // вернет 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // вернет "foo"
 ```
 
-Декораторы и мета-данные.
+Использование декораторов для построения схемы.
 
 ```ts
 import {dsNumber} from '@e22m4u/ts-data-schema';
