@@ -143,7 +143,7 @@ Defines the value type using the constants listed below.
 - `DataType.NUMBER` - numeric values
 - `DataType.BOOLEAN` - boolean values
 - `DataType.ARRAY` - array values
-- `DataType.OBJECT` - object values
+- `DataType.OBJECT` - plain object values
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';

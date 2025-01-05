@@ -142,7 +142,7 @@ type DataSchema = {
 - `DataType.NUMBER` - числовые значения
 - `DataType.BOOLEAN` - логические значения
 - `DataType.ARRAY` - массивы
-- `DataType.OBJECT` - объекты
+- `DataType.OBJECT` - объекты (не экземпляры)
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
