@@ -3,7 +3,7 @@ import { Prototype } from '../types.js';
 import { Constructor } from '../types.js';
 import { DataType } from '../data-schema.js';
 import { DataSchemaMetadata } from './data-schema-metadata.js';
-import { DataSchemaCtorOrCtorFactory } from './data-schema-metadata.js';
+import { DataSchemaClassFactory } from './data-schema-metadata.js';
 /**
  * Decorators list:
  *
@@ -117,7 +117,7 @@ export declare const dsArray: (schemaOrItemType?: DataSchemaMetadataWithoutType 
  *   @dsObject({required: true})
  * ```
  *
- * @param schemaOrCtor
+ * @param schemaOrClassFactory
  * @param schema
  */
-export declare function dsObject(schemaOrCtor?: DataSchemaMetadataWithoutType | DataSchemaCtorOrCtorFactory, schema?: DataSchemaMetadataWithoutType): <T extends object>(target: Constructor<T> | Prototype<T>, propertyKey?: string, descriptor?: PropertyDescriptor) => void;
+export declare function dsObject(schemaOrClassFactory?: DataSchemaMetadataWithoutType | DataSchemaClassFactory, schema?: DataSchemaMetadataWithoutType): <T extends object>(target: Constructor<T> | Prototype<T>, propertyKey?: string, descriptor?: PropertyDescriptor) => void;

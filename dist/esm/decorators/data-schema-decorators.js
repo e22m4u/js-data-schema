@@ -270,23 +270,23 @@ export const dsArray = (schemaOrItemType, schema) => {
  *   @dsObject({required: true})
  * ```
  *
- * @param schemaOrCtor
+ * @param schemaOrClassFactory
  * @param schema
  */
-export function dsObject(schemaOrCtor, schema) {
+export function dsObject(schemaOrClassFactory, schema) {
     // если первым аргументом является функция, то значение
     // аргумента используется как функция возвращающая
-    // конструктор для извлечения схемы объекта
-    if (typeof schemaOrCtor === 'function') {
+    // класс для извлечения схемы объекта
+    if (typeof schemaOrClassFactory === 'function') {
         schema = schema || {};
-        schema.properties = schemaOrCtor;
+        schema.properties = schemaOrClassFactory;
     }
     // если первым аргументом является объект, то значение
     // аргумента используется как схема объекта
-    else if (schemaOrCtor &&
-        typeof schemaOrCtor === 'object' &&
-        !Array.isArray(schemaOrCtor)) {
-        schema = schemaOrCtor;
+    else if (schemaOrClassFactory &&
+        typeof schemaOrClassFactory === 'object' &&
+        !Array.isArray(schemaOrClassFactory)) {
+        schema = schemaOrClassFactory;
     }
     // параметры декоратора не должны содержать опцию "type",
     // так как тип жестко задан самим декоратором

@@ -7,15 +7,14 @@ import {MetadataKey} from '@e22m4u/ts-reflector';
  * Data schema metadata.
  */
 export type DataSchemaMetadata = Flatten<Omit<DataSchema, 'properties'>> & {
-  properties?: DataSchema['properties'] | DataSchemaCtorOrCtorFactory;
+  properties?: DataSchema['properties'] | DataSchemaClassFactory;
 };
 
 /**
- * Data schema ctor factory.
+ * Data schema class factory.
  */
-export type DataSchemaCtorOrCtorFactory<T extends object = object> =
-  | (() => Constructor<T>)
-  | Constructor<T>;
+export type DataSchemaClassFactory<T extends object = object> =
+  () => Constructor<T>;
 
 /**
  * Property metadata map.

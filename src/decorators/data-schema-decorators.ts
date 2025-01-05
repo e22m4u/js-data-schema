@@ -9,7 +9,7 @@ import {DecoratorTargetType} from '@e22m4u/ts-reflector';
 import {getDecoratorTargetType} from '@e22m4u/ts-reflector';
 import {DataSchemaMetadata} from './data-schema-metadata.js';
 import {DataSchemaReflector} from './data-schema-reflector.js';
-import {DataSchemaCtorOrCtorFactory} from './data-schema-metadata.js';
+import {DataSchemaClassFactory} from './data-schema-metadata.js';
 
 /**
  * Decorators list:
@@ -380,28 +380,28 @@ export const dsArray = (
  *   @dsObject({required: true})
  * ```
  *
- * @param schemaOrCtor
+ * @param schemaOrClassFactory
  * @param schema
  */
 export function dsObject(
-  schemaOrCtor?: DataSchemaMetadataWithoutType | DataSchemaCtorOrCtorFactory,
+  schemaOrClassFactory?: DataSchemaMetadataWithoutType | DataSchemaClassFactory,
   schema?: DataSchemaMetadataWithoutType,
 ) {
   // если первым аргументом является функция, то значение
   // аргумента используется как функция возвращающая
-  // конструктор для извлечения схемы объекта
-  if (typeof schemaOrCtor === 'function') {
+  // класс для извлечения схемы объекта
+  if (typeof schemaOrClassFactory === 'function') {
     schema = schema || {};
-    schema.properties = schemaOrCtor;
+    schema.properties = schemaOrClassFactory;
   }
   // если первым аргументом является объект, то значение
   // аргумента используется как схема объекта
   else if (
-    schemaOrCtor &&
-    typeof schemaOrCtor === 'object' &&
-    !Array.isArray(schemaOrCtor)
+    schemaOrClassFactory &&
+    typeof schemaOrClassFactory === 'object' &&
+    !Array.isArray(schemaOrClassFactory)
   ) {
-    schema = schemaOrCtor;
+    schema = schemaOrClassFactory;
   }
   // параметры декоратора не должны содержать опцию "type",
   // так как тип жестко задан самим декоратором

@@ -330,12 +330,12 @@ var dsArray = /* @__PURE__ */ __name((schemaOrItemType, schema) => {
     type: DataType.ARRAY
   });
 }, "dsArray");
-function dsObject(schemaOrCtor, schema) {
-  if (typeof schemaOrCtor === "function") {
+function dsObject(schemaOrClassFactory, schema) {
+  if (typeof schemaOrClassFactory === "function") {
     schema = schema || {};
-    schema.properties = schemaOrCtor;
-  } else if (schemaOrCtor && typeof schemaOrCtor === "object" && !Array.isArray(schemaOrCtor)) {
-    schema = schemaOrCtor;
+    schema.properties = schemaOrClassFactory;
+  } else if (schemaOrClassFactory && typeof schemaOrClassFactory === "object" && !Array.isArray(schemaOrClassFactory)) {
+    schema = schemaOrClassFactory;
   }
   checkDataSchemaDoesNotHaveSpecifiedTypeOption("dsObject", schema);
   return wrapDataSchemaDecoratorToReplaceErrorMessage("dsObject", {

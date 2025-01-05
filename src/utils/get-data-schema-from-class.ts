@@ -3,8 +3,8 @@ import {Constructor} from '../types.js';
 import {Errorf} from '@e22m4u/js-format';
 import {DataType} from '../data-schema.js';
 import {DataSchema} from '../data-schema.js';
-import {DataSchemaMetadata} from '../decorators/index.js';
 import {DataSchemaReflector} from '../decorators/index.js';
+import {DataSchemaClassFactory} from '../decorators/index.js';
 
 /**
  * Get data schema from class.
@@ -20,7 +20,38 @@ export function getDataSchemaFromClass<T extends object>(
   const result: DataSchema = {type: DataType.OBJECT};
   if (classMd) {
     Object.assign(result, classMd);
-    result.properties = getPropsSchemaFromClassOrFactory(classMd.properties);
+    // если в качестве схемы свойств определена фабрика,
+    // то возвращаемое значение этой фабрики используется
+    // как класс для извлечения мета-данных
+    if (typeof classMd.properties === 'function') {
+      result.properties = getPropsSchemaFromClassFactory(classMd.properties);
+    }
+    // если схемой свойств является объект,
+    // то значение объекта используется
+    // как схема свойств без изменений
+    else if (
+      classMd.properties &&
+      typeof classMd.properties === 'object' &&
+      !Array.isArray(classMd.properties)
+    ) {
+      result.properties = classMd.properties;
+    }
+    // если схема свойств не определена,
+    // то поле "properties" удаляется
+    // из результирующего объекта
+    else if (classMd.properties == null) {
+      delete result.properties;
+    }
+    // если схемой свойств является значение отличное
+    // от фабрики, объекта, null и undefined,
+    // то выбрасывается ошибка
+    else {
+      throw new Errorf(
+        'Properties schema allows a class factory ' +
+          'or a schema object, but %v given.',
+        classMd.properties,
+      );
+    }
   }
   // извлечение мета-данных свойств класса
   const propsMd = DataSchemaReflector.getPropertiesMetadata(ctor);
@@ -37,8 +68,38 @@ export function getDataSchemaFromClass<T extends object>(
   for (const [propName, propMd] of propsMd) {
     const propSchema: DataSchema = {type: DataType.ANY};
     Object.assign(propSchema, propMd);
-    propSchema.properties = getPropsSchemaFromClassOrFactory(propMd.properties);
-    if (!propSchema.properties) delete propSchema.properties;
+    // если в качестве схемы свойств определена фабрика,
+    // то возвращаемое значение этой фабрики используется
+    // как класс для извлечения мета-данных
+    if (typeof propMd.properties === 'function') {
+      propSchema.properties = getPropsSchemaFromClassFactory(propMd.properties);
+    }
+    // если схемой свойств является объект,
+    // то значение объекта используется
+    // как схема свойств без изменений
+    else if (
+      propMd.properties &&
+      typeof propMd.properties === 'object' &&
+      !Array.isArray(propMd.properties)
+    ) {
+      propSchema.properties = propMd.properties;
+    }
+    // если схема свойств не определена,
+    // то поле "properties" удаляется
+    // из результирующей схемы
+    else if (propMd.properties == null) {
+      delete propSchema.properties;
+    }
+    // если схемой свойств является значение отличное
+    // от фабрики, объекта, null и undefined,
+    // то выбрасывается ошибка
+    else {
+      throw new Errorf(
+        'Properties schema allows a class factory ' +
+          'or a schema object, but %v given.',
+        propMd.properties,
+      );
+    }
     // запись схемы текущего свойства в результат
     result.properties = result.properties || {};
     result.properties[propName] = propSchema;
@@ -47,39 +108,26 @@ export function getDataSchemaFromClass<T extends object>(
 }
 
 /**
- * Get properties schema from class or factory.
+ * Get properties schema from class factory.
  *
- * @param input
+ * @param factory
  * @param doNotThrowIfNoMetadata
  */
-function getPropsSchemaFromClassOrFactory(
-  input: DataSchemaMetadata['properties'],
+function getPropsSchemaFromClassFactory(
+  factory: DataSchemaClassFactory,
   doNotThrowIfNoMetadata = false,
 ): DataSchema['properties'] {
-  // если значением является класс,
-  // то извлекается схема его свойств
-  if (isClass(input)) {
-    const dataSchema = getDataSchemaFromClass(input, doNotThrowIfNoMetadata);
-    return dataSchema.properties;
-  }
-  // если значением является фабрика класса,
-  // то извлекается класс и схема его свойств
-  else if (typeof input === 'function') {
-    const nestedClass = input();
-    // если результатом фабрики не является
-    // класс, то выбрасывается ошибка
-    if (!isClass(nestedClass))
-      throw new Errorf(
-        'Class factory must return a class, but %v given.',
-        nestedClass,
-      );
-    const nestedSchema = getDataSchemaFromClass(
+  const nestedClass = factory();
+  // если результатом фабрики не является
+  // класс, то выбрасывается ошибка
+  if (!isClass(nestedClass))
+    throw new Errorf(
+      'Class factory must return a class, but %v given.',
       nestedClass,
-      doNotThrowIfNoMetadata,
     );
-    return nestedSchema.properties;
-  }
-  // в противном случае входящее значение
-  // возвращается без изменений
-  return input;
+  const nestedSchema = getDataSchemaFromClass(
+    nestedClass,
+    doNotThrowIfNoMetadata,
+  );
+  return nestedSchema.properties;
 }

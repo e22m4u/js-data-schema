@@ -11,8 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { expect } from 'chai';
 import { format } from '@e22m4u/js-format';
 import { DataType } from '../data-schema.js';
-import { dataSchema, DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE, DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE, dsAny, dsArray, dsBoolean, dsNumber, dsObject, dsProperty, dsString, } from './data-schema-decorators.js';
+import { dsAny } from './data-schema-decorators.js';
+import { dsArray } from './data-schema-decorators.js';
+import { dsNumber } from './data-schema-decorators.js';
+import { dsObject } from './data-schema-decorators.js';
+import { dsString } from './data-schema-decorators.js';
+import { dsBoolean } from './data-schema-decorators.js';
+import { dsProperty } from './data-schema-decorators.js';
+import { dataSchema } from './data-schema-decorators.js';
 import { DataSchemaReflector } from './data-schema-reflector.js';
+import { DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE } from './data-schema-decorators.js';
+import { DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE } from './data-schema-decorators.js';
 describe('decorators', function () {
     describe('dataSchema', function () {
         it('sets class metadata', function () {
@@ -521,20 +530,6 @@ describe('decorators', function () {
                         required: true,
                     });
                 });
-                it('allows to set a class to the properties option', function () {
-                    class MyClass {
-                    }
-                    let MyTarget = class MyTarget {
-                    };
-                    MyTarget = __decorate([
-                        dsObject({ properties: MyClass })
-                    ], MyTarget);
-                    const res = DataSchemaReflector.getClassMetadata(MyTarget);
-                    expect(res).to.be.eql({
-                        type: DataType.OBJECT,
-                        properties: MyClass,
-                    });
-                });
                 it('allows to set a class factory to the properties option', function () {
                     class MyClass {
                     }
@@ -548,37 +543,6 @@ describe('decorators', function () {
                     expect(res).to.be.eql({
                         type: DataType.OBJECT,
                         properties: factory,
-                    });
-                });
-            });
-            describe('if the first parameter is a class', function () {
-                it('sets the given class to the properties option', function () {
-                    class MyClass {
-                    }
-                    let MyTarget = class MyTarget {
-                    };
-                    MyTarget = __decorate([
-                        dsObject(MyClass)
-                    ], MyTarget);
-                    const res = DataSchemaReflector.getClassMetadata(MyTarget);
-                    expect(res).to.be.eql({
-                        type: DataType.OBJECT,
-                        properties: MyClass,
-                    });
-                });
-                it('uses the second parameter as object schema', function () {
-                    class MyClass {
-                    }
-                    let MyTarget = class MyTarget {
-                    };
-                    MyTarget = __decorate([
-                        dsObject(MyClass, { required: true })
-                    ], MyTarget);
-                    const res = DataSchemaReflector.getClassMetadata(MyTarget);
-                    expect(res).to.be.eql({
-                        type: DataType.OBJECT,
-                        properties: MyClass,
-                        required: true,
                     });
                 });
             });
@@ -652,23 +616,6 @@ describe('decorators', function () {
                         required: true,
                     });
                 });
-                it('allows to set a class to the properties option', function () {
-                    class MyClass {
-                    }
-                    class MyTarget {
-                        myProp;
-                    }
-                    __decorate([
-                        dsObject({ properties: MyClass }),
-                        __metadata("design:type", Object)
-                    ], MyTarget.prototype, "myProp", void 0);
-                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
-                    expect(res).to.be.instanceof(Map);
-                    expect(res.get('myProp')).to.be.eql({
-                        type: DataType.OBJECT,
-                        properties: MyClass,
-                    });
-                });
                 it('allows to set a class factory to the properties option', function () {
                     class MyClass {
                     }
@@ -685,43 +632,6 @@ describe('decorators', function () {
                     expect(res.get('myProp')).to.be.eql({
                         type: DataType.OBJECT,
                         properties: factory,
-                    });
-                });
-            });
-            describe('if the first parameter is a class', function () {
-                it('sets the given class to the properties option', function () {
-                    class MyClass {
-                    }
-                    class MyTarget {
-                        myProp;
-                    }
-                    __decorate([
-                        dsObject(MyClass),
-                        __metadata("design:type", Object)
-                    ], MyTarget.prototype, "myProp", void 0);
-                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
-                    expect(res).to.be.instanceof(Map);
-                    expect(res.get('myProp')).to.be.eql({
-                        type: DataType.OBJECT,
-                        properties: MyClass,
-                    });
-                });
-                it('uses the second parameter as object schema', function () {
-                    class MyClass {
-                    }
-                    class MyTarget {
-                        myProp;
-                    }
-                    __decorate([
-                        dsObject(MyClass, { required: true }),
-                        __metadata("design:type", Object)
-                    ], MyTarget.prototype, "myProp", void 0);
-                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
-                    expect(res).to.be.instanceof(Map);
-                    expect(res.get('myProp')).to.be.eql({
-                        type: DataType.OBJECT,
-                        properties: MyClass,
-                        required: true,
                     });
                 });
             });
