@@ -1,4 +1,4 @@
-import { ValidationError } from '../errors/validation-error.js';
+import { ValidationError } from '../errors/index.js';
 /**
  * Is required validator.
  *

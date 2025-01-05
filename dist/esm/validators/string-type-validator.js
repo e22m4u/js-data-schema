@@ -1,5 +1,5 @@
 import { DataType } from '../data-schema.js';
-import { ValidationError } from '../errors/validation-error.js';
+import { ValidationError } from '../errors/index.js';
 /**
  * String type validator.
  *

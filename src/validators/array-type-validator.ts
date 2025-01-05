@@ -1,6 +1,6 @@
 import {DataType} from '../data-schema.js';
 import {DataSchema} from '../data-schema.js';
-import {ValidationError} from '../errors/validation-error.js';
+import {ValidationError} from '../errors/index.js';
 
 /**
  * Array type validator.

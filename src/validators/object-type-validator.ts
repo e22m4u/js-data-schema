@@ -1,7 +1,7 @@
 import {DataType} from '../data-schema.js';
 import {DataSchema} from '../data-schema.js';
 import {isPlainObject} from '../utils/index.js';
-import {ValidationError} from '../errors/validation-error.js';
+import {ValidationError} from '../errors/index.js';
 
 /**
  * Object type validator.

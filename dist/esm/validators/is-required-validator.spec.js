@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe } from 'mocha';
 import { DataType } from '../data-schema.js';
-import { ValidationError } from '../errors/validation-error.js';
+import { ValidationError } from '../errors/index.js';
 import { isRequiredValidator } from './is-required-validator.js';
 describe('isRequiredValidator', function () {
     it('skips validation for non-string schema', function () {

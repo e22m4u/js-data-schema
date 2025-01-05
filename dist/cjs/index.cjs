@@ -42,6 +42,7 @@ __export(index_exports, {
   DecoratorTargetError: () => DecoratorTargetError,
   REDUNDANT_TYPE_OPTION_ERROR_MESSAGE: () => REDUNDANT_TYPE_OPTION_ERROR_MESSAGE,
   TypeCastError: () => TypeCastError,
+  ValidationError: () => ValidationError,
   arrayTypeValidator: () => arrayTypeValidator,
   booleanTypeValidator: () => booleanTypeValidator,
   dataSchema: () => dataSchema,
@@ -109,22 +110,22 @@ var _TypeCastError = class _TypeCastError extends Error {
 __name(_TypeCastError, "TypeCastError");
 var TypeCastError = _TypeCastError;
 
-// dist/esm/errors/decorator-target-error.js
+// dist/esm/errors/validation-error.js
 var import_js_format2 = require("@e22m4u/js-format");
-var _DecoratorTargetError = class _DecoratorTargetError extends import_js_format2.Errorf {
+var _ValidationError = class _ValidationError extends import_js_format2.Errorf {
+};
+__name(_ValidationError, "ValidationError");
+var ValidationError = _ValidationError;
+
+// dist/esm/errors/decorator-target-error.js
+var import_js_format3 = require("@e22m4u/js-format");
+var _DecoratorTargetError = class _DecoratorTargetError extends import_js_format3.Errorf {
 };
 __name(_DecoratorTargetError, "DecoratorTargetError");
 var DecoratorTargetError = _DecoratorTargetError;
 
 // dist/esm/data-validator.js
 var import_js_format7 = require("@e22m4u/js-format");
-
-// dist/esm/errors/validation-error.js
-var import_js_format3 = require("@e22m4u/js-format");
-var _ValidationError = class _ValidationError extends import_js_format3.Errorf {
-};
-__name(_ValidationError, "ValidationError");
-var ValidationError = _ValidationError;
 
 // dist/esm/validators/array-type-validator.js
 function arrayTypeValidator(value, schema, sourcePath) {
@@ -751,6 +752,7 @@ var DataTypeCaster = _DataTypeCaster;
   DecoratorTargetError,
   REDUNDANT_TYPE_OPTION_ERROR_MESSAGE,
   TypeCastError,
+  ValidationError,
   arrayTypeValidator,
   booleanTypeValidator,
   dataSchema,

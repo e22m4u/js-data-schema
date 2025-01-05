@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { format } from '@e22m4u/js-format';
 import { DataType } from '../data-schema.js';
-import { ValidationError } from '../errors/validation-error.js';
+import { ValidationError } from '../errors/index.js';
 import { objectTypeValidator } from './object-type-validator.js';
 describe('objectTypeValidator', function () {
     it('skips validation for non-object schema', function () {

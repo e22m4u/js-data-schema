@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { describe } from 'mocha';
 import { format } from '@e22m4u/js-format';
 import { DataType } from '../data-schema.js';
+import { ValidationError } from '../errors/index.js';
 import { arrayTypeValidator } from './array-type-validator.js';
-import { ValidationError } from '../errors/validation-error.js';
 describe('arrayTypeValidator', function () {
     it('skips validation for non-array schema', function () {
         arrayTypeValidator(NaN, { type: DataType.ANY });
