@@ -56,39 +56,82 @@ typeCaster.cast('10', schema, {noTypeCastError: true});  // вернет 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // вернет "foo"
 ```
 
-Использование декораторов для построения схемы.
+Использование декораторов для построения схемы объекта.
 
 ```ts
 import {dsNumber} from '@e22m4u/ts-data-schema';
 import {dsObject} from '@e22m4u/ts-data-schema';
 import {dsString} from '@e22m4u/ts-data-schema';
-import {DataSchema} from '@e22m4u/ts-data-schema';
 import {ClassToPlain} from '@e22m4u/ts-data-schema';
 import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
 
 @dsObject()
-class Author {
+class AuthorSchema {
   @dsNumber({required: true})
-  id: number;
+  id!: number;
 
-  @dsString()
+  @dsString({validate: nonEmptyString})
   name?: string;
 }
 
-@dsObject()
-class Post {
-  @dsNumber({required: true})
-  id: number;
+type Author = ClassToPlain<AuthorSchema>;
+// {
+//   id: string,
+//   name?: string | undefined,
+// }
 
-  @dsString({validate: myAmazingValidator})
+const authorSchema = getDataSchemaFromClass(AuthorSchema);
+console.log(authorSchema);
+// {
+//   type: "object",
+//   properties: {
+//     id: {
+//       type: "number",
+//       required: true,
+//     },
+//     name: {
+//       type: "string",
+//       validate() {...}
+//     },
+//   },
+// }
+```
+
+Построение схемы вложенных объектов с помощью декораторов.
+
+```ts
+import {dsNumber} from '@e22m4u/ts-data-schema';
+import {dsObject} from '@e22m4u/ts-data-schema';
+import {dsString} from '@e22m4u/ts-data-schema';
+import {ClassToPlain} from '@e22m4u/ts-data-schema';
+import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+
+@dsObject()
+class PostSchema {
+  @dsNumber({required: true})
+  id!: number;
+
+  @dsString({validate: nonEmptyString})
   title?: string;
 
-  @dsObject(() => Author, {required: true})
-  author?: ClassToPlain<Author>;
+  @dsObject(() => AuthorSchema, {required: true})
+  author!: Author;
+  // AuthorSchema и Author
+  // определены в примере выше
 }
 
-const postDataSchema = getDataSchemaFromClass(Post);
-console.log(postDataSchema);
+type Post = ClassToPlain<PostSchema>;
+// {
+//   id: string,
+//   title?: string | undefined,
+//   author: {
+//     id: string,
+//     name?: string | undefined,
+//   }
+// }
+
+const postSchema = getDataSchemaFromClass(PostSchema);
+console.log(postSchema);
 // {
 //   type: "object"
 //   properties: {
@@ -98,7 +141,7 @@ console.log(postDataSchema);
 //     },
 //     title: {
 //       type: "string",
-//       validate: myAmazingValidator() {...}
+//       validate() {...},
 //     },
 //     author: {
 //       type: "object",
@@ -110,6 +153,7 @@ console.log(postDataSchema);
 //         },
 //         name: {
 //           type: "string",
+//           validate() {...},
 //         },
 //       },
 //     }
