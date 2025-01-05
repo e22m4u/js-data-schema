@@ -95,6 +95,48 @@ describe('decorators', function () {
             };
             expect(throwable).to.throw(format(DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE, 'dataSchema'));
         });
+        it('allows to set a class factory to the properties option', function () {
+            class MyClass {
+            }
+            const classFactory = () => MyClass;
+            class MyTarget {
+                myProp;
+            }
+            __decorate([
+                dataSchema({
+                    type: DataType.OBJECT,
+                    properties: classFactory,
+                }),
+                __metadata("design:type", Array)
+            ], MyTarget.prototype, "myProp", void 0);
+            const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+            expect(res).to.be.instanceof(Map);
+            expect(res.get('myProp')).to.be.eql({
+                type: DataType.OBJECT,
+                properties: classFactory,
+            });
+        });
+        it('allows to set a class factory to the items option', function () {
+            class MyClass {
+            }
+            const classFactory = () => MyClass;
+            class MyTarget {
+                myProp;
+            }
+            __decorate([
+                dataSchema({
+                    type: DataType.ARRAY,
+                    items: classFactory,
+                }),
+                __metadata("design:type", Array)
+            ], MyTarget.prototype, "myProp", void 0);
+            const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+            expect(res).to.be.instanceof(Map);
+            expect(res.get('myProp')).to.be.eql({
+                type: DataType.ARRAY,
+                items: classFactory,
+            });
+        });
     });
     describe('dsProperty', function () {
         it('sets instance property metadata', function () {
@@ -415,7 +457,46 @@ describe('decorators', function () {
                 });
             });
         });
-        describe('if the first parameter has the type option', function () {
+        describe('if the first parameter is a class factory', function () {
+            it('uses the first parameter as items schema', function () {
+                class MyClass {
+                }
+                const classFactory = () => MyClass;
+                class MyTarget {
+                    myProp;
+                }
+                __decorate([
+                    dsArray(classFactory),
+                    __metadata("design:type", Array)
+                ], MyTarget.prototype, "myProp", void 0);
+                const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                expect(res).to.be.instanceof(Map);
+                expect(res.get('myProp')).to.be.eql({
+                    type: DataType.ARRAY,
+                    items: classFactory,
+                });
+            });
+            it('uses the second parameter as array schema', function () {
+                class MyClass {
+                }
+                const classFactory = () => MyClass;
+                class MyTarget {
+                    myProp;
+                }
+                __decorate([
+                    dsArray(classFactory, { required: true }),
+                    __metadata("design:type", Array)
+                ], MyTarget.prototype, "myProp", void 0);
+                const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                expect(res).to.be.instanceof(Map);
+                expect(res.get('myProp')).to.be.eql({
+                    type: DataType.ARRAY,
+                    items: classFactory,
+                    required: true,
+                });
+            });
+        });
+        describe('if the first parameter is a schema object with the type option', function () {
             it('uses the first parameter as items schema', function () {
                 class MyTarget {
                     myProp;
@@ -447,6 +528,130 @@ describe('decorators', function () {
                     required: true,
                 });
             });
+            describe('for object items', function () {
+                it('allows to set a class factory to the properties option of items', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            type: DataType.OBJECT,
+                            properties: classFactory,
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.OBJECT,
+                            properties: classFactory,
+                        },
+                    });
+                });
+                it('allows to set a class factory to property schema', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: classFactory,
+                                bar: classFactory,
+                            },
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: classFactory,
+                                bar: classFactory,
+                            },
+                        },
+                    });
+                });
+                it('allows to set a class factory to the properties option of property', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                                bar: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                            },
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                                bar: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                            },
+                        },
+                    });
+                });
+            });
+            describe('for array items', function () {
+                it('allows to set a class factory to the items option of items', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            type: DataType.ARRAY,
+                            items: classFactory,
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.ARRAY,
+                            items: classFactory,
+                        },
+                    });
+                });
+            });
         });
         describe('if the first parameter is a schema object without the type option', function () {
             it('uses the first parameter as array schema', function () {
@@ -462,6 +667,138 @@ describe('decorators', function () {
                 expect(res.get('myProp')).to.be.eql({
                     type: DataType.ARRAY,
                     required: true,
+                });
+            });
+            describe('for object items', function () {
+                it('allows to set a class factory to the properties option of items', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            items: {
+                                type: DataType.OBJECT,
+                                properties: classFactory,
+                            },
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.OBJECT,
+                            properties: classFactory,
+                        },
+                    });
+                });
+                it('allows to set a class factory to property schema', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            items: {
+                                type: DataType.OBJECT,
+                                properties: {
+                                    foo: classFactory,
+                                    bar: classFactory,
+                                },
+                            },
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: classFactory,
+                                bar: classFactory,
+                            },
+                        },
+                    });
+                });
+                it('allows to set a class factory to the properties option of property', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            items: {
+                                type: DataType.OBJECT,
+                                properties: {
+                                    foo: {
+                                        type: DataType.OBJECT,
+                                        properties: classFactory,
+                                    },
+                                    bar: {
+                                        type: DataType.OBJECT,
+                                        properties: classFactory,
+                                    },
+                                },
+                            },
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                                bar: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                            },
+                        },
+                    });
+                });
+            });
+            describe('for array items', function () {
+                it('allows to set a class factory to the items option of items', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsArray({
+                            items: {
+                                type: DataType.ARRAY,
+                                items: classFactory,
+                            },
+                        }),
+                        __metadata("design:type", Array)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.ARRAY,
+                        items: {
+                            type: DataType.ARRAY,
+                            items: classFactory,
+                        },
+                    });
                 });
             });
         });
@@ -507,7 +844,7 @@ describe('decorators', function () {
             };
             expect(throwable).to.throw(format(DECORATOR_CLASS_OR_PROPERTY_TARGET_ERROR_MESSAGE, 'dsObject'));
         });
-        describe('if target is a class', function () {
+        describe('if the target is a class', function () {
             it('sets class metadata', function () {
                 let MyTarget = class MyTarget {
                 };
@@ -533,16 +870,74 @@ describe('decorators', function () {
                 it('allows to set a class factory to the properties option', function () {
                     class MyClass {
                     }
-                    const factory = () => MyClass;
+                    const classFactory = () => MyClass;
                     let MyTarget = class MyTarget {
                     };
                     MyTarget = __decorate([
-                        dsObject({ properties: factory })
+                        dsObject({ properties: classFactory })
                     ], MyTarget);
                     const res = DataSchemaReflector.getClassMetadata(MyTarget);
                     expect(res).to.be.eql({
                         type: DataType.OBJECT,
-                        properties: factory,
+                        properties: classFactory,
+                    });
+                });
+                it('allows to set a class factory to property schema', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    let MyTarget = class MyTarget {
+                    };
+                    MyTarget = __decorate([
+                        dsObject({
+                            properties: {
+                                foo: classFactory,
+                                bar: classFactory,
+                            },
+                        })
+                    ], MyTarget);
+                    const res = DataSchemaReflector.getClassMetadata(MyTarget);
+                    expect(res).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            foo: classFactory,
+                            bar: classFactory,
+                        },
+                    });
+                });
+                it('allows to set a class factory to the properties option of property', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    let MyTarget = class MyTarget {
+                    };
+                    MyTarget = __decorate([
+                        dsObject({
+                            properties: {
+                                foo: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                                bar: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                            },
+                        })
+                    ], MyTarget);
+                    const res = DataSchemaReflector.getClassMetadata(MyTarget);
+                    expect(res).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            foo: {
+                                type: DataType.OBJECT,
+                                properties: classFactory,
+                            },
+                            bar: {
+                                type: DataType.OBJECT,
+                                properties: classFactory,
+                            },
+                        },
                     });
                 });
             });
@@ -550,37 +945,37 @@ describe('decorators', function () {
                 it('sets the given factory to the properties option', function () {
                     class MyClass {
                     }
-                    const factory = () => MyClass;
+                    const classFactory = () => MyClass;
                     let MyTarget = class MyTarget {
                     };
                     MyTarget = __decorate([
-                        dsObject(factory)
+                        dsObject(classFactory)
                     ], MyTarget);
                     const res = DataSchemaReflector.getClassMetadata(MyTarget);
                     expect(res).to.be.eql({
                         type: DataType.OBJECT,
-                        properties: factory,
+                        properties: classFactory,
                     });
                 });
                 it('uses the second parameter as object schema', function () {
                     class MyClass {
                     }
-                    const factory = () => MyClass;
+                    const classFactory = () => MyClass;
                     let MyTarget = class MyTarget {
                     };
                     MyTarget = __decorate([
-                        dsObject(factory, { required: true })
+                        dsObject(classFactory, { required: true })
                     ], MyTarget);
                     const res = DataSchemaReflector.getClassMetadata(MyTarget);
                     expect(res).to.be.eql({
                         type: DataType.OBJECT,
-                        properties: factory,
+                        properties: classFactory,
                         required: true,
                     });
                 });
             });
         });
-        describe('if target is an instance property', function () {
+        describe('if the target is an instance property', function () {
             it('sets instance property metadata', function () {
                 class MyTarget {
                     myProp1;
@@ -619,19 +1014,83 @@ describe('decorators', function () {
                 it('allows to set a class factory to the properties option', function () {
                     class MyClass {
                     }
-                    const factory = () => MyClass;
+                    const classFactory = () => MyClass;
                     class MyTarget {
                         myProp;
                     }
                     __decorate([
-                        dsObject({ properties: factory }),
+                        dsObject({ properties: classFactory }),
                         __metadata("design:type", Object)
                     ], MyTarget.prototype, "myProp", void 0);
                     const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
                     expect(res).to.be.instanceof(Map);
                     expect(res.get('myProp')).to.be.eql({
                         type: DataType.OBJECT,
-                        properties: factory,
+                        properties: classFactory,
+                    });
+                });
+                it('allows to set a class factory to property schema', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsObject({
+                            properties: {
+                                foo: classFactory,
+                                bar: classFactory,
+                            },
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            foo: classFactory,
+                            bar: classFactory,
+                        },
+                    });
+                });
+                it('allows to set a class factory to the properties option of property', function () {
+                    class MyClass {
+                    }
+                    const classFactory = () => MyClass;
+                    class MyTarget {
+                        myProp;
+                    }
+                    __decorate([
+                        dsObject({
+                            properties: {
+                                foo: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                                bar: {
+                                    type: DataType.OBJECT,
+                                    properties: classFactory,
+                                },
+                            },
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyTarget.prototype, "myProp", void 0);
+                    const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
+                    expect(res).to.be.instanceof(Map);
+                    expect(res.get('myProp')).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            foo: {
+                                type: DataType.OBJECT,
+                                properties: classFactory,
+                            },
+                            bar: {
+                                type: DataType.OBJECT,
+                                properties: classFactory,
+                            },
+                        },
                     });
                 });
             });
@@ -639,37 +1098,37 @@ describe('decorators', function () {
                 it('sets the given factory to the properties option', function () {
                     class MyClass {
                     }
-                    const factory = () => MyClass;
+                    const classFactory = () => MyClass;
                     class MyTarget {
                         myProp;
                     }
                     __decorate([
-                        dsObject(factory),
+                        dsObject(classFactory),
                         __metadata("design:type", Object)
                     ], MyTarget.prototype, "myProp", void 0);
                     const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
                     expect(res).to.be.instanceof(Map);
                     expect(res.get('myProp')).to.be.eql({
                         type: DataType.OBJECT,
-                        properties: factory,
+                        properties: classFactory,
                     });
                 });
                 it('uses the second parameter as object schema', function () {
                     class MyClass {
                     }
-                    const factory = () => MyClass;
+                    const classFactory = () => MyClass;
                     class MyTarget {
                         myProp;
                     }
                     __decorate([
-                        dsObject(factory, { required: true }),
+                        dsObject(classFactory, { required: true }),
                         __metadata("design:type", Object)
                     ], MyTarget.prototype, "myProp", void 0);
                     const res = DataSchemaReflector.getPropertiesMetadata(MyTarget);
                     expect(res).to.be.instanceof(Map);
                     expect(res.get('myProp')).to.be.eql({
                         type: DataType.OBJECT,
-                        properties: factory,
+                        properties: classFactory,
                         required: true,
                     });
                 });

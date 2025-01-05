@@ -102,12 +102,16 @@ export declare const dsBoolean: (schema?: DataSchemaMetadataWithoutType) => <T e
  *
  *   @dsArray({type: DataType.STRING});
  *   @dsArray({type: DataType.STRING}, {required: true});
+ *
+ *   @dsArray(() => MyClass);
+ *   @dsArray(() => MyClass, {required: true});
+ *   @dsArray(() => MyClass, {validate: myItemValidator})
  * ```
  *
- * @param schemaOrItemType
+ * @param schemaOrItemSchema
  * @param schema
  */
-export declare const dsArray: (schemaOrItemType?: DataSchemaMetadataWithoutType | DataSchemaMetadata | DataType, schema?: DataSchemaMetadataWithoutType) => <T extends object>(target: Prototype<T>, propertyKey: string, descriptor?: PropertyDescriptor) => void;
+export declare const dsArray: (schemaOrItemSchema?: DataSchemaMetadataWithoutType | DataSchemaClassFactory | DataSchemaMetadata | DataType, schema?: DataSchemaMetadataWithoutType) => <T extends object>(target: Prototype<T>, propertyKey: string, descriptor?: PropertyDescriptor) => void;
 /**
  * Data schema decorator of Object type.
  * (for class and instance property)

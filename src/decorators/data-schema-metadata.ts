@@ -1,14 +1,34 @@
-import {Flatten} from '../types.js';
 import {Constructor} from '../types.js';
-import {DataSchema} from '../data-schema.js';
+import {DataType} from '../data-schema.js';
 import {MetadataKey} from '@e22m4u/ts-reflector';
+import {CallableValidator} from '../data-validator.js';
 
 /**
  * Data schema metadata.
  */
-export type DataSchemaMetadata = Flatten<Omit<DataSchema, 'properties'>> & {
-  properties?: DataSchema['properties'] | DataSchemaClassFactory;
+export type DataSchemaMetadata = {
+  type: DataType;
+  items?: DataSchemaMetadataItems;
+  properties?: DataSchemaMetadataProperties;
+  required?: boolean;
+  validate?: CallableValidator | CallableValidator[];
 };
+
+/**
+ * Data schema metadata items.
+ */
+export type DataSchemaMetadataItems =
+  | DataSchemaMetadata
+  | DataSchemaClassFactory;
+
+/**
+ * Data schema metadata properties.
+ */
+export type DataSchemaMetadataProperties =
+  | {
+      [key: string]: DataSchemaMetadata | DataSchemaClassFactory | undefined;
+    }
+  | DataSchemaClassFactory;
 
 /**
  * Data schema class factory.

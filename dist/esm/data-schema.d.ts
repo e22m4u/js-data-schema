@@ -16,11 +16,15 @@ export declare enum DataType {
 export type DataSchema = {
     type: DataType;
     items?: DataSchema;
-    properties?: {
-        [key: string]: DataSchema | undefined;
-    };
+    properties?: DataSchemaProperties;
     required?: boolean;
     validate?: CallableValidator | CallableValidator[];
+};
+/**
+ * Data schema properties.
+ */
+export type DataSchemaProperties = {
+    [key: string]: DataSchema | undefined;
 };
 /**
  * Data type from value.

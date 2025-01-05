@@ -136,172 +136,12 @@ describe('getDataSchemaFromClass', function () {
         });
     });
     describe('nested data schema by a class factory', function () {
-        it('resolves nested schema in object schema', function () {
-            let MyClass1 = class MyClass1 {
-            };
-            MyClass1 = __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: {
-                        foo: {
-                            type: DataType.STRING,
-                            required: true,
-                        },
-                        bar: {
-                            type: DataType.NUMBER,
-                            required: true,
-                        },
-                    },
-                })
-            ], MyClass1);
-            let MyClass2 = class MyClass2 {
-            };
-            MyClass2 = __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: () => MyClass1,
-                })
-            ], MyClass2);
-            const res = getDataSchemaFromClass(MyClass2);
-            expect(res).to.be.eql({
-                type: DataType.OBJECT,
-                properties: {
-                    foo: {
-                        type: DataType.STRING,
-                        required: true,
-                    },
-                    bar: {
-                        type: DataType.NUMBER,
-                        required: true,
-                    },
-                },
-            });
-        });
-        it('merges nested schema with properties schema', function () {
-            let MyClass1 = class MyClass1 {
-            };
-            MyClass1 = __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: {
-                        foo: {
-                            type: DataType.STRING,
-                            required: true,
-                        },
-                        bar: {
-                            type: DataType.NUMBER,
-                            required: true,
-                        },
-                    },
-                })
-            ], MyClass1);
-            let MyClass2 = class MyClass2 {
-                baz;
-                qux;
-            };
-            __decorate([
-                dataSchema({
-                    type: DataType.STRING,
-                    required: true,
-                }),
-                __metadata("design:type", String)
-            ], MyClass2.prototype, "baz", void 0);
-            __decorate([
-                dataSchema({
-                    type: DataType.NUMBER,
-                    required: true,
-                }),
-                __metadata("design:type", Number)
-            ], MyClass2.prototype, "qux", void 0);
-            MyClass2 = __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: () => MyClass1,
-                })
-            ], MyClass2);
-            const res = getDataSchemaFromClass(MyClass2);
-            expect(res).to.be.eql({
-                type: DataType.OBJECT,
-                properties: {
-                    foo: {
-                        type: DataType.STRING,
-                        required: true,
-                    },
-                    bar: {
-                        type: DataType.NUMBER,
-                        required: true,
-                    },
-                    baz: {
-                        type: DataType.STRING,
-                        required: true,
-                    },
-                    qux: {
-                        type: DataType.NUMBER,
-                        required: true,
-                    },
-                },
-            });
-        });
-        it('resolves nested schema in properties schema', function () {
-            let MyClass1 = class MyClass1 {
-            };
-            MyClass1 = __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: {
-                        foo: {
-                            type: DataType.STRING,
-                            required: true,
-                        },
-                        bar: {
-                            type: DataType.NUMBER,
-                            required: true,
-                        },
-                    },
-                })
-            ], MyClass1);
-            let MyClass2 = class MyClass2 {
-            };
-            MyClass2 = __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: {
-                        baz: {
-                            type: DataType.STRING,
-                            required: true,
-                        },
-                        qux: {
-                            type: DataType.NUMBER,
-                            required: true,
-                        },
-                    },
-                })
-            ], MyClass2);
-            class MyClass3 {
-                myProp1;
-                myProp2;
-            }
-            __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: () => MyClass1,
-                    required: true,
-                }),
-                __metadata("design:type", Object)
-            ], MyClass3.prototype, "myProp1", void 0);
-            __decorate([
-                dataSchema({
-                    type: DataType.OBJECT,
-                    properties: () => MyClass2,
-                    required: true,
-                }),
-                __metadata("design:type", Object)
-            ], MyClass3.prototype, "myProp2", void 0);
-            const res = getDataSchemaFromClass(MyClass3);
-            expect(res).to.be.eql({
-                type: DataType.OBJECT,
-                properties: {
-                    myProp1: {
+        describe('for object property', function () {
+            it('merges nested class metadata with properties metadata', function () {
+                let MyClass1 = class MyClass1 {
+                };
+                MyClass1 = __decorate([
+                    dataSchema({
                         type: DataType.OBJECT,
                         properties: {
                             foo: {
@@ -313,23 +153,1771 @@ describe('getDataSchemaFromClass', function () {
                                 required: true,
                             },
                         },
+                    })
+                ], MyClass1);
+                let MyClass2 = class MyClass2 {
+                    baz;
+                    qux;
+                };
+                __decorate([
+                    dataSchema({
+                        type: DataType.STRING,
                         required: true,
+                    }),
+                    __metadata("design:type", String)
+                ], MyClass2.prototype, "baz", void 0);
+                __decorate([
+                    dataSchema({
+                        type: DataType.NUMBER,
+                        required: true,
+                    }),
+                    __metadata("design:type", Number)
+                ], MyClass2.prototype, "qux", void 0);
+                MyClass2 = __decorate([
+                    dataSchema({
+                        type: DataType.OBJECT,
+                        properties: () => MyClass1,
+                    })
+                ], MyClass2);
+                const res = getDataSchemaFromClass(MyClass2);
+                expect(res).to.be.eql({
+                    type: DataType.OBJECT,
+                    properties: {
+                        foo: {
+                            type: DataType.STRING,
+                            required: true,
+                        },
+                        bar: {
+                            type: DataType.NUMBER,
+                            required: true,
+                        },
+                        baz: {
+                            type: DataType.STRING,
+                            required: true,
+                        },
+                        qux: {
+                            type: DataType.NUMBER,
+                            required: true,
+                        },
                     },
-                    myProp2: {
+                });
+            });
+            describe('if the target is a class', function () {
+                it('resolves class factory in the properties option', function () {
+                    let MyClass1 = class MyClass1 {
+                    };
+                    MyClass1 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                bar: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass1);
+                    let MyClass2 = class MyClass2 {
+                    };
+                    MyClass2 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: () => MyClass1,
+                        })
+                    ], MyClass2);
+                    const res = getDataSchemaFromClass(MyClass2);
+                    expect(res).to.be.eql({
                         type: DataType.OBJECT,
                         properties: {
-                            baz: {
+                            foo: {
                                 type: DataType.STRING,
                                 required: true,
                             },
-                            qux: {
+                            bar: {
                                 type: DataType.NUMBER,
                                 required: true,
                             },
                         },
-                        required: true,
-                    },
-                },
+                    });
+                });
+                it('resolves class factory in property schema', function () {
+                    let MyClass1 = class MyClass1 {
+                    };
+                    MyClass1 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                foo: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                bar: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass1);
+                    let MyClass2 = class MyClass2 {
+                    };
+                    MyClass2 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                baz: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                qux: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass2);
+                    let MyClass3 = class MyClass3 {
+                    };
+                    MyClass3 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: () => MyClass1,
+                                myProp2: () => MyClass2,
+                            },
+                        })
+                    ], MyClass3);
+                    const res = getDataSchemaFromClass(MyClass3);
+                    expect(res).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            myProp1: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            },
+                            myProp2: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            },
+                        },
+                    });
+                });
+                it('resolves class factory in the properties option of property', function () {
+                    let MyClass1 = class MyClass1 {
+                    };
+                    MyClass1 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                bar: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass1);
+                    let MyClass2 = class MyClass2 {
+                    };
+                    MyClass2 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                baz: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                qux: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass2);
+                    let MyClass3 = class MyClass3 {
+                    };
+                    MyClass3 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass1,
+                                    required: true,
+                                },
+                                myProp2: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass2,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass3);
+                    const res = getDataSchemaFromClass(MyClass3);
+                    expect(res).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            myProp1: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            },
+                            myProp2: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            },
+                        },
+                    });
+                });
+            });
+            describe('if the target is an instance property', function () {
+                it('resolves class factory in the properties option', function () {
+                    let MyClass1 = class MyClass1 {
+                    };
+                    MyClass1 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                foo: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                bar: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass1);
+                    let MyClass2 = class MyClass2 {
+                    };
+                    MyClass2 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                baz: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                qux: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass2);
+                    class MyClass3 {
+                        myProp1;
+                        myProp2;
+                    }
+                    __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: () => MyClass1,
+                            required: true,
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyClass3.prototype, "myProp1", void 0);
+                    __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: () => MyClass2,
+                            required: true,
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyClass3.prototype, "myProp2", void 0);
+                    const res = getDataSchemaFromClass(MyClass3);
+                    expect(res).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            myProp1: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            },
+                            myProp2: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            },
+                        },
+                    });
+                });
+                it('resolves class factory in property schema', function () {
+                    let MyClass1 = class MyClass1 {
+                    };
+                    MyClass1 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                qwe: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                asd: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass1);
+                    let MyClass2 = class MyClass2 {
+                    };
+                    MyClass2 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                zxc: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                rty: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass2);
+                    let MyClass3 = class MyClass3 {
+                    };
+                    MyClass3 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                fgh: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                vbn: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass3);
+                    let MyClass4 = class MyClass4 {
+                    };
+                    MyClass4 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                uio: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                jkl: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass4);
+                    class MyClass5 {
+                        myProp1;
+                        myProp2;
+                    }
+                    __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                myProp3: () => MyClass1,
+                                myProp4: () => MyClass2,
+                            },
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyClass5.prototype, "myProp1", void 0);
+                    __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                myProp5: () => MyClass3,
+                                myProp6: () => MyClass4,
+                            },
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyClass5.prototype, "myProp2", void 0);
+                    const res = getDataSchemaFromClass(MyClass5);
+                    expect(res).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            myProp1: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    myProp3: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            qwe: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            asd: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                    myProp4: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            zxc: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            rty: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            myProp2: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    myProp5: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            fgh: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            vbn: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                    myProp6: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            uio: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            jkl: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    });
+                });
+                it('resolves class factory in the properties option in property', function () {
+                    let MyClass1 = class MyClass1 {
+                    };
+                    MyClass1 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                qwe: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                asd: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass1);
+                    let MyClass2 = class MyClass2 {
+                    };
+                    MyClass2 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                zxc: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                rty: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass2);
+                    let MyClass3 = class MyClass3 {
+                    };
+                    MyClass3 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                fgh: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                vbn: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass3);
+                    let MyClass4 = class MyClass4 {
+                    };
+                    MyClass4 = __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            properties: {
+                                uio: {
+                                    type: DataType.STRING,
+                                    required: true,
+                                },
+                                jkl: {
+                                    type: DataType.NUMBER,
+                                    required: true,
+                                },
+                            },
+                        })
+                    ], MyClass4);
+                    class MyClass5 {
+                        myProp1;
+                        myProp2;
+                    }
+                    __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                myProp3: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass1,
+                                    required: true,
+                                },
+                                myProp4: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass2,
+                                    required: true,
+                                },
+                            },
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyClass5.prototype, "myProp1", void 0);
+                    __decorate([
+                        dataSchema({
+                            type: DataType.OBJECT,
+                            required: true,
+                            properties: {
+                                myProp5: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass3,
+                                    required: true,
+                                },
+                                myProp6: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass4,
+                                    required: true,
+                                },
+                            },
+                        }),
+                        __metadata("design:type", Object)
+                    ], MyClass5.prototype, "myProp2", void 0);
+                    const res = getDataSchemaFromClass(MyClass5);
+                    expect(res).to.be.eql({
+                        type: DataType.OBJECT,
+                        properties: {
+                            myProp1: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    myProp3: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            qwe: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            asd: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                    myProp4: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            zxc: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            rty: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            myProp2: {
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    myProp5: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            fgh: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            vbn: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                    myProp6: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            uio: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            jkl: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    });
+                });
+            });
+        });
+        describe('for array property', function () {
+            describe('if the target is a class', function () {
+                describe('for object items', function () {
+                    it('resolves class factory in the properties option of items', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        let MyClass3 = class MyClass3 {
+                        };
+                        MyClass3 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    myProp1: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            properties: () => MyClass1,
+                                            required: true,
+                                        },
+                                    },
+                                    myProp2: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            properties: () => MyClass2,
+                                            required: true,
+                                        },
+                                    },
+                                },
+                            })
+                        ], MyClass3);
+                        const res = getDataSchemaFromClass(MyClass3);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            foo: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            bar: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            baz: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            qux: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                    it('resolves class factory in items schema', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        let MyClass3 = class MyClass3 {
+                        };
+                        MyClass3 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    myProp1: {
+                                        type: DataType.ARRAY,
+                                        items: () => MyClass1,
+                                        required: true,
+                                    },
+                                    myProp2: {
+                                        type: DataType.ARRAY,
+                                        items: () => MyClass2,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass3);
+                        const res = getDataSchemaFromClass(MyClass3);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            foo: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            bar: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            baz: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            qux: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                    it('resolves class factory in the properties option of property', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    qwe: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    asd: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    zxc: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    rty: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        let MyClass3 = class MyClass3 {
+                        };
+                        MyClass3 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    fgh: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    vbn: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass3);
+                        let MyClass4 = class MyClass4 {
+                        };
+                        MyClass4 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    uio: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    jkl: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass4);
+                        let MyClass5 = class MyClass5 {
+                        };
+                        MyClass5 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    myProp1: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            required: true,
+                                            properties: {
+                                                myProp3: {
+                                                    type: DataType.OBJECT,
+                                                    required: true,
+                                                    properties: () => MyClass1,
+                                                },
+                                                myProp4: {
+                                                    type: DataType.OBJECT,
+                                                    required: true,
+                                                    properties: () => MyClass2,
+                                                },
+                                            },
+                                        },
+                                    },
+                                    myProp2: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            required: true,
+                                            properties: {
+                                                myProp5: {
+                                                    type: DataType.OBJECT,
+                                                    required: true,
+                                                    properties: () => MyClass3,
+                                                },
+                                                myProp6: {
+                                                    type: DataType.OBJECT,
+                                                    required: true,
+                                                    properties: () => MyClass4,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            })
+                        ], MyClass5);
+                        const res = getDataSchemaFromClass(MyClass5);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            myProp3: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    qwe: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    asd: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                            myProp4: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    zxc: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    rty: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            myProp5: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    fgh: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    vbn: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                            myProp6: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    uio: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    jkl: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                });
+                describe('for array items', function () {
+                    it('resolves class factory in the items option of items', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        let MyClass3 = class MyClass3 {
+                        };
+                        MyClass3 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    myProp1: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.ARRAY,
+                                            items: () => MyClass1,
+                                            required: true,
+                                        },
+                                    },
+                                    myProp2: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.ARRAY,
+                                            items: () => MyClass2,
+                                            required: true,
+                                        },
+                                    },
+                                },
+                            })
+                        ], MyClass3);
+                        const res = getDataSchemaFromClass(MyClass3);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            properties: {
+                                                foo: {
+                                                    type: DataType.STRING,
+                                                    required: true,
+                                                },
+                                                bar: {
+                                                    type: DataType.NUMBER,
+                                                    required: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            properties: {
+                                                baz: {
+                                                    type: DataType.STRING,
+                                                    required: true,
+                                                },
+                                                qux: {
+                                                    type: DataType.NUMBER,
+                                                    required: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                });
+            });
+            describe('if the target is an instance property', function () {
+                describe('for object items', function () {
+                    it('resolves class factory in the properties option of items', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        class MyClass3 {
+                            myProp1;
+                            myProp2;
+                        }
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                required: true,
+                                items: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass1,
+                                    required: true,
+                                },
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass3.prototype, "myProp1", void 0);
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                required: true,
+                                items: {
+                                    type: DataType.OBJECT,
+                                    properties: () => MyClass2,
+                                    required: true,
+                                },
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass3.prototype, "myProp2", void 0);
+                        const res = getDataSchemaFromClass(MyClass3);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            foo: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            bar: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            baz: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            qux: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                    it('resolves class factory in items schema', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                required: true,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        class MyClass3 {
+                            myProp1;
+                            myProp2;
+                        }
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                items: () => MyClass1,
+                                required: true,
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass3.prototype, "myProp1", void 0);
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                items: () => MyClass2,
+                                required: true,
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass3.prototype, "myProp2", void 0);
+                        const res = getDataSchemaFromClass(MyClass3);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            foo: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            bar: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            baz: {
+                                                type: DataType.STRING,
+                                                required: true,
+                                            },
+                                            qux: {
+                                                type: DataType.NUMBER,
+                                                required: true,
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                    it('resolves class factory in the properties option of property', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    qwe: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    asd: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    zxc: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    rty: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        let MyClass3 = class MyClass3 {
+                        };
+                        MyClass3 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    fgh: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    vbn: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass3);
+                        let MyClass4 = class MyClass4 {
+                        };
+                        MyClass4 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    uio: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    jkl: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass4);
+                        class MyClass5 {
+                            myProp1;
+                            myProp2;
+                        }
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                required: true,
+                                items: {
+                                    type: DataType.OBJECT,
+                                    required: true,
+                                    properties: {
+                                        myProp3: {
+                                            type: DataType.OBJECT,
+                                            required: true,
+                                            properties: () => MyClass1,
+                                        },
+                                        myProp4: {
+                                            type: DataType.OBJECT,
+                                            required: true,
+                                            properties: () => MyClass2,
+                                        },
+                                    },
+                                },
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass5.prototype, "myProp1", void 0);
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                required: true,
+                                items: {
+                                    type: DataType.OBJECT,
+                                    required: true,
+                                    properties: {
+                                        myProp5: {
+                                            type: DataType.OBJECT,
+                                            required: true,
+                                            properties: () => MyClass3,
+                                        },
+                                        myProp6: {
+                                            type: DataType.OBJECT,
+                                            required: true,
+                                            properties: () => MyClass4,
+                                        },
+                                    },
+                                },
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass5.prototype, "myProp2", void 0);
+                        const res = getDataSchemaFromClass(MyClass5);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            myProp3: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    qwe: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    asd: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                            myProp4: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    zxc: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    rty: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.OBJECT,
+                                        required: true,
+                                        properties: {
+                                            myProp5: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    fgh: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    vbn: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                            myProp6: {
+                                                type: DataType.OBJECT,
+                                                required: true,
+                                                properties: {
+                                                    uio: {
+                                                        type: DataType.STRING,
+                                                        required: true,
+                                                    },
+                                                    jkl: {
+                                                        type: DataType.NUMBER,
+                                                        required: true,
+                                                    },
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                });
+                describe('for array items', function () {
+                    it('resolves class factory in the items option of items', function () {
+                        let MyClass1 = class MyClass1 {
+                        };
+                        MyClass1 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    foo: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    bar: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass1);
+                        let MyClass2 = class MyClass2 {
+                        };
+                        MyClass2 = __decorate([
+                            dataSchema({
+                                type: DataType.OBJECT,
+                                properties: {
+                                    baz: {
+                                        type: DataType.STRING,
+                                        required: true,
+                                    },
+                                    qux: {
+                                        type: DataType.NUMBER,
+                                        required: true,
+                                    },
+                                },
+                            })
+                        ], MyClass2);
+                        class MyClass3 {
+                            myProp1;
+                            myProp2;
+                        }
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                required: true,
+                                items: {
+                                    type: DataType.ARRAY,
+                                    items: () => MyClass1,
+                                    required: true,
+                                },
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass3.prototype, "myProp1", void 0);
+                        __decorate([
+                            dataSchema({
+                                type: DataType.ARRAY,
+                                required: true,
+                                items: {
+                                    type: DataType.ARRAY,
+                                    items: () => MyClass2,
+                                    required: true,
+                                },
+                            }),
+                            __metadata("design:type", Array)
+                        ], MyClass3.prototype, "myProp2", void 0);
+                        const res = getDataSchemaFromClass(MyClass3);
+                        expect(res).to.be.eql({
+                            type: DataType.OBJECT,
+                            properties: {
+                                myProp1: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            properties: {
+                                                foo: {
+                                                    type: DataType.STRING,
+                                                    required: true,
+                                                },
+                                                bar: {
+                                                    type: DataType.NUMBER,
+                                                    required: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                                myProp2: {
+                                    type: DataType.ARRAY,
+                                    required: true,
+                                    items: {
+                                        type: DataType.ARRAY,
+                                        required: true,
+                                        items: {
+                                            type: DataType.OBJECT,
+                                            properties: {
+                                                baz: {
+                                                    type: DataType.STRING,
+                                                    required: true,
+                                                },
+                                                qux: {
+                                                    type: DataType.NUMBER,
+                                                    required: true,
+                                                },
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    });
+                });
             });
         });
     });

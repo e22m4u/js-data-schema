@@ -309,20 +309,25 @@ var dsAny = createDataSchemaPropertyDecoratorWithDataType("dsAny", DataType.ANY)
 var dsString = createDataSchemaPropertyDecoratorWithDataType("dsString", DataType.STRING);
 var dsNumber = createDataSchemaPropertyDecoratorWithDataType("dsNumber", DataType.NUMBER);
 var dsBoolean = createDataSchemaPropertyDecoratorWithDataType("dsBoolean", DataType.BOOLEAN);
-var dsArray = /* @__PURE__ */ __name((schemaOrItemType, schema) => {
+var dsArray = /* @__PURE__ */ __name((schemaOrItemSchema, schema) => {
   let arraySchemaWithoutType;
-  if (typeof schemaOrItemType === "string") {
+  if (typeof schemaOrItemSchema === "function") {
     arraySchemaWithoutType = {
       ...schema,
-      items: { type: schemaOrItemType }
+      items: schemaOrItemSchema
     };
-  } else if (schemaOrItemType && typeof schemaOrItemType === "object" && !Array.isArray(schemaOrItemType) && "type" in schemaOrItemType && schemaOrItemType.type) {
+  } else if (typeof schemaOrItemSchema === "string") {
     arraySchemaWithoutType = {
       ...schema,
-      items: schemaOrItemType
+      items: { type: schemaOrItemSchema }
+    };
+  } else if (schemaOrItemSchema && typeof schemaOrItemSchema === "object" && !Array.isArray(schemaOrItemSchema) && "type" in schemaOrItemSchema && schemaOrItemSchema.type) {
+    arraySchemaWithoutType = {
+      ...schema,
+      items: schemaOrItemSchema
     };
   } else {
-    arraySchemaWithoutType = schemaOrItemType || schema;
+    arraySchemaWithoutType = schemaOrItemSchema || schema;
   }
   checkDataSchemaDoesNotHaveSpecifiedTypeOption("dsArray", arraySchemaWithoutType);
   return wrapDataSchemaPropertyDecoratorToReplaceErrorMessage("dsArray", {

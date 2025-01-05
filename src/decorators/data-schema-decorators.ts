@@ -294,19 +294,43 @@ export const dsBoolean = createDataSchemaPropertyDecoratorWithDataType(
  *
  *   @dsArray({type: DataType.STRING});
  *   @dsArray({type: DataType.STRING}, {required: true});
+ *
+ *   @dsArray(() => MyClass);
+ *   @dsArray(() => MyClass, {required: true});
+ *   @dsArray(() => MyClass, {validate: myItemValidator})
  * ```
  *
- * @param schemaOrItemType
+ * @param schemaOrItemSchema
  * @param schema
  */
 export const dsArray = (
-  schemaOrItemType?:
+  schemaOrItemSchema?:
     | DataSchemaMetadataWithoutType
+    | DataSchemaClassFactory
     | DataSchemaMetadata
     | DataType,
   schema?: DataSchemaMetadataWithoutType,
 ) => {
   let arraySchemaWithoutType: DataSchemaMetadataWithoutType | undefined;
+  // если первым аргументом является функция, то значение
+  // используется как фабрика класса, который содержит
+  // мета-данные описывающие схему элемента массива
+  //
+  // пример 1:
+  //   @dsArray(() => MyClass)
+  //
+  // пример 2:
+  //   @dsArray(() => MyClass, {required: true})
+  //
+  // пример 3:
+  //   @dsArray(() => MyClass, {validate: myItemValidator})
+  //
+  if (typeof schemaOrItemSchema === 'function') {
+    arraySchemaWithoutType = {
+      ...schema,
+      items: schemaOrItemSchema,
+    };
+  }
   // если первым аргументом является строка, то значение
   // аргумента используется как тип элементов массива,
   // тогда вторым аргументом считается схема массива
@@ -317,10 +341,10 @@ export const dsArray = (
   // пример 2:
   //   @dsArray(DataType.STRING, {required: true});
   //
-  if (typeof schemaOrItemType === 'string') {
+  else if (typeof schemaOrItemSchema === 'string') {
     arraySchemaWithoutType = {
       ...schema,
-      items: {type: schemaOrItemType},
+      items: {type: schemaOrItemSchema},
     };
   }
   // если первым аргументом является объект содержащий тип,
@@ -334,15 +358,15 @@ export const dsArray = (
   //   @dsArray({type: DataType.STRING}, {required: true});
   //
   else if (
-    schemaOrItemType &&
-    typeof schemaOrItemType === 'object' &&
-    !Array.isArray(schemaOrItemType) &&
-    'type' in schemaOrItemType &&
-    schemaOrItemType.type
+    schemaOrItemSchema &&
+    typeof schemaOrItemSchema === 'object' &&
+    !Array.isArray(schemaOrItemSchema) &&
+    'type' in schemaOrItemSchema &&
+    schemaOrItemSchema.type
   ) {
     arraySchemaWithoutType = {
       ...schema,
-      items: schemaOrItemType as DataSchema,
+      items: schemaOrItemSchema as DataSchema,
     };
   }
   // во всех остальных случаях схемой массива
@@ -355,7 +379,7 @@ export const dsArray = (
   //   @dsArray(undefined, {required: true});
   //
   else {
-    arraySchemaWithoutType = schemaOrItemType || schema;
+    arraySchemaWithoutType = schemaOrItemSchema || schema;
   }
   // параметры декоратора не должны объявляться с опцией
   // "type", так как тип жестко задан самим декоратором
