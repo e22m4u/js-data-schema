@@ -225,7 +225,11 @@ Validator arguments usage.
 ```ts
 import {DataSchema} from '@e22m4u/ts-data-schema';
 
-function noEmptyString(value: unknown, schema: DataSchema, sourcePath: string) {
+function noEmptyString(
+  value: unknown,
+  schema: DataSchema,
+  sourcePath?: string,
+) {
   if (!value || typeof value !== 'string') {
     if (sourcePath)
       throw new ValidationError(
