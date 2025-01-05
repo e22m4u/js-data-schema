@@ -57,7 +57,7 @@ typeCaster.cast('10', schema, {noTypeCastError: true});  // returns 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // returns "foo"
 ```
 
-Using decorators to define object schema.
+Using decorators to define an object schema.
 
 ```ts
 import {dsNumber} from '@e22m4u/ts-data-schema';
