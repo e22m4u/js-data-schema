@@ -317,19 +317,48 @@ function noEmptyString(
 
 ## Декораторы
 
-Общие:
+Декораторы предоставляют удобный способ определения схем данных
+с использованием классов TypeScript. Они позволяют создавать
+типобезопасные схемы валидации и преобразования данных непосредственно
+в коде.
 
-- `@dataSchema`
-- `@dsProperty`
+Общие декораторы:
 
-Псевдонимы:
+- `@dataSchema` - базовый декоратор для определения схемы данных
+- `@dsProperty` - декоратор для определения свойств схемы
 
-- `@dsAny`
-- `@dsString`
-- `@dsNumber`
-- `@dsBoolean`
-- `@dsArray`
-- `@dsObject`
+Декораторы конкретных типов данных:
+
+- `@dsAny` - для значений любого типа
+- `@dsString` - для строковых значений
+- `@dsNumber` - для числовых значений
+- `@dsBoolean` - для логических значений
+- `@dsArray` - для массивов
+- `@dsObject` - для объектов
+
+#### @dsObject
+
+Декоратор `@dsObject` определяет класс как схему объекта. Он позволяет
+генерировать структуру через утилиту `getDataSchemaFromClass`. В сочетании
+с декораторами свойств, `@dsObject` формирует систему описания и валидации
+данных, что особенно важно для сложных объектных структур с вложенными типами.
+
+```ts
+import {dsObject} from '@e22m4u/ts-data-schema';
+import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+
+@dsObject()
+class PostSchema {
+  // ...
+}
+
+const postSchema = getDataSchemaFromClass(PostSchema);
+console.log(postSchema);
+// {
+//   "type": "object",
+//   "properties": { ... }
+// }
+```
 
 ## Отладка
 

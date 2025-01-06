@@ -318,19 +318,48 @@ function noEmptyString(
 
 ## Decorators
 
-Common:
+Decorators provide a convenient way to define data schemas using
+TypeScript classes. They allow creating type-safe validation schemas
+and data transformations directly in the code.
 
-- `@dataSchema`
-- `@dsProperty`
+Common decorators:
 
-Aliases:
+- `@dataSchema` - base decorator for defining data schema
+- `@dsProperty` - decorator for defining schema properties
 
-- `@dsAny`
-- `@dsString`
-- `@dsNumber`
-- `@dsBoolean`
-- `@dsArray`
-- `@dsObject`
+Decorators for specific data types:
+
+- `@dsAny` - for values of any type
+- `@dsString` - for string values
+- `@dsNumber` - for numeric values
+- `@dsBoolean` - for boolean values
+- `@dsArray` - for arrays
+- `@dsObject` - for objects
+
+#### @dsObject
+
+The `@dsObject` decorator defines a class as an object schema. It enables
+structure generation through the `getDataSchemaFromClass` utility. Combined
+with property decorators, `@dsObject` forms a system for data description
+and validation, which is particularly important for complex object structures
+with nested types.
+
+```ts
+import {dsObject} from '@e22m4u/ts-data-schema';
+import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+
+@dsObject()
+class PostSchema {
+  // ...
+}
+
+const postSchema = getDataSchemaFromClass(PostSchema);
+console.log(postSchema);
+// {
+//   "type": "object",
+//   "properties": { ... }
+// }
+```
 
 ## Debugging
 
