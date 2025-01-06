@@ -319,8 +319,7 @@ function noEmptyString(
 ## Decorators
 
 Decorators provide a convenient way to define data schemas using
-TypeScript classes. They allow creating type-safe validation schemas
-and data transformations directly in the code.
+TypeScript classes.
 
 Common decorators:
 
