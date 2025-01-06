@@ -28,11 +28,38 @@ const schema = {
 };
 
 // validate value according to schema
-validator.validate('string', schema); // returns undefined
-validator.validate(10, schema);       // throws ValidationError
+validator.validate('John', schema); // returns undefined
+validator.validate(10, schema);     // throws ValidationError
 ```
 
-Type casting.
+Using a custom validator.
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DataValidator} from '@e22m4u/ts-data-schema';
+import {ValidationError} from '@e22m4u/ts-data-schema';
+
+const validator = new DataValidator();
+
+// define a custom validator
+function nonEmptyString(value) {
+  if (!value || typeof value !== 'string')
+    throw new ValidationError('Non-empty string required.');
+}
+
+// define schema
+const schema = {
+  type: DataType.STRING,
+  validate: nonEmptyString, // set your validator
+  // validate: [myValidator1, myValidator2, ...],
+};
+
+// validate values
+validator.validate('John', schema); // returns undefined
+validator.validate('', schema);     // throws ValidationError
+```
+
+Value conversion according to the schema.
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';

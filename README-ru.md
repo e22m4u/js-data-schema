@@ -27,11 +27,38 @@ const schema = {
 };
 
 // валидация значения согласно схеме
-validator.validate('string', schema); // вернет undefined
-validator.validate(10, schema);       // ошибка ValidationError
+validator.validate('John', schema); // вернет undefined
+validator.validate(10, schema);     // ошибка ValidationError
 ```
 
-Приведение типов.
+Использование пользовательского валидатора.
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DataValidator} from '@e22m4u/ts-data-schema';
+import {ValidationError} from '@e22m4u/ts-data-schema';
+
+const validator = new DataValidator();
+
+// определение функции-валидатора
+function nonEmptyString(value) {
+  if (!value || typeof value !== 'string')
+    throw new ValidationError('Non-empty string required.');
+}
+
+// определение схемы
+const schema = {
+  type: DataType.STRING,
+  validate: nonEmptyString, // установка вашего валидатора
+  // validate: [myValidator1, myValidator2, ...],
+};
+
+// проверка значений
+validator.validate('John', schema); // вернет undefined
+validator.validate('', schema);     // ошибка ValidationError
+```
+
+Конвертация значений согласно схеме.
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
