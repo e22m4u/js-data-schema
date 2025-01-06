@@ -21,13 +21,13 @@ import {DataValidator} from '@e22m4u/ts-data-schema';
 
 const validator = new DataValidator();
 
-// define schema
+// define a schema
 const schema = {
   type: DataType.STRING,
   // additional options
 };
 
-// validate value according to schema
+// validate values by the schema
 validator.validate('John', schema); // returns undefined
 validator.validate(10, schema);     // throws ValidationError
 ```
@@ -47,14 +47,14 @@ function nonEmptyString(value) {
     throw new ValidationError('Non-empty string required.');
 }
 
-// define schema
+// define a schema
 const schema = {
   type: DataType.STRING,
   validate: nonEmptyString, // set your validator
   // validate: [myValidator1, myValidator2, ...],
 };
 
-// validate values
+// validate values by the schema
 validator.validate('John', schema); // returns undefined
 validator.validate('', schema);     // throws ValidationError
 ```
@@ -67,18 +67,18 @@ import {DataTypeCaster} from '@e22m4u/ts-data-schema';
 
 const typeCaster = new DataTypeCaster();
 
-// define schema
+// define a schema
 const schema = {
   type: DataType.NUMBER,
   // additional options
 };
 
-// cast type according to schema
+// cast type by the schema
 // or throw TypeCastError
 typeCaster.cast('10', schema);  // returns 10 as number
 typeCaster.cast('foo', schema); // throws TypeCastError
 
-// cast type according to schema
+// cast type by the schema
 // or return value as is
 typeCaster.cast('10', schema, {noTypeCastError: true});  // returns 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // returns "foo"
@@ -226,7 +226,7 @@ const schema = {
 
 #### items
 
-Used for arrays to define the schema of array elements.
+Used for arrays to define schema of array elements.
 This is a nested `DataSchema` that describes each item in the array.
 
 ```ts
@@ -238,7 +238,7 @@ const schema = {
 
 #### properties
 
-Used for objects to define the schema of object properties.
+Used for objects to define schema of object properties.
 Each property is a key-value pair where the value is a nested
 `DataSchema`.
 
