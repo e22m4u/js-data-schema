@@ -1,19 +1,16 @@
 # @e22m4u/ts-data-schema
 
-*English | [Русский](./README-ru.md)*
+Валидация данных и приведение типов для TypeScript.
 
-Data validation and type casting for TypeScript.
+## Ключевые особенности
+- **DataValidator** - Сервис валидации со встроенной проверкой типов.
+- **DataTypeCaster** - Сервис конвертации значений согласно схеме данных.
+- Расширяемая архитектура, позволяющая добавлять пользовательские валидаторы и преобразователи типов.
+- Подробная отладка.
 
-## Key Features
+## Использование
 
-- **DataValidator** - Validation service with built-in type checking.
-- **DataTypeCaster** - Value conversion service according to data schema.
-- Extensible architecture allowing custom validators and type casters.
-- Detailed debugging.
-
-## Usage
-
-Data validation.
+Валидация данных.
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
@@ -21,18 +18,18 @@ import {DataValidator} from '@e22m4u/ts-data-schema';
 
 const validator = new DataValidator();
 
-// define a schema
+// определение схемы
 const schema = {
   type: DataType.STRING,
-  // additional options
+  // дополнительные опции
 };
 
-// validate values by the schema
-validator.validate('John', schema); // returns undefined
-validator.validate(10, schema);     // throws ValidationError
+// валидация значения согласно схеме
+validator.validate('John', schema); // вернет undefined
+validator.validate(10, schema);     // ошибка ValidationError
 ```
 
-Using a custom validator.
+Использование пользовательского валидатора.
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
@@ -41,25 +38,25 @@ import {ValidationError} from '@e22m4u/ts-data-schema';
 
 const validator = new DataValidator();
 
-// define a custom validator
+// определение функции-валидатора
 function nonEmptyString(value) {
   if (!value || typeof value !== 'string')
     throw new ValidationError('Non-empty string required.');
 }
 
-// define a schema
+// определение схемы
 const schema = {
   type: DataType.STRING,
-  validate: nonEmptyString, // set your validator
+  validate: nonEmptyString, // установка вашего валидатора
   // validate: [myValidator1, myValidator2, ...],
 };
 
-// validate values by the schema
-validator.validate('John', schema); // returns undefined
-validator.validate('', schema);     // throws ValidationError
+// проверка значений
+validator.validate('John', schema); // вернет undefined
+validator.validate('', schema);     // ошибка ValidationError
 ```
 
-Value conversion according to the schema.
+Конвертация значений согласно схеме.
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
@@ -67,24 +64,24 @@ import {DataTypeCaster} from '@e22m4u/ts-data-schema';
 
 const typeCaster = new DataTypeCaster();
 
-// define a schema
+// определение схемы
 const schema = {
   type: DataType.NUMBER,
-  // additional options
+  // дополнительные опции
 };
 
-// cast type by the schema
-// or throw TypeCastError
-typeCaster.cast('10', schema);  // returns 10 as number
-typeCaster.cast('foo', schema); // throws TypeCastError
+// приведение типа согласно схеме,
+// или выброс ошибки TypeCastError
+typeCaster.cast('10', schema);  // вернет 10 как number
+typeCaster.cast('foo', schema); // ошибка TypeCastError
 
-// cast type by the schema
-// or return value as is
-typeCaster.cast('10', schema, {noTypeCastError: true});  // returns 10
-typeCaster.cast('foo', schema, {noTypeCastError: true}); // returns "foo"
+// приведение типа согласно схеме,
+// или возврат значения без изменений
+typeCaster.cast('10', schema, {noTypeCastError: true});  // вернет 10
+typeCaster.cast('foo', schema, {noTypeCastError: true}); // вернет "foo"
 ```
 
-Using decorators to define an object schema.
+Использование декораторов для построения схемы объекта.
 
 ```ts
 import {dsNumber} from '@e22m4u/ts-data-schema';
@@ -125,7 +122,7 @@ console.log(authorSchema);
 // }
 ```
 
-Nesting object schemas using decorators.
+Построение схемы вложенных объектов с помощью декораторов.
 
 ```ts
 import {dsNumber} from '@e22m4u/ts-data-schema';
@@ -144,8 +141,8 @@ class PostSchema {
 
   @dsObject(() => AuthorSchema, {required: true})
   author!: Author;
-  // AuthorSchema and Author
-  // are defined in the example above
+  // AuthorSchema и Author
+  // определены в примере выше
 }
 
 type Post = ClassToPlain<PostSchema>;
@@ -191,9 +188,9 @@ console.log(postSchema);
 
 ## DataSchema
 
-`DataSchema` is an object that defines the structure for data validation
-and type casting. The schema provides a flexible way to describe the shape
-and constraints of your data. Let's look at the schema object definition.
+`DataSchema` является объектом, определяющим структуру для валидации
+данных и приведения типов. Схема предоставляет гибкий способ описания
+формы и ограничений ваших данных. Рассмотрим определение объекта схемы.
 
 ```ts
 type DataSchema = {
@@ -207,14 +204,14 @@ type DataSchema = {
 
 #### type
 
-Defines the value type using the constants listed below.
+Определяет тип значения с помощью констант указанных ниже.
 
-- `DataType.ANY` - accepts any type
-- `DataType.STRING` - string values
-- `DataType.NUMBER` - numeric values
-- `DataType.BOOLEAN` - boolean values
-- `DataType.ARRAY` - array values
-- `DataType.OBJECT` - plain object values
+- `DataType.ANY` - принимает любой тип
+- `DataType.STRING` - строковые значения
+- `DataType.NUMBER` - числовые значения
+- `DataType.BOOLEAN` - логические значения
+- `DataType.ARRAY` - массивы
+- `DataType.OBJECT` - объекты (не экземпляры)
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
@@ -226,8 +223,8 @@ const schema = {
 
 #### items
 
-Used for arrays to define schema of array elements.
-This is a nested `DataSchema` that describes each item in the array.
+Используется массивами для определения схемы их элементов. Это вложенный
+объект `DataSchema`, описывающий каждый элемент массива.
 
 ```ts
 const schema = {
@@ -238,9 +235,9 @@ const schema = {
 
 #### properties
 
-Used for objects to define schema of object properties.
-Each property is a key-value pair where the value is a nested
-`DataSchema`.
+Используется объектами для определения схемы их свойств. Каждое свойство
+представляет собой пару ключ-значение, где значением является вложенный
+объект `DataSchema`.
 
 ```ts
 const schema = {
@@ -254,8 +251,8 @@ const schema = {
 
 #### required
 
-Indicates if the value is required. When `true`, the value cannot
-be `undefined` or `null`.
+Указывает, является ли значение обязательным. Когда `true`, значение
+не может быть `undefined` или `null`.
 
 ```ts
 const schema = {
@@ -266,8 +263,8 @@ const schema = {
 
 #### validate
 
-Custom validation function(s) to apply additional rules. Can be
-a single function or an array of functions.
+Пользовательская функция(и) валидации для применения дополнительных
+правил. Может быть одной функцией или массивом функций.
 
 ```ts
 const schema = {
@@ -279,7 +276,7 @@ const schema = {
 }
 ```
 
-Multiple validators usage.
+Использование нескольких валидаторов.
 
 ```ts
 const schema = {
@@ -291,7 +288,7 @@ const schema = {
 }
 ```
 
-Validator arguments usage.
+Пример использования аргументов валидатора.
 
 ```ts
 import {DataSchema} from '@e22m4u/ts-data-schema';
@@ -316,32 +313,31 @@ function noEmptyString(
 }
 ```
 
-## Decorators
+## Декораторы
 
-Decorators provide a convenient way to define data schemas using
-TypeScript classes.
+Декораторы предоставляют удобный способ определения схем данных
+с использованием классов TypeScript.
 
-Common decorators:
+Общие декораторы:
 
-- `@dataSchema` - base decorator for defining data schema
-- `@dsProperty` - decorator for defining schema properties
+- `@dataSchema` - базовый декоратор для определения схемы данных
+- `@dsProperty` - декоратор для определения свойств схемы
 
-Decorators for specific data types:
+Декораторы конкретных типов данных:
 
-- `@dsAny` - for values of any type
-- `@dsString` - for string values
-- `@dsNumber` - for numeric values
-- `@dsBoolean` - for boolean values
-- `@dsArray` - for arrays
-- `@dsObject` - for objects
+- `@dsAny` - для значений любого типа
+- `@dsString` - для строковых значений
+- `@dsNumber` - для числовых значений
+- `@dsBoolean` - для логических значений
+- `@dsArray` - для массивов
+- `@dsObject` - для объектов
 
 #### @dsObject
 
-The `@dsObject` decorator defines a class as an object schema. It enables
-structure generation through the `getDataSchemaFromClass` utility. Combined
-with property decorators, `@dsObject` forms a system for data description
-and validation, which is particularly important for complex object structures
-with nested types.
+Декоратор `@dsObject` определяет класс как схему объекта. Он позволяет
+генерировать структуру через утилиту `getDataSchemaFromClass`. В сочетании
+с декораторами свойств, `@dsObject` формирует систему описания и валидации
+данных, что особенно важно для сложных объектных структур с вложенными типами.
 
 ```ts
 import {dsObject} from '@e22m4u/ts-data-schema';
@@ -360,22 +356,20 @@ console.log(postSchema);
 // }
 ```
 
-## Debugging
+## Отладка
 
-Enable logs by setting the `DEBUG` environment variable.
+Установка переменной `DEBUG` включает вывод логов.
 
 ```bash
 DEBUG=tsDataSchema* npm run test
 ```
 
-## Tests
-
-Run the test suite.
+## Тесты
 
 ```bash
 npm run test
 ```
 
-## License
+## Лицензия
 
 MIT
