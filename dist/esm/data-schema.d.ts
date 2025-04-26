@@ -19,6 +19,7 @@ export type DataSchema = {
     properties?: DataSchemaProperties;
     required?: boolean;
     validate?: CallableValidator | CallableValidator[];
+    default?: unknown;
 };
 /**
  * Data schema properties.
