@@ -69,12 +69,12 @@ module.exports = __toCommonJS(index_exports);
 // dist/esm/data-schema.js
 var DataType;
 (function(DataType2) {
-  DataType2["ANY"] = "Any";
-  DataType2["STRING"] = "String";
-  DataType2["NUMBER"] = "Number";
-  DataType2["BOOLEAN"] = "Boolean";
-  DataType2["ARRAY"] = "Array";
-  DataType2["OBJECT"] = "Object";
+  DataType2["ANY"] = "any";
+  DataType2["STRING"] = "string";
+  DataType2["NUMBER"] = "number";
+  DataType2["BOOLEAN"] = "boolean";
+  DataType2["ARRAY"] = "array";
+  DataType2["OBJECT"] = "object";
 })(DataType || (DataType = {}));
 function dataTypeFrom(value) {
   if (value == null)
@@ -95,73 +95,7 @@ function dataTypeFrom(value) {
 __name(dataTypeFrom, "dataTypeFrom");
 
 // dist/esm/errors/type-cast-error.js
-var import_js_format = require("@e22m4u/js-format");
-var _TypeCastError = class _TypeCastError extends Error {
-  value;
-  targetType;
-  constructor(value, targetType) {
-    const sourceType = dataTypeFrom(value);
-    const message = (0, import_js_format.format)("Unable to cast %s to %s.", sourceType, targetType);
-    super(message);
-    this.value = value;
-    this.targetType = targetType;
-  }
-};
-__name(_TypeCastError, "TypeCastError");
-var TypeCastError = _TypeCastError;
-
-// dist/esm/errors/validation-error.js
-var import_js_format2 = require("@e22m4u/js-format");
-var _ValidationError = class _ValidationError extends import_js_format2.Errorf {
-};
-__name(_ValidationError, "ValidationError");
-var ValidationError = _ValidationError;
-
-// dist/esm/errors/decorator-target-error.js
-var import_js_format3 = require("@e22m4u/js-format");
-var _DecoratorTargetError = class _DecoratorTargetError extends import_js_format3.Errorf {
-};
-__name(_DecoratorTargetError, "DecoratorTargetError");
-var DecoratorTargetError = _DecoratorTargetError;
-
-// dist/esm/data-validator.js
-var import_js_format7 = require("@e22m4u/js-format");
-
-// dist/esm/validators/array-type-validator.js
-function arrayTypeValidator(value, schema, sourcePath) {
-  if (schema.type === DataType.ARRAY && !Array.isArray(value)) {
-    if (sourcePath) {
-      throw new ValidationError("Value of %v must be an Array, but %v given.", sourcePath, value);
-    } else {
-      throw new ValidationError("Value must be an Array, but %v given.", value);
-    }
-  }
-}
-__name(arrayTypeValidator, "arrayTypeValidator");
-
-// dist/esm/validators/is-required-validator.js
-function isRequiredValidator(value, schema, sourcePath) {
-  if (schema.required && value == null) {
-    if (sourcePath) {
-      throw new ValidationError("Value of %v is required, but %v given.", sourcePath, value);
-    } else {
-      throw new ValidationError("Value is required, but %v given.", value);
-    }
-  }
-}
-__name(isRequiredValidator, "isRequiredValidator");
-
-// dist/esm/validators/number-type-validator.js
-function numberTypeValidator(value, schema, sourcePath) {
-  if (schema.type === DataType.NUMBER && (typeof value !== "number" || isNaN(value))) {
-    if (sourcePath) {
-      throw new ValidationError("Value of %v must be a Number, but %v given.", sourcePath, value);
-    } else {
-      throw new ValidationError("Value must be a Number, but %v given.", value);
-    }
-  }
-}
-__name(numberTypeValidator, "numberTypeValidator");
+var import_js_format4 = require("@e22m4u/js-format");
 
 // dist/esm/utils/to-camel-case.js
 function toCamelCase(input) {
@@ -169,13 +103,21 @@ function toCamelCase(input) {
 }
 __name(toCamelCase, "toCamelCase");
 
+// dist/esm/utils/to-pascal-case.js
+function toPascalCase(input) {
+  if (!input)
+    return "";
+  return input.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([0-9])([a-zA-Z])/g, "$1 $2").replace(/[-_]+|[^\p{L}\p{N}]/gu, " ").toLowerCase().replace(new RegExp("(?:^|\\s)(\\p{L})", "gu"), (_, letter) => letter.toUpperCase()).replace(/\s+/g, "");
+}
+__name(toPascalCase, "toPascalCase");
+
 // dist/esm/utils/create-debugger.js
 var import_debug = __toESM(require("debug"), 1);
-var import_js_format4 = require("@e22m4u/js-format");
+var import_js_format = require("@e22m4u/js-format");
 function createDebugger(name) {
   const debug = (0, import_debug.default)(`tsDataSchema:${name}`);
   return function(message, ...args) {
-    const interpolatedMessage = (0, import_js_format4.format)(message, ...args);
+    const interpolatedMessage = (0, import_js_format.format)(message, ...args);
     return debug(interpolatedMessage);
   };
 }
@@ -188,7 +130,7 @@ function isPlainObject(input) {
 __name(isPlainObject, "isPlainObject");
 
 // dist/esm/utils/get-data-schema-from-class.js
-var import_js_format6 = require("@e22m4u/js-format");
+var import_js_format3 = require("@e22m4u/js-format");
 
 // dist/esm/decorators/data-schema-metadata.js
 var import_ts_reflector = require("@e22m4u/ts-reflector");
@@ -237,7 +179,7 @@ __name(_DataSchemaReflector, "DataSchemaReflector");
 var DataSchemaReflector = _DataSchemaReflector;
 
 // dist/esm/decorators/data-schema-decorators.js
-var import_js_format5 = require("@e22m4u/js-format");
+var import_js_format2 = require("@e22m4u/js-format");
 var import_ts_reflector3 = require("@e22m4u/ts-reflector");
 var import_ts_reflector4 = require("@e22m4u/ts-reflector");
 var DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE = "@%s decorator is only supported on an instance property.";
@@ -265,7 +207,7 @@ function dsProperty(schema) {
 __name(dsProperty, "dsProperty");
 function checkDataSchemaDoesNotHaveSpecifiedTypeOption(decoratorName, schema) {
   if (schema && typeof schema === "object" && !Array.isArray(schema) && schema.type) {
-    throw new import_js_format5.Errorf(REDUNDANT_TYPE_OPTION_ERROR_MESSAGE, decoratorName);
+    throw new import_js_format2.Errorf(REDUNDANT_TYPE_OPTION_ERROR_MESSAGE, decoratorName);
   }
 }
 __name(checkDataSchemaDoesNotHaveSpecifiedTypeOption, "checkDataSchemaDoesNotHaveSpecifiedTypeOption");
@@ -349,6 +291,74 @@ function dsObject(schemaOrClassFactory, schema) {
   });
 }
 __name(dsObject, "dsObject");
+
+// dist/esm/errors/type-cast-error.js
+var _TypeCastError = class _TypeCastError extends Error {
+  value;
+  targetType;
+  constructor(value, targetType) {
+    const sourceType = dataTypeFrom(value);
+    const message = (0, import_js_format4.format)("Unable to cast %s to %s.", sourceType ? toPascalCase(sourceType) : sourceType, toPascalCase(targetType));
+    super(message);
+    this.value = value;
+    this.targetType = targetType;
+  }
+};
+__name(_TypeCastError, "TypeCastError");
+var TypeCastError = _TypeCastError;
+
+// dist/esm/errors/validation-error.js
+var import_js_format5 = require("@e22m4u/js-format");
+var _ValidationError = class _ValidationError extends import_js_format5.Errorf {
+};
+__name(_ValidationError, "ValidationError");
+var ValidationError = _ValidationError;
+
+// dist/esm/errors/decorator-target-error.js
+var import_js_format6 = require("@e22m4u/js-format");
+var _DecoratorTargetError = class _DecoratorTargetError extends import_js_format6.Errorf {
+};
+__name(_DecoratorTargetError, "DecoratorTargetError");
+var DecoratorTargetError = _DecoratorTargetError;
+
+// dist/esm/data-validator.js
+var import_js_format7 = require("@e22m4u/js-format");
+
+// dist/esm/validators/array-type-validator.js
+function arrayTypeValidator(value, schema, sourcePath) {
+  if (schema.type === DataType.ARRAY && !Array.isArray(value)) {
+    if (sourcePath) {
+      throw new ValidationError("Value of %v must be an Array, but %v given.", sourcePath, value);
+    } else {
+      throw new ValidationError("Value must be an Array, but %v given.", value);
+    }
+  }
+}
+__name(arrayTypeValidator, "arrayTypeValidator");
+
+// dist/esm/validators/is-required-validator.js
+function isRequiredValidator(value, schema, sourcePath) {
+  if (schema.required && value == null) {
+    if (sourcePath) {
+      throw new ValidationError("Value of %v is required, but %v given.", sourcePath, value);
+    } else {
+      throw new ValidationError("Value is required, but %v given.", value);
+    }
+  }
+}
+__name(isRequiredValidator, "isRequiredValidator");
+
+// dist/esm/validators/number-type-validator.js
+function numberTypeValidator(value, schema, sourcePath) {
+  if (schema.type === DataType.NUMBER && (typeof value !== "number" || isNaN(value))) {
+    if (sourcePath) {
+      throw new ValidationError("Value of %v must be a Number, but %v given.", sourcePath, value);
+    } else {
+      throw new ValidationError("Value must be a Number, but %v given.", value);
+    }
+  }
+}
+__name(numberTypeValidator, "numberTypeValidator");
 
 // dist/esm/validators/object-type-validator.js
 function objectTypeValidator(value, schema, sourcePath) {

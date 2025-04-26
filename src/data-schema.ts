@@ -4,12 +4,12 @@ import {CallableValidator} from './data-validator.js';
  * Data type.
  */
 export enum DataType {
-  ANY = 'Any',
-  STRING = 'String',
-  NUMBER = 'Number',
-  BOOLEAN = 'Boolean',
-  ARRAY = 'Array',
-  OBJECT = 'Object',
+  ANY = 'any',
+  STRING = 'string',
+  NUMBER = 'number',
+  BOOLEAN = 'boolean',
+  ARRAY = 'array',
+  OBJECT = 'object',
 }
 
 /**

@@ -3,12 +3,12 @@
  */
 export var DataType;
 (function (DataType) {
-    DataType["ANY"] = "Any";
-    DataType["STRING"] = "String";
-    DataType["NUMBER"] = "Number";
-    DataType["BOOLEAN"] = "Boolean";
-    DataType["ARRAY"] = "Array";
-    DataType["OBJECT"] = "Object";
+    DataType["ANY"] = "any";
+    DataType["STRING"] = "string";
+    DataType["NUMBER"] = "number";
+    DataType["BOOLEAN"] = "boolean";
+    DataType["ARRAY"] = "array";
+    DataType["OBJECT"] = "object";
 })(DataType || (DataType = {}));
 /**
  * Data type from value.

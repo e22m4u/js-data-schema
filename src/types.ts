@@ -34,11 +34,3 @@ export type Prototype<T = unknown> = T &
  * Function type.
  */
 export type Callable<T = unknown> = (...args: any[]) => T;
-
-/**
- * Class to plain.
- */
-export type ClassToPlain<T> = {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  [K in keyof T]: T[K] extends Function ? never : T[K];
-} & {};

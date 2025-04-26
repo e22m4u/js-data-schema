@@ -1,4 +1,3 @@
-export * from './types.js';
 export * from './data-schema.js';
 export * from './errors/index.js';
 export * from './data-validator.js';

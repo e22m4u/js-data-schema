@@ -36,9 +36,3 @@ export type Prototype<T = unknown> = T & object & {
  * Function type.
  */
 export type Callable<T = unknown> = (...args: any[]) => T;
-/**
- * Class to plain.
- */
-export type ClassToPlain<T> = {
-    [K in keyof T]: T[K] extends Function ? never : T[K];
-} & {};
