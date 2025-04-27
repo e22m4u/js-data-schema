@@ -142,11 +142,13 @@ const schema = {
 
 ```ts
 import {DataSchema} from '@e22m4u/ts-data-schema';
+// import {ServiceContainer} from '@e22m4u/js-service';
 
 function noEmptyString(
   value: unknown,
   schema: DataSchema,
   sourcePath?: string,
+  // services: ServiceContainer,
 ) {
   if (!value || typeof value !== 'string') {
     if (sourcePath)
