@@ -14,7 +14,7 @@
   - [validate](#validate)
 - [Пустые значения](#пустые-значения)
 - [Декораторы](#декораторы)
-- [Использование](#использование)
+- [Примеры](#примеры)
 - [Отладка](#отладка)
 - [Тесты](#тесты)
 
@@ -144,7 +144,7 @@ const schema = {
 import {DataSchema} from '@e22m4u/ts-data-schema';
 // import {ServiceContainer} from '@e22m4u/js-service';
 
-function noEmptyString(
+function nonEmptyString(
   value: unknown,
   schema: DataSchema,
   sourcePath?: string,
@@ -227,9 +227,9 @@ console.log(postSchema);
 // }
 ```
 
-## Использование
+## Примеры
 
-Валидация данных.
+Проверка простых значений.
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
