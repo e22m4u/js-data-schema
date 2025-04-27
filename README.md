@@ -2,11 +2,228 @@
 
 Валидация данных и приведение типов для TypeScript.
 
+## Содержание
+
+- [Ключевые особенности](#ключевые-особенности)
+- [Схема данных](#схема-данных)
+  - [type](#type)
+  - [items](#items)
+  - [properties](#properties)
+  - [required](#required)
+  - [default](#default)
+  - [validate](#validate)
+- [Декораторы](#декораторы)
+- [Пустые значения](#пустые-значения)
+- [Использование](#использование)
+- [Отладка](#отладка)
+- [Тесты](#тесты)
+
 ## Ключевые особенности
 - **DataValidator** - Сервис валидации со встроенной проверкой типов.
 - **DataTypeCaster** - Сервис конвертации значений согласно схеме данных.
 - Расширяемая архитектура, позволяющая добавлять пользовательские валидаторы и преобразователи типов.
 - Подробная отладка.
+
+## Схема данных
+
+`DataSchema` является объектом, определяющим структуру для валидации
+данных и приведения типов. Схема предоставляет гибкий способ описания
+и ограничения входящих данных. Рассмотрим определение объекта схемы.
+
+```ts
+type DataSchema = {
+  type: DataType;
+  items?: DataSchema;
+  properties?: {[key: string]: DataSchema};
+  required?: boolean;
+  default?: unknown;
+  validate?: CallableValidator | CallableValidator[];
+};
+```
+
+#### type
+
+Определяет тип значения с помощью констант указанных ниже.
+
+- `DataType.ANY` - принимает любой тип
+- `DataType.STRING` - строковые значения
+- `DataType.NUMBER` - числовые значения
+- `DataType.BOOLEAN` - логические значения
+- `DataType.ARRAY` - массивы
+- `DataType.OBJECT` - объекты (не экземпляры)
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+
+const schema = {
+  type: DataSchema.STRING,
+}
+```
+
+#### items
+
+Используется массивами для определения схемы элементов. Это вложенный
+объект `DataSchema`, описывающий каждый элемент массива.
+
+```ts
+const schema = {
+  type: DataSchema.ARRAY,
+  items: {type: DataSchema.STRING},
+}
+```
+
+#### properties
+
+Используется объектами для определения схемы свойств. Каждое свойство
+представляет собой пару ключ-значение, где значением является вложенный
+объект `DataSchema`.
+
+```ts
+const schema = {
+  type: DataSchema.OBJECT,
+  properties: {
+    foo: {type: DataSchema.STRING},
+    bar: {type: DataSchema.NUMBER},
+  },
+}
+```
+
+#### required
+
+Параметр исключает допуск [пустых значений](#пустые-значения) для данной схемы.
+
+```ts
+const schema = {
+  type: DataSchema.ANY,
+  required: true,
+}
+```
+
+#### default
+
+Параметр определяет значение по умолчанию на случай, если входящее значение
+не имеет [полезной нагрузки](#пустые-значения).
+
+```ts
+const schema = {
+  type: DataSchema.STRING,
+  default: 'John Doe',
+}
+```
+
+#### validate
+
+Пользовательская функция(и) валидации для применения дополнительных
+правил. Может быть одной функцией или массивом функций.
+
+```ts
+const schema = {
+  type: DataSchema.ANY,
+  validate: (value: unknown) => {
+    if (typeof value !== 'string')
+      throw new Error('A string required.');
+  },
+}
+```
+
+Использование нескольких валидаторов.
+
+```ts
+const schema = {
+  type: DataSchema.ANY,
+  validate: [
+    myValidator1,
+    myValidator2,
+  ],
+}
+```
+
+Использование аргументов валидатора.
+
+```ts
+import {DataSchema} from '@e22m4u/ts-data-schema';
+
+function noEmptyString(
+  value: unknown,
+  schema: DataSchema,
+  sourcePath?: string,
+) {
+  if (!value || typeof value !== 'string') {
+    if (sourcePath)
+      throw new ValidationError(
+        'Value of %v must be a non-empty String, but %v given.',
+        sourcePath,
+        value,
+      );
+    throw new ValidationError(
+      'Value must be a non-empty String, but %v given.',
+      value,
+    );
+  }
+}
+```
+
+## Декораторы
+
+Декораторы предоставляют удобный способ определения схем данных
+с использованием классов.
+
+Общие декораторы:
+
+- `@dataSchema` - базовый декоратор для определения схемы данных
+- `@dsProperty` - декоратор для определения свойств схемы
+
+Декораторы конкретных типов данных:
+
+- `@dsAny` - для значений любого типа
+- `@dsString` - для строковых значений
+- `@dsNumber` - для числовых значений
+- `@dsBoolean` - для логических значений
+- `@dsArray` - для массивов
+- `@dsObject` - для объектов
+
+#### @dsObject
+
+Декоратор `@dsObject` определяет класс как схему объекта. Он позволяет
+генерировать объект схемы через утилиту `getDataSchemaFromClass`.
+
+```ts
+import {dsObject} from '@e22m4u/ts-data-schema';
+import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+
+@dsObject()
+class PostSchema {
+  // ...
+}
+
+const postSchema = getDataSchemaFromClass(PostSchema);
+console.log(postSchema);
+// {
+//   "type": "object",
+//   "properties": { ... }
+// }
+```
+
+## Пустые значения
+
+Проверка наличия полезной нагрузки выполняется встроенным модулем
+[@e22m4u/js-empty-values](https://www.npmjs.com/package/@e22m4u/js-empty-values)
+(не требует установки). Согласно спецификации модуля, разные типы данных
+имеют собственные наборы пустых значений. Эти наборы используются для определения
+наличия полезной нагрузки при проверке обязательных значений или определения
+необходимости использования значения по умолчанию.
+
+| константа          | тип         | пустые значения           |
+|--------------------|-------------|---------------------------|
+| `DataType.ANY`     | `'any'`     | `undefined`, `null`       |
+| `DataType.STRING`  | `'string'`  | `undefined`, `null`, `''` |
+| `DataType.NUMBER`  | `'number'`  | `undefined`, `null`, `0`  |
+| `DataType.BOOLEAN` | `'boolean'` | `undefined`, `null`       |
+| `DataType.ARRAY`   | `'array'`   | `undefined`, `null`, `[]` |
+| `DataType.OBJECT`  | `'object'`  | `undefined`, `null`, `{}` |
+
+В первой колонке указаны константы каждого типа, которые могут быть
+использованы вместо строки названия типа (вторая колонка).
 
 ## Использование
 
@@ -29,7 +246,7 @@ validator.validate('John', schema); // вернет undefined
 validator.validate(10, schema);     // ошибка ValidationError
 ```
 
-Использование пользовательского валидатора.
+Пользовательская функция-валидатор.
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
@@ -183,176 +400,6 @@ console.log(postSchema);
 //       },
 //     }
 //   }
-// }
-```
-
-## DataSchema
-
-`DataSchema` является объектом, определяющим структуру для валидации
-данных и приведения типов. Схема предоставляет гибкий способ описания
-формы и ограничений ваших данных. Рассмотрим определение объекта схемы.
-
-```ts
-type DataSchema = {
-  type: DataType;
-  items?: DataSchema;
-  properties?: {[key: string]: DataSchema};
-  required?: boolean;
-  validate?: CallableValidator | CallableValidator[];
-};
-```
-
-#### type
-
-Определяет тип значения с помощью констант указанных ниже.
-
-- `DataType.ANY` - принимает любой тип
-- `DataType.STRING` - строковые значения
-- `DataType.NUMBER` - числовые значения
-- `DataType.BOOLEAN` - логические значения
-- `DataType.ARRAY` - массивы
-- `DataType.OBJECT` - объекты (не экземпляры)
-
-```ts
-import {DataType} from '@e22m4u/ts-data-schema';
-
-const schema = {
-  type: DataSchema.STRING,
-}
-```
-
-#### items
-
-Используется массивами для определения схемы их элементов. Это вложенный
-объект `DataSchema`, описывающий каждый элемент массива.
-
-```ts
-const schema = {
-  type: DataSchema.ARRAY,
-  items: {type: DataSchema.STRING},
-}
-```
-
-#### properties
-
-Используется объектами для определения схемы их свойств. Каждое свойство
-представляет собой пару ключ-значение, где значением является вложенный
-объект `DataSchema`.
-
-```ts
-const schema = {
-  type: DataSchema.OBJECT,
-  properties: {
-    foo: {type: DataSchema.STRING},
-    bar: {type: DataSchema.NUMBER},
-  },
-}
-```
-
-#### required
-
-Указывает, является ли значение обязательным. Когда `true`, значение
-не может быть `undefined` или `null`.
-
-```ts
-const schema = {
-  type: DataSchema.ANY,
-  required: true,
-}
-```
-
-#### validate
-
-Пользовательская функция(и) валидации для применения дополнительных
-правил. Может быть одной функцией или массивом функций.
-
-```ts
-const schema = {
-  type: DataSchema.ANY,
-  validate: (value: unknown) => {
-    if (typeof value !== 'string')
-      throw new Error('A string required.');
-  },
-}
-```
-
-Использование нескольких валидаторов.
-
-```ts
-const schema = {
-  type: DataSchema.ANY,
-  validate: [
-    myValidator1,
-    myValidator2,
-  ],
-}
-```
-
-Пример использования аргументов валидатора.
-
-```ts
-import {DataSchema} from '@e22m4u/ts-data-schema';
-
-function noEmptyString(
-  value: unknown,
-  schema: DataSchema,
-  sourcePath?: string,
-) {
-  if (!value || typeof value !== 'string') {
-    if (sourcePath)
-      throw new ValidationError(
-        'Value of %v must be a non-empty String, but %v given.',
-        sourcePath,
-        value,
-      );
-    throw new ValidationError(
-      'Value must be a non-empty String, but %v given.',
-      value,
-    );
-  }
-}
-```
-
-## Декораторы
-
-Декораторы предоставляют удобный способ определения схем данных
-с использованием классов TypeScript.
-
-Общие декораторы:
-
-- `@dataSchema` - базовый декоратор для определения схемы данных
-- `@dsProperty` - декоратор для определения свойств схемы
-
-Декораторы конкретных типов данных:
-
-- `@dsAny` - для значений любого типа
-- `@dsString` - для строковых значений
-- `@dsNumber` - для числовых значений
-- `@dsBoolean` - для логических значений
-- `@dsArray` - для массивов
-- `@dsObject` - для объектов
-
-#### @dsObject
-
-Декоратор `@dsObject` определяет класс как схему объекта. Он позволяет
-генерировать структуру через утилиту `getDataSchemaFromClass`. В сочетании
-с декораторами свойств, `@dsObject` формирует систему описания и валидации
-данных, что особенно важно для сложных объектных структур с вложенными типами.
-
-```ts
-import {dsObject} from '@e22m4u/ts-data-schema';
-import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
-
-@dsObject()
-class PostSchema {
-  // ...
-}
-
-const postSchema = getDataSchemaFromClass(PostSchema);
-console.log(postSchema);
-// {
-//   "type": "object",
-//   "properties": { ... }
 // }
 ```
 

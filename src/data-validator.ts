@@ -2,6 +2,7 @@ import {PlainObject} from './types.js';
 import {Errorf} from '@e22m4u/js-format';
 import {DataType} from './data-schema.js';
 import {DataSchema} from './data-schema.js';
+import {ServiceContainer} from '@e22m4u/js-service';
 import {arrayTypeValidator} from './validators/index.js';
 import {DebuggableService} from './debuggable-service.js';
 import {isRequiredValidator} from './validators/index.js';
@@ -16,7 +17,8 @@ import {booleanTypeValidator} from './validators/index.js';
 export type CallableValidator = (
   value: unknown,
   schema: DataSchema,
-  sourcePath?: string,
+  sourcePath: string | undefined,
+  services: ServiceContainer,
 ) => void;
 
 /**
@@ -100,7 +102,7 @@ export class DataValidator extends DebuggableService {
     const validators = this.getValidators();
     if (validators.length) {
       this.debug('%v global validators found.', validators.length);
-      validators.forEach(fn => fn(value, schema, sourcePath));
+      validators.forEach(fn => fn(value, schema, sourcePath, this.container));
       this.debug('Global validators are passed.');
     } else {
       this.debug('No global validators found.');
@@ -114,7 +116,9 @@ export class DataValidator extends DebuggableService {
     }
     if (localValidators.length) {
       this.debug('%v local validators found.', localValidators.length);
-      localValidators.forEach(fn => fn(value, schema, sourcePath));
+      localValidators.forEach(fn =>
+        fn(value, schema, sourcePath, this.container),
+      );
       this.debug('Local validators are passed.');
     } else {
       this.debug('No local validators found.');

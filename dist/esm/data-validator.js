@@ -83,7 +83,7 @@ export class DataValidator extends DebuggableService {
         const validators = this.getValidators();
         if (validators.length) {
             this.debug('%v global validators found.', validators.length);
-            validators.forEach(fn => fn(value, schema, sourcePath));
+            validators.forEach(fn => fn(value, schema, sourcePath, this.container));
             this.debug('Global validators are passed.');
         }
         else {
@@ -99,7 +99,7 @@ export class DataValidator extends DebuggableService {
         }
         if (localValidators.length) {
             this.debug('%v local validators found.', localValidators.length);
-            localValidators.forEach(fn => fn(value, schema, sourcePath));
+            localValidators.forEach(fn => fn(value, schema, sourcePath, this.container));
             this.debug('Local validators are passed.');
         }
         else {

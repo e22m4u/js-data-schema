@@ -1,9 +1,10 @@
 import { DataSchema } from './data-schema.js';
+import { ServiceContainer } from '@e22m4u/js-service';
 import { DebuggableService } from './debuggable-service.js';
 /**
  * Callable validator.
  */
-export type CallableValidator = (value: unknown, schema: DataSchema, sourcePath?: string) => void;
+export type CallableValidator = (value: unknown, schema: DataSchema, sourcePath: string | undefined, services: ServiceContainer) => void;
 /**
  * Data validator.
  */

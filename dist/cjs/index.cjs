@@ -337,13 +337,18 @@ function arrayTypeValidator(value, schema, sourcePath) {
 __name(arrayTypeValidator, "arrayTypeValidator");
 
 // dist/esm/validators/is-required-validator.js
-function isRequiredValidator(value, schema, sourcePath) {
-  if (schema.required && value == null) {
-    if (sourcePath) {
-      throw new ValidationError("Value of %v is required, but %v given.", sourcePath, value);
-    } else {
-      throw new ValidationError("Value is required, but %v given.", value);
-    }
+var import_js_empty_values = require("@e22m4u/js-empty-values");
+function isRequiredValidator(value, schema, sourcePath, services) {
+  if (!schema.required)
+    return;
+  const emptyValuesService = services.get(import_js_empty_values.EmptyValuesService);
+  const isEmpty = emptyValuesService.isEmptyByType(schema.type, value);
+  if (!isEmpty)
+    return;
+  if (sourcePath) {
+    throw new ValidationError("Value of %v is required, but %v given.", sourcePath, value);
+  } else {
+    throw new ValidationError("Value is required, but %v given.", value);
   }
 }
 __name(isRequiredValidator, "isRequiredValidator");
@@ -491,7 +496,7 @@ var _DataValidator = class _DataValidator extends DebuggableService {
     const validators = this.getValidators();
     if (validators.length) {
       this.debug("%v global validators found.", validators.length);
-      validators.forEach((fn) => fn(value, schema, sourcePath));
+      validators.forEach((fn) => fn(value, schema, sourcePath, this.container));
       this.debug("Global validators are passed.");
     } else {
       this.debug("No global validators found.");
@@ -504,7 +509,7 @@ var _DataValidator = class _DataValidator extends DebuggableService {
     }
     if (localValidators.length) {
       this.debug("%v local validators found.", localValidators.length);
-      localValidators.forEach((fn) => fn(value, schema, sourcePath));
+      localValidators.forEach((fn) => fn(value, schema, sourcePath, this.container));
       this.debug("Local validators are passed.");
     } else {
       this.debug("No local validators found.");
