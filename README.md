@@ -364,7 +364,7 @@ const res = defaultsApplier.applyDefaultValuesIfNeeded(
 console.log(res);
 // {
 //   foo: 'myDefaultValue', <- значение по умолчанию вместо null
-//   bar: 10,               <- значение по умолчанию (свойство не определено)
+//   bar: 10,               <- значение по умолчанию (не определено)
 //   baz: 'qux'             <- осталось без изменений (новое свойство)
 // }
 ```
