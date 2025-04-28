@@ -31,8 +31,9 @@ export class DataTypeCaster extends DebuggableService {
      * @param caster
      */
     setTypeCaster(type, caster) {
+        const debug = this.getDebuggerFor(this.setTypeCaster);
         this.typeCasterMap.set(type, caster);
-        this.debug('A type caster %v is set for %s type.', caster.name, type);
+        debug('A type caster %v is set for %s type.', caster.name, type);
         return this;
     }
     /**
@@ -54,18 +55,19 @@ export class DataTypeCaster extends DebuggableService {
      * @param options
      */
     cast(value, schema, options) {
-        this.debug('Type casting.');
+        const debug = this.getDebuggerFor(this.cast);
+        debug('Type casting.');
         const sourcePath = options?.sourcePath;
         if (sourcePath)
-            this.debug('Source path is %v.', sourcePath);
+            debug('Source path is %v.', sourcePath);
         const noTypeCastError = options?.noTypeCastError ?? false;
         if (noTypeCastError)
-            this.debug('Type cast errors are disabled.');
+            debug('Type cast errors are disabled.');
         // если определение не имеет типа,
         // то пропускаем преобразование
         if (!schema.type) {
-            this.debug('Data schema does not have the type definition.');
-            this.debug('Type casting is skipped.');
+            debug('Data schema does not have the type definition.');
+            debug('Type casting is skipped.');
             return value;
         }
         const targetType = schema.type;
@@ -74,8 +76,8 @@ export class DataTypeCaster extends DebuggableService {
         // ошибку в строгом режиме
         if (value == null) {
             if (noTypeCastError) {
-                this.debug('No type casting required for %v.', value);
-                this.debug('Type casting is skipped.');
+                debug('No type casting required for %v.', value);
+                debug('Type casting is skipped.');
                 return value;
             }
             else {
@@ -85,11 +87,11 @@ export class DataTypeCaster extends DebuggableService {
         // если целевой тип является ANY,
         // то пропускаем преобразование
         const sourceType = dataTypeFrom(value);
-        this.debug('Source type is %s.', sourceType);
-        this.debug('Target type is %s.', targetType);
+        debug('Source type is %s.', sourceType);
+        debug('Target type is %s.', targetType);
         if (targetType === DataType.ANY) {
-            this.debug('No type casting required for Any.');
-            this.debug('Type casting is skipped.');
+            debug('No type casting required for Any.');
+            debug('Type casting is skipped.');
             return value;
         }
         // если исходный тип не соответствует целевому,
@@ -102,8 +104,8 @@ export class DataTypeCaster extends DebuggableService {
             }
             catch (error) {
                 if (noTypeCastError && error instanceof TypeCastError) {
-                    this.debug(error.message);
-                    this.debug('Type casting is skipped.');
+                    debug(error.message);
+                    debug('Type casting is skipped.');
                     return value;
                 }
                 throw error;
@@ -113,8 +115,8 @@ export class DataTypeCaster extends DebuggableService {
         // и не является массивом или объектом,
         // то возвращаем значение без изменений
         else if (sourceType !== DataType.ARRAY && sourceType !== DataType.OBJECT) {
-            this.debug('Source and target types are the same.');
-            this.debug('Type casting is skipped.');
+            debug('Source and target types are the same.');
+            debug('Type casting is skipped.');
             return value;
         }
         // в случае массива, рекурсивно
@@ -122,7 +124,7 @@ export class DataTypeCaster extends DebuggableService {
         if (targetType === DataType.ARRAY &&
             schema.items &&
             Array.isArray(newValue)) {
-            this.debug('Starting type casting of array items.');
+            debug('Starting type casting of array items.');
             const valueAsArray = newValue;
             for (const index in valueAsArray) {
                 const elValue = valueAsArray[index];
@@ -135,7 +137,7 @@ export class DataTypeCaster extends DebuggableService {
                     noTypeCastError,
                 });
             }
-            this.debug('Type casting of array items is done.');
+            debug('Type casting of array items is done.');
         }
         // в случае объекта, рекурсивно
         // проходим по каждому свойству
@@ -144,7 +146,7 @@ export class DataTypeCaster extends DebuggableService {
             newValue !== null &&
             typeof newValue === 'object' &&
             !Array.isArray(newValue)) {
-            this.debug('Starting type casting of object properties.');
+            debug('Starting type casting of object properties.');
             const valueAsObject = newValue;
             for (const propName in schema.properties) {
                 const propSchema = schema.properties[propName];
@@ -157,10 +159,10 @@ export class DataTypeCaster extends DebuggableService {
                     noTypeCastError,
                 });
             }
-            this.debug('Type casting of object properties is done.');
+            debug('Type casting of object properties is done.');
         }
-        this.debug('%s has been casted to %s.', sourceType, targetType);
-        this.debug('New value is %v.', newValue);
+        debug('%s has been casted to %s.', sourceType, targetType);
+        debug('New value is %v.', newValue);
         return newValue;
     }
 }

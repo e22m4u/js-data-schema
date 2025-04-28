@@ -1,9 +1,7 @@
 "use strict";
-var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 var __export = (target, all) => {
@@ -18,14 +16,6 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // dist/esm/index.js
@@ -95,7 +85,7 @@ function dataTypeFrom(value) {
 __name(dataTypeFrom, "dataTypeFrom");
 
 // dist/esm/errors/type-cast-error.js
-var import_js_format4 = require("@e22m4u/js-format");
+var import_js_format3 = require("@e22m4u/js-format");
 
 // dist/esm/utils/to-camel-case.js
 function toCamelCase(input) {
@@ -111,18 +101,6 @@ function toPascalCase(input) {
 }
 __name(toPascalCase, "toPascalCase");
 
-// dist/esm/utils/create-debugger.js
-var import_debug = __toESM(require("debug"), 1);
-var import_js_format = require("@e22m4u/js-format");
-function createDebugger(name) {
-  const debug = (0, import_debug.default)(`tsDataSchema:${name}`);
-  return function(message, ...args) {
-    const interpolatedMessage = (0, import_js_format.format)(message, ...args);
-    return debug(interpolatedMessage);
-  };
-}
-__name(createDebugger, "createDebugger");
-
 // dist/esm/utils/is-plain-object.js
 function isPlainObject(input) {
   return !(input === null || typeof input !== "object" || Array.isArray(input) || input.constructor && input.constructor !== Object);
@@ -130,7 +108,7 @@ function isPlainObject(input) {
 __name(isPlainObject, "isPlainObject");
 
 // dist/esm/utils/get-data-schema-from-class.js
-var import_js_format3 = require("@e22m4u/js-format");
+var import_js_format2 = require("@e22m4u/js-format");
 
 // dist/esm/decorators/data-schema-metadata.js
 var import_ts_reflector = require("@e22m4u/ts-reflector");
@@ -179,7 +157,7 @@ __name(_DataSchemaReflector, "DataSchemaReflector");
 var DataSchemaReflector = _DataSchemaReflector;
 
 // dist/esm/decorators/data-schema-decorators.js
-var import_js_format2 = require("@e22m4u/js-format");
+var import_js_format = require("@e22m4u/js-format");
 var import_ts_reflector3 = require("@e22m4u/ts-reflector");
 var import_ts_reflector4 = require("@e22m4u/ts-reflector");
 var DECORATOR_PROPERTY_TARGET_ERROR_MESSAGE = "@%s decorator is only supported on an instance property.";
@@ -207,7 +185,7 @@ function dsProperty(schema) {
 __name(dsProperty, "dsProperty");
 function checkDataSchemaDoesNotHaveSpecifiedTypeOption(decoratorName, schema) {
   if (schema && typeof schema === "object" && !Array.isArray(schema) && schema.type) {
-    throw new import_js_format2.Errorf(REDUNDANT_TYPE_OPTION_ERROR_MESSAGE, decoratorName);
+    throw new import_js_format.Errorf(REDUNDANT_TYPE_OPTION_ERROR_MESSAGE, decoratorName);
   }
 }
 __name(checkDataSchemaDoesNotHaveSpecifiedTypeOption, "checkDataSchemaDoesNotHaveSpecifiedTypeOption");
@@ -298,7 +276,7 @@ var _TypeCastError = class _TypeCastError extends Error {
   targetType;
   constructor(value, targetType) {
     const sourceType = dataTypeFrom(value);
-    const message = (0, import_js_format4.format)("Unable to cast %s to %s.", sourceType ? toPascalCase(sourceType) : sourceType, toPascalCase(targetType));
+    const message = (0, import_js_format3.format)("Unable to cast %s to %s.", sourceType ? toPascalCase(sourceType) : sourceType, toPascalCase(targetType));
     super(message);
     this.value = value;
     this.targetType = targetType;
@@ -308,21 +286,22 @@ __name(_TypeCastError, "TypeCastError");
 var TypeCastError = _TypeCastError;
 
 // dist/esm/errors/validation-error.js
-var import_js_format5 = require("@e22m4u/js-format");
-var _ValidationError = class _ValidationError extends import_js_format5.Errorf {
+var import_js_format4 = require("@e22m4u/js-format");
+var _ValidationError = class _ValidationError extends import_js_format4.Errorf {
 };
 __name(_ValidationError, "ValidationError");
 var ValidationError = _ValidationError;
 
 // dist/esm/errors/decorator-target-error.js
-var import_js_format6 = require("@e22m4u/js-format");
-var _DecoratorTargetError = class _DecoratorTargetError extends import_js_format6.Errorf {
+var import_js_format5 = require("@e22m4u/js-format");
+var _DecoratorTargetError = class _DecoratorTargetError extends import_js_format5.Errorf {
 };
 __name(_DecoratorTargetError, "DecoratorTargetError");
 var DecoratorTargetError = _DecoratorTargetError;
 
 // dist/esm/data-validator.js
-var import_js_format7 = require("@e22m4u/js-format");
+var import_js_format6 = require("@e22m4u/js-format");
+var import_js_debug2 = require("@e22m4u/js-debug");
 
 // dist/esm/validators/array-type-validator.js
 function arrayTypeValidator(value, schema, sourcePath) {
@@ -403,11 +382,22 @@ __name(booleanTypeValidator, "booleanTypeValidator");
 
 // dist/esm/debuggable-service.js
 var import_js_service = require("@e22m4u/js-service");
+var import_js_debug = require("@e22m4u/js-debug");
 var _DebuggableService = class _DebuggableService extends import_js_service.Service {
   /**
    * Debug.
    */
   debug;
+  /**
+   * Возвращает функцию-отладчик с сегментом пространства имен
+   * указанного в параметре метода.
+   *
+   * @param method
+   * @protected
+   */
+  getDebuggerFor(method) {
+    return this.debug.withHash().withNs(method.name);
+  }
   /**
    * Constructor.
    *
@@ -416,8 +406,9 @@ var _DebuggableService = class _DebuggableService extends import_js_service.Serv
   constructor(container) {
     super(container);
     const serviceName = toCamelCase(this.constructor.name);
-    this.debug = createDebugger(serviceName);
-    this.debug("%v is created.", this.constructor);
+    this.debug = (0, import_js_debug.createDebugger)("tsDataSchema", serviceName);
+    const debug = this.debug.withNs("constructor").withHash();
+    debug("Service created.");
   }
 };
 __name(_DebuggableService, "DebuggableService");
@@ -444,8 +435,9 @@ var _DataValidator = class _DataValidator extends DebuggableService {
    * @param fn
    */
   addValidator(fn) {
+    const debug = this.getDebuggerFor(this.addValidator);
     this.validatorMap.add(fn);
-    this.debug("Validator %v is added.", fn.name);
+    debug("Validator %v is added.", fn.name);
     return this;
   }
   /**
@@ -469,11 +461,12 @@ var _DataValidator = class _DataValidator extends DebuggableService {
    */
   removeValidator(fn) {
     if (this.validatorMap.has(fn)) {
+      const debug = this.getDebuggerFor(this.removeValidator);
       this.validatorMap.delete(fn);
-      this.debug("Validator %v is removed.", fn.name);
+      debug("Validator %v is removed.", fn.name);
       return this;
     }
-    throw new import_js_format7.Errorf("Unable to remove non-existent validator %v.", fn.name);
+    throw new import_js_format6.Errorf("Unable to remove non-existent validator %v.", fn.name);
   }
   /**
    * Remove all validators.
@@ -490,16 +483,22 @@ var _DataValidator = class _DataValidator extends DebuggableService {
    * @param sourcePath A path like 'body.user.name' from which the value.
    */
   validate(value, schema, sourcePath) {
-    this.debug("Validation.");
+    const debug = this.getDebuggerFor(this.validate);
+    const debugWo1 = debug.withOffset(1);
+    debug("Validating a value against the given schema.");
+    debug("Schema:");
+    debugWo1((0, import_js_debug2.createColorizedDump)(schema));
+    debug("Value:");
+    debugWo1((0, import_js_debug2.createColorizedDump)(value));
     if (sourcePath)
-      this.debug("Source path is %v.", sourcePath);
+      debug("Source path is %v.", sourcePath);
     const validators = this.getValidators();
     if (validators.length) {
-      this.debug("%v global validators found.", validators.length);
+      debug("%v global validators found.", validators.length);
       validators.forEach((fn) => fn(value, schema, sourcePath, this.container));
-      this.debug("Global validators are passed.");
+      debug("Global validators are passed.");
     } else {
-      this.debug("No global validators found.");
+      debug("No global validators found.");
     }
     let localValidators = [];
     if (Array.isArray(schema.validate)) {
@@ -508,14 +507,14 @@ var _DataValidator = class _DataValidator extends DebuggableService {
       localValidators = [schema.validate];
     }
     if (localValidators.length) {
-      this.debug("%v local validators found.", localValidators.length);
+      debug("%v local validators found.", localValidators.length);
       localValidators.forEach((fn) => fn(value, schema, sourcePath, this.container));
-      this.debug("Local validators are passed.");
+      debug("Local validators are passed.");
     } else {
-      this.debug("No local validators found.");
+      debug("No local validators found.");
     }
     if (schema.type === DataType.ARRAY && schema.items && Array.isArray(value)) {
-      this.debug("Starting array items validation.");
+      debug("Validating array items.");
       const valueAsArray = value;
       for (const index in valueAsArray) {
         const elValue = valueAsArray[index];
@@ -523,10 +522,10 @@ var _DataValidator = class _DataValidator extends DebuggableService {
         const elSourcePath = sourcePath ? `${sourcePath}[${index}]` : `Array[${index}]`;
         this.validate(elValue, elSchema, elSourcePath);
       }
-      this.debug("Array items validation is done.");
+      debug("Array items validated.");
     }
     if (schema.type === DataType.OBJECT && schema.properties && value !== null && typeof value === "object" && !Array.isArray(value)) {
-      this.debug("Starting object properties validation.");
+      debug("Validating object properties.");
       const valueAsObject = value;
       for (const propName in schema.properties) {
         const propSchema = schema.properties[propName];
@@ -534,16 +533,20 @@ var _DataValidator = class _DataValidator extends DebuggableService {
         const propSourcePath = sourcePath ? `${sourcePath}.${propName}` : propName;
         this.validate(propValue, propSchema, propSourcePath);
       }
-      this.debug("Object properties validation is done.");
+      debug("Object properties validated.");
     }
-    this.debug("Validation of %v is done.", sourcePath);
+    if (sourcePath) {
+      debug("Validation of %v is passed.", sourcePath);
+    } else {
+      debug("Validation passed.");
+    }
   }
 };
 __name(_DataValidator, "DataValidator");
 var DataValidator = _DataValidator;
 
 // dist/esm/data-type-caster.js
-var import_js_format8 = require("@e22m4u/js-format");
+var import_js_format7 = require("@e22m4u/js-format");
 
 // dist/esm/type-casters/type-cast-to-array.js
 function typeCastToArray(value) {
@@ -652,8 +655,9 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
    * @param caster
    */
   setTypeCaster(type, caster) {
+    const debug = this.getDebuggerFor(this.setTypeCaster);
     this.typeCasterMap.set(type, caster);
-    this.debug("A type caster %v is set for %s type.", caster.name, type);
+    debug("A type caster %v is set for %s type.", caster.name, type);
     return this;
   }
   /**
@@ -665,7 +669,7 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
     const typeCaster = this.typeCasterMap.get(type);
     if (typeCaster)
       return typeCaster;
-    throw new import_js_format8.Errorf("No type caster found for %s type.", type);
+    throw new import_js_format7.Errorf("No type caster found for %s type.", type);
   }
   /**
    * Cast.
@@ -676,34 +680,35 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
    */
   cast(value, schema, options) {
     var _a;
-    this.debug("Type casting.");
+    const debug = this.getDebuggerFor(this.cast);
+    debug("Type casting.");
     const sourcePath = options == null ? void 0 : options.sourcePath;
     if (sourcePath)
-      this.debug("Source path is %v.", sourcePath);
+      debug("Source path is %v.", sourcePath);
     const noTypeCastError = (_a = options == null ? void 0 : options.noTypeCastError) != null ? _a : false;
     if (noTypeCastError)
-      this.debug("Type cast errors are disabled.");
+      debug("Type cast errors are disabled.");
     if (!schema.type) {
-      this.debug("Data schema does not have the type definition.");
-      this.debug("Type casting is skipped.");
+      debug("Data schema does not have the type definition.");
+      debug("Type casting is skipped.");
       return value;
     }
     const targetType = schema.type;
     if (value == null) {
       if (noTypeCastError) {
-        this.debug("No type casting required for %v.", value);
-        this.debug("Type casting is skipped.");
+        debug("No type casting required for %v.", value);
+        debug("Type casting is skipped.");
         return value;
       } else {
         throw new TypeCastError(value, targetType);
       }
     }
     const sourceType = dataTypeFrom(value);
-    this.debug("Source type is %s.", sourceType);
-    this.debug("Target type is %s.", targetType);
+    debug("Source type is %s.", sourceType);
+    debug("Target type is %s.", targetType);
     if (targetType === DataType.ANY) {
-      this.debug("No type casting required for Any.");
-      this.debug("Type casting is skipped.");
+      debug("No type casting required for Any.");
+      debug("Type casting is skipped.");
       return value;
     }
     let newValue = value;
@@ -713,19 +718,19 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
         newValue = caster(value);
       } catch (error) {
         if (noTypeCastError && error instanceof TypeCastError) {
-          this.debug(error.message);
-          this.debug("Type casting is skipped.");
+          debug(error.message);
+          debug("Type casting is skipped.");
           return value;
         }
         throw error;
       }
     } else if (sourceType !== DataType.ARRAY && sourceType !== DataType.OBJECT) {
-      this.debug("Source and target types are the same.");
-      this.debug("Type casting is skipped.");
+      debug("Source and target types are the same.");
+      debug("Type casting is skipped.");
       return value;
     }
     if (targetType === DataType.ARRAY && schema.items && Array.isArray(newValue)) {
-      this.debug("Starting type casting of array items.");
+      debug("Starting type casting of array items.");
       const valueAsArray = newValue;
       for (const index in valueAsArray) {
         const elValue = valueAsArray[index];
@@ -736,10 +741,10 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
           noTypeCastError
         });
       }
-      this.debug("Type casting of array items is done.");
+      debug("Type casting of array items is done.");
     }
     if (schema.type === DataType.OBJECT && schema.properties && newValue !== null && typeof newValue === "object" && !Array.isArray(newValue)) {
-      this.debug("Starting type casting of object properties.");
+      debug("Starting type casting of object properties.");
       const valueAsObject = newValue;
       for (const propName in schema.properties) {
         const propSchema = schema.properties[propName];
@@ -750,10 +755,10 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
           noTypeCastError
         });
       }
-      this.debug("Type casting of object properties is done.");
+      debug("Type casting of object properties is done.");
     }
-    this.debug("%s has been casted to %s.", sourceType, targetType);
-    this.debug("New value is %v.", newValue);
+    debug("%s has been casted to %s.", sourceType, targetType);
+    debug("New value is %v.", newValue);
     return newValue;
   }
 };

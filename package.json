@@ -41,18 +41,17 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@e22m4u/js-debug": "~0.1.4",
     "@e22m4u/js-empty-values": "^0.0.1",
     "@e22m4u/js-format": "~0.1.0",
     "@e22m4u/js-service": "~0.2.0",
-    "@e22m4u/ts-reflector": "~0.1.0",
-    "debug": "~4.4.0"
+    "@e22m4u/ts-reflector": "~0.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "~19.8.0",
     "@commitlint/config-conventional": "~19.8.0",
     "@eslint/js": "~9.25.1",
     "@types/chai": "~5.2.1",
-    "@types/debug": "~4.1.12",
     "@types/mocha": "~10.0.10",
     "@types/node": "~22.14.1",
     "c8": "~10.1.3",
