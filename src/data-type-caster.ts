@@ -146,26 +146,22 @@ export class DataTypeCaster extends DebuggableService {
     // если значение является массивом,
     // то выполняется рекурсивный обход
     // каждого элемента
-    if (targetType === DataType.ARRAY) {
+    if (targetType === DataType.ARRAY && Array.isArray(newValue)) {
       debug('Type casting array items.');
       if (schema.items) {
-        if (Array.isArray(newValue)) {
-          const valueAsArray = newValue as unknown[];
-          for (const index in valueAsArray) {
-            const elValue = valueAsArray[index];
-            const elSchema = schema.items;
-            const elSourcePath = sourcePath
-              ? `${sourcePath}[${index}]`
-              : `Array[${index}]`;
-            valueAsArray[index] = this.cast(elValue, elSchema, {
-              sourcePath: elSourcePath,
-              noTypeCastError,
-            });
-          }
-          debug('Array items type casting completed.');
-        } else {
-          debug('A cast value is not an Array.');
+        const valueAsArray = newValue as unknown[];
+        for (const index in valueAsArray) {
+          const elValue = valueAsArray[index];
+          const elSchema = schema.items;
+          const elSourcePath = sourcePath
+            ? `${sourcePath}[${index}]`
+            : `Array[${index}]`;
+          valueAsArray[index] = this.cast(elValue, elSchema, {
+            sourcePath: elSourcePath,
+            noTypeCastError,
+          });
         }
+        debug('Items type casting completed.');
       } else {
         debug('No items schema specified.');
       }
@@ -173,30 +169,27 @@ export class DataTypeCaster extends DebuggableService {
     // если значение является объектом,
     // то выполняется рекурсивный обход
     // каждого свойства
-    if (schema.type === DataType.OBJECT) {
+    if (
+      schema.type === DataType.OBJECT &&
+      newValue !== null &&
+      typeof newValue === 'object' &&
+      !Array.isArray(newValue)
+    ) {
       debug('Type casting object properties.');
       if (schema.properties) {
-        if (
-          newValue !== null &&
-          typeof newValue === 'object' &&
-          !Array.isArray(newValue)
-        ) {
-          const valueAsObject = newValue as PlainObject;
-          for (const propName in schema.properties) {
-            const propSchema = schema.properties[propName]!;
-            const propValue = valueAsObject[propName];
-            const propSourcePath = sourcePath
-              ? `${sourcePath}.${propName}`
-              : propName;
-            valueAsObject[propName] = this.cast(propValue, propSchema, {
-              sourcePath: propSourcePath,
-              noTypeCastError,
-            });
-          }
-          debug('Object properties type casting completed.');
-        } else {
-          debug('A cast value is not an Object.');
+        const valueAsObject = newValue as PlainObject;
+        for (const propName in schema.properties) {
+          const propSchema = schema.properties[propName]!;
+          const propValue = valueAsObject[propName];
+          const propSourcePath = sourcePath
+            ? `${sourcePath}.${propName}`
+            : propName;
+          valueAsObject[propName] = this.cast(propValue, propSchema, {
+            sourcePath: propSourcePath,
+            noTypeCastError,
+          });
         }
+        debug('Properties type casting completed.');
       } else {
         debug('No properties schema specified.');
       }
