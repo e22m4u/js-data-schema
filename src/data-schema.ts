@@ -36,15 +36,13 @@ export type DataSchemaProperties = {
  *
  * @param value
  */
-export function dataTypeFrom(
-  value: unknown,
-): Exclude<DataType, DataType.ANY> | undefined {
-  if (value == null) return undefined;
+export function dataTypeFrom(value: unknown): DataType {
+  if (value == null) return DataType.ANY;
   const baseType = typeof value;
   if (baseType === 'string') return DataType.STRING;
   if (baseType === 'number') return DataType.NUMBER;
   if (baseType === 'boolean') return DataType.BOOLEAN;
   if (Array.isArray(value)) return DataType.ARRAY;
   if (baseType === 'object') return DataType.OBJECT;
-  return undefined;
+  return DataType.ANY;
 }

@@ -32,4 +32,4 @@ export type DataSchemaProperties = {
  *
  * @param value
  */
-export declare function dataTypeFrom(value: unknown): Exclude<DataType, DataType.ANY> | undefined;
+export declare function dataTypeFrom(value: unknown): DataType;

@@ -17,7 +17,7 @@ export var DataType;
  */
 export function dataTypeFrom(value) {
     if (value == null)
-        return undefined;
+        return DataType.ANY;
     const baseType = typeof value;
     if (baseType === 'string')
         return DataType.STRING;
@@ -29,5 +29,5 @@ export function dataTypeFrom(value) {
         return DataType.ARRAY;
     if (baseType === 'object')
         return DataType.OBJECT;
-    return undefined;
+    return DataType.ANY;
 }

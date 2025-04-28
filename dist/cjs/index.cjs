@@ -68,7 +68,7 @@ var DataType;
 })(DataType || (DataType = {}));
 function dataTypeFrom(value) {
   if (value == null)
-    return void 0;
+    return DataType.ANY;
   const baseType = typeof value;
   if (baseType === "string")
     return DataType.STRING;
@@ -80,7 +80,7 @@ function dataTypeFrom(value) {
     return DataType.ARRAY;
   if (baseType === "object")
     return DataType.OBJECT;
-  return void 0;
+  return DataType.ANY;
 }
 __name(dataTypeFrom, "dataTypeFrom");
 
@@ -547,6 +547,7 @@ var DataValidator = _DataValidator;
 
 // dist/esm/data-type-caster.js
 var import_js_format7 = require("@e22m4u/js-format");
+var import_js_debug3 = require("@e22m4u/js-debug");
 
 // dist/esm/type-casters/type-cast-to-array.js
 function typeCastToArray(value) {
@@ -681,7 +682,12 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
   cast(value, schema, options) {
     var _a;
     const debug = this.getDebuggerFor(this.cast);
-    debug("Type casting.");
+    const debugWo1 = debug.withOffset(1);
+    debug("Converting value type based on the given schema.");
+    debug("Schema:");
+    debugWo1((0, import_js_debug3.createColorizedDump)(schema));
+    debug("Value:");
+    debugWo1((0, import_js_debug3.createColorizedDump)(value));
     const sourcePath = options == null ? void 0 : options.sourcePath;
     if (sourcePath)
       debug("Source path is %v.", sourcePath);
@@ -704,8 +710,8 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
       }
     }
     const sourceType = dataTypeFrom(value);
-    debug("Source type is %s.", sourceType);
-    debug("Target type is %s.", targetType);
+    debug("Source type is %s.", toPascalCase(sourceType));
+    debug("Target type is %s.", toPascalCase(targetType));
     if (targetType === DataType.ANY) {
       debug("No type casting required for Any.");
       debug("Type casting is skipped.");
@@ -726,39 +732,57 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
       }
     } else if (sourceType !== DataType.ARRAY && sourceType !== DataType.OBJECT) {
       debug("Source and target types are the same.");
-      debug("Type casting is skipped.");
+      debug("Type casting skipped.");
       return value;
     }
-    if (targetType === DataType.ARRAY && schema.items && Array.isArray(newValue)) {
-      debug("Starting type casting of array items.");
-      const valueAsArray = newValue;
-      for (const index in valueAsArray) {
-        const elValue = valueAsArray[index];
-        const elSchema = schema.items;
-        const elSourcePath = sourcePath ? `${sourcePath}[${index}]` : `Array[${index}]`;
-        valueAsArray[index] = this.cast(elValue, elSchema, {
-          sourcePath: elSourcePath,
-          noTypeCastError
-        });
+    if (targetType === DataType.ARRAY) {
+      debug("Type casting array items.");
+      if (schema.items) {
+        if (Array.isArray(newValue)) {
+          const valueAsArray = newValue;
+          for (const index in valueAsArray) {
+            const elValue = valueAsArray[index];
+            const elSchema = schema.items;
+            const elSourcePath = sourcePath ? `${sourcePath}[${index}]` : `Array[${index}]`;
+            valueAsArray[index] = this.cast(elValue, elSchema, {
+              sourcePath: elSourcePath,
+              noTypeCastError
+            });
+          }
+          debug("Array items type casting completed.");
+        } else {
+          debug("A cast value is not an Array.");
+        }
+      } else {
+        debug("No items schema specified.");
       }
-      debug("Type casting of array items is done.");
     }
-    if (schema.type === DataType.OBJECT && schema.properties && newValue !== null && typeof newValue === "object" && !Array.isArray(newValue)) {
-      debug("Starting type casting of object properties.");
-      const valueAsObject = newValue;
-      for (const propName in schema.properties) {
-        const propSchema = schema.properties[propName];
-        const propValue = valueAsObject[propName];
-        const propSourcePath = sourcePath ? `${sourcePath}.${propName}` : propName;
-        valueAsObject[propName] = this.cast(propValue, propSchema, {
-          sourcePath: propSourcePath,
-          noTypeCastError
-        });
+    if (schema.type === DataType.OBJECT) {
+      debug("Type casting object properties.");
+      if (schema.properties) {
+        if (newValue !== null && typeof newValue === "object" && !Array.isArray(newValue)) {
+          const valueAsObject = newValue;
+          for (const propName in schema.properties) {
+            const propSchema = schema.properties[propName];
+            const propValue = valueAsObject[propName];
+            const propSourcePath = sourcePath ? `${sourcePath}.${propName}` : propName;
+            valueAsObject[propName] = this.cast(propValue, propSchema, {
+              sourcePath: propSourcePath,
+              noTypeCastError
+            });
+          }
+          debug("Object properties type casting completed.");
+        } else {
+          debug("A cast value is not an Object.");
+        }
+      } else {
+        debug("No properties schema specified.");
       }
-      debug("Type casting of object properties is done.");
     }
-    debug("%s has been casted to %s.", sourceType, targetType);
-    debug("New value is %v.", newValue);
+    if (sourceType !== targetType)
+      debug("Value cast from %s to %s.", toPascalCase(sourceType), toPascalCase(targetType));
+    debug("New value:");
+    debugWo1((0, import_js_debug3.createColorizedDump)(newValue));
     return newValue;
   }
 };
