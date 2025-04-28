@@ -21,6 +21,7 @@
 ## Ключевые особенности
 - **DataValidator** - Сервис валидации со встроенной проверкой типов.
 - **DataTypeCaster** - Сервис конвертации значений согласно схеме данных.
+- **DefaultValuesApplier** - Сервис заполняющий данные значениями по-умолчанию.
 - Расширяемая архитектура, позволяющая добавлять пользовательские валидаторы и преобразователи типов.
 - Подробная отладка.
 
@@ -298,6 +299,74 @@ typeCaster.cast('foo', schema); // ошибка TypeCastError
 // или возврат значения без изменений
 typeCaster.cast('10', schema, {noTypeCastError: true});  // вернет 10
 typeCaster.cast('foo', schema, {noTypeCastError: true}); // вернет "foo"
+```
+
+Получить значение по умолчанию согласно указанной схеме, если входящее
+значение является [пустым](#пустые-значения). В противном случае возвращается
+оригинальное значение без изменений.
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DefaultValuesApplier} from './default-values-applier';
+
+const defaultsApplier = new DefaultValuesApplier();
+
+// определение схемы
+// числового значения
+const schema = {
+  type: DataType.NUMBER,
+  default: 10, // <- по умолчанию
+};
+
+// метод `applyDefaultValuesIfNeeded` возвращает
+// значение по умолчанию, если входящее значение
+// является пустым
+const res1 = defaultsApplier.applyDefaultValuesIfNeeded(5, schema);
+const res2 = defaultsApplier.applyDefaultValuesIfNeeded(0, schema);
+const res3 = defaultsApplier.applyDefaultValuesIfNeeded(undefined, schema);
+console.log(res1); // 5  (без изменений)
+console.log(res2); // 10 (по умолчанию вместо 0)
+console.log(res3); // 10 (по умолчанию вместо undefined)
+```
+
+Заполнение свойств объекта значениями по умолчанию согласно указанной
+схеме, если свойство имеет [пустое значение](#пустые-значения).
+
+```ts
+import {DataType} from '@e22m4u/ts-data-schema';
+import {DefaultValuesApplier} from './default-values-applier';
+
+const defaultsApplier = new DefaultValuesApplier();
+
+// определене схемы объекта и значений
+// по умолчанию для каждого свойства
+const schema = {
+  type: DataType.OBJECT,
+  properties: {
+    foo: {
+      type: DataType.STRING,
+      default: 'myDefaultValue',
+    },
+    bar: {
+      type: DataType.NUMBER,
+      default: 10,
+    },
+  },
+};
+
+// метод `applyDefaultValuesIfNeeded` по необходимости
+// устанавливает стандартные значения для каждого свойства,
+// и возвращает новый объект (не затрагивая оригинал)
+const res = defaultsApplier.applyDefaultValuesIfNeeded(
+  {foo: null, baz: 'qux'},
+  schema,
+);
+console.log(res);
+// {
+//   foo: 'myDefaultValue', <- значение по умолчанию вместо null
+//   bar: 10,               <- значение по умолчанию (не определено)
+//   baz: 'qux'             <- осталось без изменений (новое свойство)
+// }
 ```
 
 Использование декораторов для построения схемы объекта.

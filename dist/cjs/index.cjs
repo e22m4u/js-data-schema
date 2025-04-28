@@ -30,6 +30,7 @@ __export(index_exports, {
   DataTypeCaster: () => DataTypeCaster,
   DataValidator: () => DataValidator,
   DecoratorTargetError: () => DecoratorTargetError,
+  DefaultValuesApplier: () => DefaultValuesApplier,
   REDUNDANT_TYPE_OPTION_ERROR_MESSAGE: () => REDUNDANT_TYPE_OPTION_ERROR_MESSAGE,
   TypeCastError: () => TypeCastError,
   ValidationError: () => ValidationError,
@@ -86,6 +87,47 @@ __name(dataTypeFrom, "dataTypeFrom");
 
 // dist/esm/errors/type-cast-error.js
 var import_js_format3 = require("@e22m4u/js-format");
+
+// dist/esm/utils/clone-deep.js
+function cloneDeep(value) {
+  if (!value)
+    return value;
+  const types = [Number, String, Boolean];
+  let result;
+  types.forEach((type) => {
+    if (value instanceof type)
+      result = type(value);
+  });
+  if (result === void 0) {
+    if (Array.isArray(value)) {
+      result = [];
+      value.forEach((child, index) => {
+        result[index] = cloneDeep(child);
+      });
+    } else if (typeof value === "object") {
+      if ("nodeType" in value && value.nodeType && "cloneNode" in value && typeof value.cloneNode === "function") {
+        result = value.cloneNode(true);
+      } else if (!("prototype" in value) || !value.prototype) {
+        if (value instanceof Date) {
+          result = new Date(value);
+        } else if (value.constructor && value.constructor.name === "Object") {
+          result = {};
+          for (const key in value) {
+            result[key] = cloneDeep(value[key]);
+          }
+        } else {
+          result = value;
+        }
+      } else {
+        result = value;
+      }
+    } else {
+      result = value;
+    }
+  }
+  return result;
+}
+__name(cloneDeep, "cloneDeep");
 
 // dist/esm/utils/to-camel-case.js
 function toCamelCase(input) {
@@ -780,6 +822,82 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
 };
 __name(_DataTypeCaster, "DataTypeCaster");
 var DataTypeCaster = _DataTypeCaster;
+
+// dist/esm/default-values-applier.js
+var import_js_debug4 = require("@e22m4u/js-debug");
+var import_js_empty_values2 = require("@e22m4u/js-empty-values");
+var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableService {
+  /**
+   * Apply default values if needed.
+   *
+   * @param value
+   * @param schema
+   * @param sourcePath
+   */
+  applyDefaultValuesIfNeeded(value, schema, sourcePath) {
+    var _a;
+    const debug = this.getDebuggerFor(this.applyDefaultValuesIfNeeded);
+    const debugWo1 = debug.withOffset(1);
+    debug("Applying default values by the given schema.");
+    debug("Schema:");
+    debugWo1((0, import_js_debug4.createColorizedDump)(schema));
+    debug("Value:");
+    debugWo1((0, import_js_debug4.createColorizedDump)(value));
+    if (sourcePath)
+      debug("Source path is %v.", sourcePath);
+    const valueType = (_a = schema.type) != null ? _a : DataType.ANY;
+    debug("Value type is %v.", toPascalCase(valueType));
+    const isEmpty = this.getService(import_js_empty_values2.EmptyValuesService).isEmptyByType(valueType, value);
+    let resValue;
+    if (isEmpty) {
+      debug("Value is empty.");
+      if (schema.default !== void 0) {
+        resValue = cloneDeep(schema.default);
+        debug("Default value:");
+        debug.withOffset(1)((0, import_js_debug4.createColorizedDump)(resValue));
+      } else {
+        debug("No default value specified.");
+        resValue = cloneDeep(value);
+      }
+    } else {
+      debug("Value is not empty.");
+      resValue = cloneDeep(value);
+    }
+    if (valueType === DataType.ARRAY && Array.isArray(resValue)) {
+      debug("Applying default values to array items.");
+      if (schema.items) {
+        const valueAsArray = resValue;
+        for (const index in valueAsArray) {
+          const elValue = valueAsArray[index];
+          const elSchema = schema.items;
+          const elSourcePath = sourcePath ? `${sourcePath}[${index}]` : `Array[${index}]`;
+          valueAsArray[index] = this.applyDefaultValuesIfNeeded(elValue, elSchema, elSourcePath);
+        }
+        debug("Default values applied to items.");
+      } else {
+        debug("No items schema specified.");
+      }
+    }
+    if (valueType === DataType.OBJECT && resValue !== null && typeof resValue === "object" && !Array.isArray(resValue)) {
+      debug("Applying default values to properties.");
+      if (schema.properties) {
+        const valueAsObject = resValue;
+        for (const propName in schema.properties) {
+          const propSchema = schema.properties[propName];
+          const propValue = valueAsObject[propName];
+          const propSourcePath = sourcePath ? `${sourcePath}.${propName}` : propName;
+          valueAsObject[propName] = this.applyDefaultValuesIfNeeded(propValue, propSchema, propSourcePath);
+        }
+        debug("Default values applied to properties.");
+      } else {
+        debug("No properties schema specified.");
+      }
+    }
+    return resValue;
+  }
+};
+__name(_DefaultValuesApplier, "DefaultValuesApplier");
+var DefaultValuesApplier = _DefaultValuesApplier;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   DATA_SCHEMA_CLASS_METADATA_KEY,
@@ -791,6 +909,7 @@ var DataTypeCaster = _DataTypeCaster;
   DataTypeCaster,
   DataValidator,
   DecoratorTargetError,
+  DefaultValuesApplier,
   REDUNDANT_TYPE_OPTION_ERROR_MESSAGE,
   TypeCastError,
   ValidationError,
