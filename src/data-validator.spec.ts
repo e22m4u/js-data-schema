@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import {describe} from 'mocha';
 import {DataType} from './data-schema.js';
 import {DataValidator} from './data-validator.js';
 import {CallableValidator} from './data-validator.js';

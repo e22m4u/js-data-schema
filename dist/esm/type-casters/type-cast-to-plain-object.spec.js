@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { describe } from 'mocha';
 import { TypeCastError } from '../errors/index.js';
 import { typeCastToPlainObject } from './type-cast-to-plain-object.js';
 describe('typeCastToPlainObject', function () {

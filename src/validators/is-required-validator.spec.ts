@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import {describe} from 'mocha';
 import {DataType} from '../data-schema.js';
 import {ValidationError} from '../errors/index.js';
 import {ServiceContainer} from '@e22m4u/js-service';

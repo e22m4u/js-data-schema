@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { describe } from 'mocha';
 import { DataType } from '../data-schema.js';
 import { TypeCastError } from './type-cast-error.js';
 describe('TypeCastError', function () {

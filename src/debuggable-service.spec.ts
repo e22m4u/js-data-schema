@@ -1,5 +1,4 @@
 import {expect} from 'chai';
-import {describe} from 'mocha';
 import {Service} from '@e22m4u/js-service';
 import {DebuggableService} from './debuggable-service.js';
 

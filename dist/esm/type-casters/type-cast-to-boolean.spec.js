@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { describe } from 'mocha';
 import { TypeCastError } from '../errors/index.js';
 import { typeCastToBoolean } from './type-cast-to-boolean.js';
 describe('typeCastToBoolean', function () {

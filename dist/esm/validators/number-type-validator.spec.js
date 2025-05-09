@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { describe } from 'mocha';
 import { format } from '@e22m4u/js-format';
 import { DataType } from '../data-schema.js';
 import { ValidationError } from '../errors/index.js';

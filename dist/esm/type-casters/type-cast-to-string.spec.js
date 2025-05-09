@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { describe } from 'mocha';
 import { TypeCastError } from '../errors/index.js';
 import { typeCastToString } from './type-cast-to-string.js';
 describe('typeCastToString', function () {

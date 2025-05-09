@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { describe } from 'mocha';
 import { Errorf } from '@e22m4u/js-format';
 import { DecoratorTargetError } from './decorator-target-error.js';
 describe('DecoratorTargetError', function () {
