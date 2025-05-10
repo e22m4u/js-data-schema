@@ -852,7 +852,12 @@ var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableServic
     if (isEmpty) {
       debug("Value is empty.");
       if (schema.default !== void 0) {
-        resValue = cloneDeep(schema.default);
+        let defaultValue = schema.default;
+        if (typeof schema.default === "function") {
+          debug("Extracting factory value.");
+          defaultValue = schema.default();
+        }
+        resValue = cloneDeep(defaultValue);
         debug("Default value:");
         debug.withOffset(1)((0, import_js_debug4.createColorizedDump)(resValue));
       } else {

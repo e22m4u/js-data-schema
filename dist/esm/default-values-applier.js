@@ -35,7 +35,14 @@ export class DefaultValuesApplier extends DebuggableService {
         if (isEmpty) {
             debug('Value is empty.');
             if (schema.default !== undefined) {
-                resValue = cloneDeep(schema.default);
+                // если значение по умолчанию является фабрикой,
+                // то выполняется извлечение фабричного значения
+                let defaultValue = schema.default;
+                if (typeof schema.default === 'function') {
+                    debug('Extracting factory value.');
+                    defaultValue = schema.default();
+                }
+                resValue = cloneDeep(defaultValue);
                 debug('Default value:');
                 debug.withOffset(1)(createColorizedDump(resValue));
             }
