@@ -448,7 +448,7 @@ var _DebuggableService = class _DebuggableService extends import_js_service.Serv
   constructor(container) {
     super(container);
     const serviceName = toCamelCase(this.constructor.name);
-    this.debug = (0, import_js_debug.createDebugger)("tsDataSchema", serviceName);
+    this.debug = (0, import_js_debug.createDebugger)("tsDataSchema", serviceName).withoutEnvNs();
     const debug = this.debug.withNs("constructor").withHash();
     debug("Service created.");
   }

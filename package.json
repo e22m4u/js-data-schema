@@ -41,7 +41,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@e22m4u/js-debug": "~0.1.4",
+    "@e22m4u/js-debug": "~0.1.6",
     "@e22m4u/js-empty-values": "~0.0.1",
     "@e22m4u/js-format": "~0.1.0",
     "@e22m4u/js-service": "~0.2.0",
