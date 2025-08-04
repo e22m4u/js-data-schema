@@ -346,8 +346,12 @@ var import_js_format6 = require("@e22m4u/js-format");
 var import_js_debug2 = require("@e22m4u/js-debug");
 
 // dist/esm/validators/array-type-validator.js
-function arrayTypeValidator(value, schema, sourcePath) {
+var import_js_empty_values = require("@e22m4u/js-empty-values");
+function arrayTypeValidator(value, schema, sourcePath, container) {
   if (schema.type === DataType.ARRAY && !Array.isArray(value)) {
+    const isEmpty = container.get(import_js_empty_values.EmptyValuesService).isEmptyByType(schema.type, value);
+    if (isEmpty)
+      return;
     if (sourcePath) {
       throw new ValidationError("Value of %v must be an Array, but %v given.", sourcePath, value);
     } else {
@@ -358,11 +362,11 @@ function arrayTypeValidator(value, schema, sourcePath) {
 __name(arrayTypeValidator, "arrayTypeValidator");
 
 // dist/esm/validators/is-required-validator.js
-var import_js_empty_values = require("@e22m4u/js-empty-values");
-function isRequiredValidator(value, schema, sourcePath, services) {
+var import_js_empty_values2 = require("@e22m4u/js-empty-values");
+function isRequiredValidator(value, schema, sourcePath, container) {
   if (!schema.required)
     return;
-  const emptyValuesService = services.get(import_js_empty_values.EmptyValuesService);
+  const emptyValuesService = container.get(import_js_empty_values2.EmptyValuesService);
   const isEmpty = emptyValuesService.isEmptyByType(schema.type, value);
   if (!isEmpty)
     return;
@@ -375,8 +379,12 @@ function isRequiredValidator(value, schema, sourcePath, services) {
 __name(isRequiredValidator, "isRequiredValidator");
 
 // dist/esm/validators/number-type-validator.js
-function numberTypeValidator(value, schema, sourcePath) {
+var import_js_empty_values3 = require("@e22m4u/js-empty-values");
+function numberTypeValidator(value, schema, sourcePath, container) {
   if (schema.type === DataType.NUMBER && (typeof value !== "number" || isNaN(value))) {
+    const isEmpty = container.get(import_js_empty_values3.EmptyValuesService).isEmptyByType(schema.type, value);
+    if (isEmpty)
+      return;
     if (sourcePath) {
       throw new ValidationError("Value of %v must be a Number, but %v given.", sourcePath, value);
     } else {
@@ -387,8 +395,12 @@ function numberTypeValidator(value, schema, sourcePath) {
 __name(numberTypeValidator, "numberTypeValidator");
 
 // dist/esm/validators/object-type-validator.js
-function objectTypeValidator(value, schema, sourcePath) {
+var import_js_empty_values4 = require("@e22m4u/js-empty-values");
+function objectTypeValidator(value, schema, sourcePath, container) {
   if (schema.type === DataType.OBJECT && !isPlainObject(value)) {
+    const isEmpty = container.get(import_js_empty_values4.EmptyValuesService).isEmptyByType(schema.type, value);
+    if (isEmpty)
+      return;
     if (sourcePath) {
       throw new ValidationError("Value of %v must be a plain Object, but %v given.", sourcePath, value);
     } else {
@@ -399,8 +411,12 @@ function objectTypeValidator(value, schema, sourcePath) {
 __name(objectTypeValidator, "objectTypeValidator");
 
 // dist/esm/validators/string-type-validator.js
-function stringTypeValidator(value, schema, sourcePath) {
+var import_js_empty_values5 = require("@e22m4u/js-empty-values");
+function stringTypeValidator(value, schema, sourcePath, container) {
   if (schema.type === DataType.STRING && typeof value !== "string") {
+    const isEmpty = container.get(import_js_empty_values5.EmptyValuesService).isEmptyByType(schema.type, value);
+    if (isEmpty)
+      return;
     if (sourcePath) {
       throw new ValidationError("Value of %v must be a String, but %v given.", sourcePath, value);
     } else {
@@ -411,8 +427,12 @@ function stringTypeValidator(value, schema, sourcePath) {
 __name(stringTypeValidator, "stringTypeValidator");
 
 // dist/esm/validators/boolean-type-validator.js
-function booleanTypeValidator(value, schema, sourcePath) {
+var import_js_empty_values6 = require("@e22m4u/js-empty-values");
+function booleanTypeValidator(value, schema, sourcePath, container) {
   if (schema.type === DataType.BOOLEAN && typeof value !== "boolean") {
+    const isEmpty = container.get(import_js_empty_values6.EmptyValuesService).isEmptyByType(schema.type, value);
+    if (isEmpty)
+      return;
     if (sourcePath) {
       throw new ValidationError("Value of %v must be a Boolean, but %v given.", sourcePath, value);
     } else {
@@ -825,7 +845,7 @@ var DataTypeCaster = _DataTypeCaster;
 
 // dist/esm/default-values-applier.js
 var import_js_debug4 = require("@e22m4u/js-debug");
-var import_js_empty_values2 = require("@e22m4u/js-empty-values");
+var import_js_empty_values7 = require("@e22m4u/js-empty-values");
 var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableService {
   /**
    * Apply default values if needed.
@@ -847,7 +867,7 @@ var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableServic
       debug("Source path is %v.", sourcePath);
     const valueType = (_a = schema.type) != null ? _a : DataType.ANY;
     debug("Value type is %v.", toPascalCase(valueType));
-    const isEmpty = this.getService(import_js_empty_values2.EmptyValuesService).isEmptyByType(valueType, value);
+    const isEmpty = this.getService(import_js_empty_values7.EmptyValuesService).isEmptyByType(valueType, value);
     let resValue;
     if (isEmpty) {
       debug("Value is empty.");

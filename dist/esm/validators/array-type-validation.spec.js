@@ -2,17 +2,23 @@ import { expect } from 'chai';
 import { format } from '@e22m4u/js-format';
 import { DataType } from '../data-schema.js';
 import { ValidationError } from '../errors/index.js';
+import { ServiceContainer } from '@e22m4u/js-service';
 import { arrayTypeValidator } from './array-type-validator.js';
+const SC = new ServiceContainer();
 describe('arrayTypeValidator', function () {
     it('skips validation for non-array schema', function () {
-        arrayTypeValidator(NaN, { type: DataType.ANY });
-        arrayTypeValidator(NaN, { type: DataType.STRING });
-        arrayTypeValidator(NaN, { type: DataType.NUMBER });
-        arrayTypeValidator(NaN, { type: DataType.BOOLEAN });
-        arrayTypeValidator(NaN, { type: DataType.OBJECT });
+        arrayTypeValidator(NaN, { type: DataType.ANY }, undefined, SC);
+        arrayTypeValidator(NaN, { type: DataType.STRING }, undefined, SC);
+        arrayTypeValidator(NaN, { type: DataType.NUMBER }, undefined, SC);
+        arrayTypeValidator(NaN, { type: DataType.BOOLEAN }, undefined, SC);
+        arrayTypeValidator(NaN, { type: DataType.OBJECT }, undefined, SC);
+    });
+    it('skips empty values', function () {
+        arrayTypeValidator(undefined, { type: DataType.ARRAY }, undefined, SC);
+        arrayTypeValidator(null, { type: DataType.ARRAY }, undefined, SC);
     });
     it('throws an error for non-array value in case of array schema', function () {
-        const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY });
+        const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY }, undefined, SC);
         const error = (v) => format('Value must be an Array, but %s given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
         expect(throwable('')).to.throw(ValidationError, error('""'));
@@ -25,7 +31,7 @@ describe('arrayTypeValidator', function () {
     });
     describe('with sourcePath', function () {
         it('throws an error for non-array value in case of array schema', function () {
-            const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY }, 'source.path');
+            const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY }, 'source.path', SC);
             const error = (v) => format('Value of "source.path" must be an Array, but %s given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));
             expect(throwable('')).to.throw(ValidationError, error('""'));

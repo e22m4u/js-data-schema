@@ -6,6 +6,6 @@ import { ServiceContainer } from '@e22m4u/js-service';
  * @param value
  * @param schema
  * @param sourcePath
- * @param services
+ * @param container
  */
-export declare function isRequiredValidator(value: unknown, schema: DataSchema, sourcePath: string | undefined, services: ServiceContainer): void;
+export declare function isRequiredValidator(value: unknown, schema: DataSchema, sourcePath: string | undefined, container: ServiceContainer): void;

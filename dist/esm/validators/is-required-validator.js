@@ -6,12 +6,12 @@ import { EmptyValuesService } from '@e22m4u/js-empty-values';
  * @param value
  * @param schema
  * @param sourcePath
- * @param services
+ * @param container
  */
-export function isRequiredValidator(value, schema, sourcePath, services) {
+export function isRequiredValidator(value, schema, sourcePath, container) {
     if (!schema.required)
         return;
-    const emptyValuesService = services.get(EmptyValuesService);
+    const emptyValuesService = container.get(EmptyValuesService);
     const isEmpty = emptyValuesService.isEmptyByType(schema.type, value);
     if (!isEmpty)
         return;

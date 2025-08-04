@@ -19,7 +19,7 @@ export type CallableValidator = (
   value: unknown,
   schema: DataSchema,
   sourcePath: string | undefined,
-  services: ServiceContainer,
+  container: ServiceContainer,
 ) => void;
 
 /**
