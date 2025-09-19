@@ -24,12 +24,15 @@ export function arrayTypeValidator(
     if (isEmpty) return;
     if (sourcePath) {
       throw new ValidationError(
-        'Value of %v must be an Array, but %v given.',
+        'Value of %v must be an Array, but %v was given.',
         sourcePath,
         value,
       );
     } else {
-      throw new ValidationError('Value must be an Array, but %v given.', value);
+      throw new ValidationError(
+        'Value must be an Array, but %v was given.',
+        value,
+      );
     }
   }
 }

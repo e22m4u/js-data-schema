@@ -19,7 +19,7 @@ describe('objectTypeValidator', function () {
     });
     it('throws an error for non-object value', function () {
         const throwable = (v) => () => objectTypeValidator(v, { type: DataType.OBJECT }, undefined, SC);
-        const error = (v) => format('Value must be a plain Object, but %s given.', v);
+        const error = (v) => format('Value must be a plain Object, but %s was given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
         expect(throwable('')).to.throw(ValidationError, error('""'));
         expect(throwable(10)).to.throw(ValidationError, error('10'));
@@ -31,7 +31,7 @@ describe('objectTypeValidator', function () {
     });
     it('throws an error for a non-plain object', function () {
         const throwable = () => objectTypeValidator(new Date(), { type: DataType.OBJECT }, undefined, SC);
-        expect(throwable).to.throw(ValidationError, 'Value must be a plain Object, but Date given.');
+        expect(throwable).to.throw(ValidationError, 'Value must be a plain Object, but Date was given.');
     });
     it('does not throw an error for a plain object', function () {
         objectTypeValidator(Object.create(null), { type: DataType.OBJECT }, undefined, SC);
@@ -39,7 +39,7 @@ describe('objectTypeValidator', function () {
     describe('with sourcePath', function () {
         it('throws an error for non-object value', function () {
             const throwable = (v) => () => objectTypeValidator(v, { type: DataType.OBJECT }, 'source.path', SC);
-            const error = (v) => format('Value of "source.path" must be a plain Object, but %s given.', v);
+            const error = (v) => format('Value of "source.path" must be a plain Object, but %s was given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));
             expect(throwable('')).to.throw(ValidationError, error('""'));
             expect(throwable(true)).to.throw(ValidationError, error('true'));
@@ -51,7 +51,7 @@ describe('objectTypeValidator', function () {
         });
         it('throws an error for a non-plain object', function () {
             const throwable = () => objectTypeValidator(new Date(), { type: DataType.OBJECT }, 'source.path', SC);
-            expect(throwable).to.throw(ValidationError, 'Value of "source.path" must be a plain Object, but Date given.');
+            expect(throwable).to.throw(ValidationError, 'Value of "source.path" must be a plain Object, but Date was given.');
         });
         it('does not throw an error for a plain object', function () {
             objectTypeValidator(Object.create(null), { type: DataType.OBJECT }, 'source.path', SC);

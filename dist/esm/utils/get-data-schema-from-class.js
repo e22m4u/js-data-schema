@@ -59,7 +59,7 @@ function convertDataSchemaMetadataOrClassFactoryToDataSchema(input, doNotThrowIf
         // то выбрасывается ошибка
         else {
             throw new Errorf('Properties schema allows a class factory ' +
-                'or a schema object, but %v given.', input.properties);
+                'or a schema object, but %v was given.', input.properties);
         }
     }
     else if (input.type === DataType.ARRAY) {
@@ -87,7 +87,7 @@ function convertDataSchemaMetadataOrClassFactoryToDataSchema(input, doNotThrowIf
         // то выбрасывается ошибка
         else {
             throw new Errorf('Items schema allows a class factory ' +
-                'or a schema object, but %v given.', result.items);
+                'or a schema object, but %v was given.', result.items);
         }
     }
     return result;
@@ -133,6 +133,6 @@ function getClassFromFactory(factory) {
     // если результатом фабрики не является
     // класс, то выбрасывается ошибка
     if (!isClass(cls))
-        throw new Errorf('Class factory must return a class, but %v given.', cls);
+        throw new Errorf('Class factory must return a class, but %v was given.', cls);
     return cls;
 }

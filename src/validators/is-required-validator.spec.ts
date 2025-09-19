@@ -21,7 +21,7 @@ describe('isRequiredValidator', function () {
       isRequiredValidator(undefined, schema, undefined, C);
     expect(throwable).to.throw(
       ValidationError,
-      'Value is required, but undefined given.',
+      'Value is required, but undefined was given.',
     );
   });
 
@@ -31,7 +31,7 @@ describe('isRequiredValidator', function () {
     const throwable = () => isRequiredValidator(null, schema, undefined, C);
     expect(throwable).to.throw(
       ValidationError,
-      'Value is required, but null given.',
+      'Value is required, but null was given.',
     );
   });
 
@@ -43,7 +43,7 @@ describe('isRequiredValidator', function () {
         isRequiredValidator(undefined, schema, 'source', C);
       expect(throwable).to.throw(
         ValidationError,
-        'Value of "source" is required, but undefined given.',
+        'Value of "source" is required, but undefined was given.',
       );
     });
 
@@ -53,7 +53,7 @@ describe('isRequiredValidator', function () {
       const throwable = () => isRequiredValidator(null, schema, 'source', C);
       expect(throwable).to.throw(
         ValidationError,
-        'Value of "source" is required, but null given.',
+        'Value of "source" is required, but null was given.',
       );
     });
   });

@@ -25,7 +25,7 @@ describe('numberTypeValidator', function () {
     const throwable = (v: unknown) => () =>
       numberTypeValidator(v, {type: DataType.NUMBER}, undefined, SC);
     const error = (v: string) =>
-      format('Value must be a Number, but %s given.', v);
+      format('Value must be a Number, but %s was given.', v);
     expect(throwable('str')).to.throw(ValidationError, error('"str"'));
     expect(throwable('')).to.throw(ValidationError, error('""'));
     expect(throwable(true)).to.throw(ValidationError, error('true'));
@@ -41,7 +41,7 @@ describe('numberTypeValidator', function () {
       numberTypeValidator(NaN, {type: DataType.NUMBER}, undefined, SC);
     expect(throwable).to.throw(
       ValidationError,
-      'Value must be a Number, but NaN given.',
+      'Value must be a Number, but NaN was given.',
     );
   });
 
@@ -50,7 +50,7 @@ describe('numberTypeValidator', function () {
       const throwable = (v: unknown) => () =>
         numberTypeValidator(v, {type: DataType.NUMBER}, 'source.path', SC);
       const error = (v: string) =>
-        format('Value of "source.path" must be a Number, but %s given.', v);
+        format('Value of "source.path" must be a Number, but %s was given.', v);
       expect(throwable('str')).to.throw(ValidationError, error('"str"'));
       expect(throwable('')).to.throw(ValidationError, error('""'));
       expect(throwable(true)).to.throw(ValidationError, error('true'));
@@ -69,7 +69,7 @@ describe('numberTypeValidator', function () {
         numberTypeValidator(NaN, {type: DataType.NUMBER}, 'source.path', SC);
       expect(throwable).to.throw(
         ValidationError,
-        'Value of "source.path" must be a Number, but NaN given.',
+        'Value of "source.path" must be a Number, but NaN was given.',
       );
     });
   });

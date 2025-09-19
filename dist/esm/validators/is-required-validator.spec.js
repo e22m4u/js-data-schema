@@ -16,26 +16,26 @@ describe('isRequiredValidator', function () {
         const C = new ServiceContainer();
         const schema = { type: DataType.ANY, required: true };
         const throwable = () => isRequiredValidator(undefined, schema, undefined, C);
-        expect(throwable).to.throw(ValidationError, 'Value is required, but undefined given.');
+        expect(throwable).to.throw(ValidationError, 'Value is required, but undefined was given.');
     });
     it('throws an error for null in case of required option', function () {
         const C = new ServiceContainer();
         const schema = { type: DataType.ANY, required: true };
         const throwable = () => isRequiredValidator(null, schema, undefined, C);
-        expect(throwable).to.throw(ValidationError, 'Value is required, but null given.');
+        expect(throwable).to.throw(ValidationError, 'Value is required, but null was given.');
     });
     describe('with sourcePath', function () {
         it('throws an error for undefined in case of required option', function () {
             const C = new ServiceContainer();
             const schema = { type: DataType.ANY, required: true };
             const throwable = () => isRequiredValidator(undefined, schema, 'source', C);
-            expect(throwable).to.throw(ValidationError, 'Value of "source" is required, but undefined given.');
+            expect(throwable).to.throw(ValidationError, 'Value of "source" is required, but undefined was given.');
         });
         it('throws an error for null in case of required option', function () {
             const C = new ServiceContainer();
             const schema = { type: DataType.ANY, required: true };
             const throwable = () => isRequiredValidator(null, schema, 'source', C);
-            expect(throwable).to.throw(ValidationError, 'Value of "source" is required, but null given.');
+            expect(throwable).to.throw(ValidationError, 'Value of "source" is required, but null was given.');
         });
     });
 });

@@ -25,7 +25,7 @@ describe('objectTypeValidator', function () {
     const throwable = (v: unknown) => () =>
       objectTypeValidator(v, {type: DataType.OBJECT}, undefined, SC);
     const error = (v: string) =>
-      format('Value must be a plain Object, but %s given.', v);
+      format('Value must be a plain Object, but %s was given.', v);
     expect(throwable('str')).to.throw(ValidationError, error('"str"'));
     expect(throwable('')).to.throw(ValidationError, error('""'));
     expect(throwable(10)).to.throw(ValidationError, error('10'));
@@ -41,7 +41,7 @@ describe('objectTypeValidator', function () {
       objectTypeValidator(new Date(), {type: DataType.OBJECT}, undefined, SC);
     expect(throwable).to.throw(
       ValidationError,
-      'Value must be a plain Object, but Date given.',
+      'Value must be a plain Object, but Date was given.',
     );
   });
 
@@ -60,7 +60,7 @@ describe('objectTypeValidator', function () {
         objectTypeValidator(v, {type: DataType.OBJECT}, 'source.path', SC);
       const error = (v: string) =>
         format(
-          'Value of "source.path" must be a plain Object, but %s given.',
+          'Value of "source.path" must be a plain Object, but %s was given.',
           v,
         );
       expect(throwable('str')).to.throw(ValidationError, error('"str"'));
@@ -83,7 +83,7 @@ describe('objectTypeValidator', function () {
         );
       expect(throwable).to.throw(
         ValidationError,
-        'Value of "source.path" must be a plain Object, but Date given.',
+        'Value of "source.path" must be a plain Object, but Date was given.',
       );
     });
 

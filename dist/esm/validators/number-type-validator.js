@@ -18,10 +18,10 @@ export function numberTypeValidator(value, schema, sourcePath, container) {
         if (isEmpty)
             return;
         if (sourcePath) {
-            throw new ValidationError('Value of %v must be a Number, but %v given.', sourcePath, value);
+            throw new ValidationError('Value of %v must be a Number, but %v was given.', sourcePath, value);
         }
         else {
-            throw new ValidationError('Value must be a Number, but %v given.', value);
+            throw new ValidationError('Value must be a Number, but %v was given.', value);
         }
     }
 }

@@ -19,10 +19,14 @@
 - [Тесты](#тесты)
 
 ## Ключевые особенности
-- **DataValidator** - Сервис валидации со встроенной проверкой типов.
+
+- **DataValidator** - Сервис валидации со встроенной проверкой типов
+  и гибкой системой пользовательских правил.
 - **DataTypeCaster** - Сервис конвертации значений согласно схеме данных.
-- **DefaultValuesApplier** - Сервис заполняющий данные значениями по-умолчанию.
-- Расширяемая архитектура, позволяющая добавлять пользовательские валидаторы и преобразователи типов.
+- **DefaultValuesApplier** - Сервис, заполняющий данные значениями
+  по-умолчанию.
+- Расширяемая архитектура, позволяющая добавлять пользовательские
+  валидаторы и преобразователи типов.
 - Подробная отладка.
 
 ## Схема данных
@@ -44,20 +48,20 @@ type DataSchema = {
 
 #### type
 
-Определяет тип значения с помощью констант указанных ниже.
+Определяет тип значения с помощью констант, указанных ниже.
 
-- `DataType.ANY` - принимает любой тип
-- `DataType.STRING` - строковые значения
-- `DataType.NUMBER` - числовые значения
-- `DataType.BOOLEAN` - логические значения
-- `DataType.ARRAY` - массивы
-- `DataType.OBJECT` - объекты (не экземпляры)
+- `DataType.ANY` - принимает любой тип;
+- `DataType.STRING` - строковые значения;
+- `DataType.NUMBER` - числовые значения;
+- `DataType.BOOLEAN` - логические значения;
+- `DataType.ARRAY` - массивы;
+- `DataType.OBJECT` - объекты (не экземпляры);
 
 ```ts
 import {DataType} from '@e22m4u/ts-data-schema';
 
 const schema = {
-  type: DataSchema.STRING,
+  type: DataType.STRING,
 }
 ```
 
@@ -68,8 +72,8 @@ const schema = {
 
 ```ts
 const schema = {
-  type: DataSchema.ARRAY,
-  items: {type: DataSchema.STRING},
+  type: DataType.ARRAY,
+  items: {type: DataType.STRING},
 }
 ```
 
@@ -81,33 +85,34 @@ const schema = {
 
 ```ts
 const schema = {
-  type: DataSchema.OBJECT,
+  type: DataType.OBJECT,
   properties: {
-    foo: {type: DataSchema.STRING},
-    bar: {type: DataSchema.NUMBER},
+    foo: {type: DataType.STRING},
+    bar: {type: DataType.NUMBER},
   },
 }
 ```
 
 #### required
 
-Параметр исключает допуск [пустых значений](#пустые-значения) для данной схемы.
+Параметр исключает допуск [пустых значений](#пустые-значения) для данной
+схемы.
 
 ```ts
 const schema = {
-  type: DataSchema.ANY,
+  type: DataType.ANY,
   required: true,
 }
 ```
 
 #### default
 
-Параметр определяет значение по умолчанию на случай, если входящее значение
-является [пустым](#пустые-значения).
+Параметр определяет значение по умолчанию на случай, если входящее
+значение является [пустым](#пустые-значения).
 
 ```ts
 const schema = {
-  type: DataSchema.STRING,
+  type: DataType.STRING,
   default: 'John Doe',
 }
 ```
@@ -117,32 +122,30 @@ const schema = {
 Пользовательская функция(и) валидации для применения дополнительных
 правил. Может быть одной функцией или массивом функций.
 
+Валидатор может сигнализировать об ошибке несколькими способами:
+1. **Вернуть строку с сообщением об ошибке** (рекомендуется для простых случаев).
+2. Вернуть `false` для генерации стандартного сообщения об ошибке.
+3. Вернуть экземпляр `Error` (например, `new ValidationError(...)`).
+4. Выбросить исключение.
+
+Если валидация прошла успешно, функция должна вернуть `true` или
+ничего (`undefined`).
+
+**Пример с возвратом строки:**
+
 ```ts
 const schema = {
-  type: DataSchema.ANY,
-  validate: (value: unknown) => {
-    if (typeof value !== 'string')
-      throw new Error('A string required.');
-  },
+  type: DataType.NUMBER,
+  // Если значение не положительное, вернется строка,
+  // которая станет сообщением ошибки
+  validate: (value) => value > 0 || 'Значение должно быть положительным.',
 }
 ```
 
-Использование нескольких валидаторов.
+**Пример с `throw` (для более сложной логики):**
 
 ```ts
-const schema = {
-  type: DataSchema.ANY,
-  validate: [
-    myValidator1,
-    myValidator2,
-  ],
-}
-```
-
-Использование аргументов валидатора.
-
-```ts
-import {DataSchema} from '@e22m4u/ts-data-schema';
+import {DataSchema, ValidationError} from '@e22m4u/ts-data-schema';
 // import {ServiceContainer} from '@e22m4u/js-service';
 
 function nonEmptyString(
@@ -164,6 +167,11 @@ function nonEmptyString(
     );
   }
 }
+
+const schema = {
+  type: DataType.STRING,
+  validate: nonEmptyString,
+}
 ```
 
 ## Пустые значения
@@ -171,9 +179,9 @@ function nonEmptyString(
 Проверка наличия полезной нагрузки выполняется встроенным модулем
 [@e22m4u/js-empty-values](https://www.npmjs.com/package/@e22m4u/js-empty-values)
 (не требует установки). Согласно спецификации модуля, разные типы данных
-имеют собственные наборы пустых значений. Эти наборы используются для определения
-наличия полезной нагрузки при проверке обязательных значений или определения
-необходимости использования значения по умолчанию.
+имеют собственные наборы пустых значений. Эти наборы используются для
+определения наличия полезной нагрузки при проверке обязательных
+значений или определения необходимости использования значения по умолчанию.
 
 | константа          | тип         | пустые значения           |
 |--------------------|-------------|---------------------------|
@@ -212,134 +220,157 @@ function nonEmptyString(
 генерировать объект схемы через утилиту `getDataSchemaFromClass`.
 
 ```ts
-import {dsObject} from '@e22m4u/ts-data-schema';
-import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+import {
+  dsObject,
+  dsString,
+  getDataSchemaFromClass,
+} from '@e22m4u/ts-data-schema';
 
 @dsObject()
 class PostSchema {
-  // ...
+  @dsString()
+  title: string;
 }
 
 const postSchema = getDataSchemaFromClass(PostSchema);
 console.log(postSchema);
 // {
-//   "type": "object",
-//   "properties": { ... }
+//   type: 'object',
+//   properties: {
+//     "title": {
+//       type: 'string'
+//     }
+//   }
 // }
 ```
 
 ## Примеры
 
-Проверка простых значений.
+### Проверка простых значений
 
 ```ts
-import {DataType} from '@e22m4u/ts-data-schema';
-import {DataValidator} from '@e22m4u/ts-data-schema';
+import {
+  DataType,
+  DataValidator,
+  ValidationError,
+} from '@e22m4u/ts-data-schema';
 
 const validator = new DataValidator();
 
-// определение схемы
+// Определение схемы
 const schema = {
   type: DataType.STRING,
-  // дополнительные опции
 };
 
-// валидация значения согласно схеме
-validator.validate('John', schema); // вернет undefined
-validator.validate(10, schema);     // ошибка ValidationError
-```
+// Валидация значения согласно схеме
+validator.validate('John', schema); // Успех, ничего не происходит
 
-Пользовательская функция-валидатор.
-
-```ts
-import {DataType} from '@e22m4u/ts-data-schema';
-import {DataValidator} from '@e22m4u/ts-data-schema';
-import {ValidationError} from '@e22m4u/ts-data-schema';
-
-const validator = new DataValidator();
-
-// определение функции-валидатора
-function nonEmptyString(value) {
-  if (!value || typeof value !== 'string')
-    throw new ValidationError('Non-empty string required.');
+try {
+  validator.validate(10, schema); // Ошибка
+} catch (e) {
+  if (e instanceof ValidationError) {
+    // "Value must be a String, but 10 was given."
+    console.error(e.message);
+  }
 }
-
-// определение схемы
-const schema = {
-  type: DataType.STRING,
-  validate: nonEmptyString, // установка вашего валидатора
-  // validate: [myValidator1, myValidator2, ...],
-};
-
-// проверка значений
-validator.validate('John', schema); // вернет undefined
-validator.validate('', schema);     // ошибка ValidationError
 ```
 
-Конвертация значений согласно схеме.
+### Пользовательская функция-валидатор
 
 ```ts
-import {DataType} from '@e22m4u/ts-data-schema';
-import {DataTypeCaster} from '@e22m4u/ts-data-schema';
+import {
+  DataType,
+  DataValidator,
+  ValidationError,
+} from '@e22m4u/ts-data-schema';
+
+const validator = new DataValidator();
+
+// Определение схемы с коротким валидатором
+const schema = {
+  type: DataType.STRING,
+  validate: (v) => (v && v.length > 0) || 'Строка не должна быть пустой',
+};
+
+// Проверка значений
+validator.validate('John', schema); // Успех
+
+try {
+  validator.validate('', schema); // Ошибка
+} catch (e) {
+  if (e instanceof ValidationError) {
+    console.error(e.message); // "Строка не должна быть пустой"
+  }
+}
+```
+
+### Конвертация значений
+
+```ts
+import {
+  DataType,
+  DataTypeCaster,
+  TypeCastError,
+} from '@e22m4u/ts-data-schema';
 
 const typeCaster = new DataTypeCaster();
 
-// определение схемы
 const schema = {
   type: DataType.NUMBER,
-  // дополнительные опции
 };
 
-// приведение типа согласно схеме,
-// или выброс ошибки TypeCastError
-typeCaster.cast('10', schema);  // вернет 10 как number
-typeCaster.cast('foo', schema); // ошибка TypeCastError
+// Приведение типа согласно схеме
+const num = typeCaster.cast('10', schema); // Вернет 10 (тип number)
+console.log(typeof num); // "number"
 
-// приведение типа согласно схеме,
-// или возврат значения без изменений
-typeCaster.cast('10', schema, {noTypeCastError: true});  // вернет 10
-typeCaster.cast('foo', schema, {noTypeCastError: true}); // вернет "foo"
+try {
+  // Выбросит ошибку TypeCastError
+  typeCaster.cast('foo', schema);
+} catch (e) {
+  if (e instanceof TypeCastError) {
+    console.error(e.message); // "Unable to cast String to Number."
+  }
+}
+
+
+// Приведение типа с подавлением ошибок
+const res1 = typeCaster.cast('10', schema, {noTypeCastError: true});  // 10
+const res2 = typeCaster.cast('foo', schema, {noTypeCastError: true}); // "foo"
 ```
 
-Получить значение по умолчанию согласно указанной схеме, если входящее
-значение является [пустым](#пустые-значения). В противном случае возвращается
-оригинал без изменений.
+### Значения по умолчанию
 
 ```ts
-import {DataType} from '@e22m4u/ts-data-schema';
-import {DefaultValuesApplier} from './default-values-applier';
+import {
+  DataType,
+  DefaultValuesApplier,
+} from '@e22m4u/ts-data-schema';
 
 const defaultsApplier = new DefaultValuesApplier();
 
-// определение схемы
-// числового значения
 const schema = {
   type: DataType.NUMBER,
-  default: 10, // <- по умолчанию
+  default: 10,
 };
 
-// метод `applyDefaultValuesIfNeeded` возвращает
+// Метод `applyDefaultValuesIfNeeded` возвращает
 // значение по умолчанию, если входящее значение
-// является пустым
-const res1 = defaultsApplier.applyDefaultValuesIfNeeded(5, schema);
-const res2 = defaultsApplier.applyDefaultValuesIfNeeded(0, schema);
-const res3 = defaultsApplier.applyDefaultValuesIfNeeded(undefined, schema);
-console.log(res1); // 5  (без изменений)
-console.log(res2); // 10 (по умолчанию вместо 0)
-console.log(res3); // 10 (по умолчанию вместо undefined)
+// является пустым.
+const res1 = defaultsApplier.applyDefaultValuesIfNeeded(5, schema); // 5
+const res2 = defaultsApplier.applyDefaultValuesIfNeeded(0, schema); // 10
+const res3 = defaultsApplier.applyDefaultValuesIfNeeded(undefined, schema); // 10
 ```
 
-Заполнение свойств объекта значениями по умолчанию согласно указанной
-схеме (если свойство имеет [пустое значение](#пустые-значения)).
+### Заполнение объекта значениями по умолчанию
 
 ```ts
-import {DataType} from '@e22m4u/ts-data-schema';
-import {DefaultValuesApplier} from './default-values-applier';
+import {
+  DataType,
+  DefaultValuesApplier,
+} from '@e22m4u/ts-data-schema';
 
 const defaultsApplier = new DefaultValuesApplier();
 
-// определене схемы объекта и значений
-// по умолчанию для каждого свойства
 const schema = {
   type: DataType.OBJECT,
   properties: {
@@ -354,121 +385,106 @@ const schema = {
   },
 };
 
-// метод `applyDefaultValuesIfNeeded` по необходимости
-// устанавливает стандартные значения для каждого свойства,
-// и возвращает новый объект (не затрагивая оригинал)
+// Метод возвращает новый объект (не затрагивая оригинал)
 const res = defaultsApplier.applyDefaultValuesIfNeeded(
   {foo: null, baz: 'qux'},
   schema,
 );
 console.log(res);
 // {
-//   foo: 'myDefaultValue', <- значение по умолчанию вместо null
-//   bar: 10,               <- значение по умолчанию (не определено)
-//   baz: 'qux'             <- осталось без изменений (новое свойство)
+//   foo: 'myDefaultValue', // значение по умолчанию вместо null
+//   bar: 10,               // значение по умолчанию (т.к. свойство
+//                          // не было определено)
+//   baz: 'qux'             // осталось без изменений
 // }
 ```
 
-Использование декораторов для построения схемы объекта.
+### Использование декораторов
 
 ```ts
-import {dsNumber} from '@e22m4u/ts-data-schema';
-import {dsObject} from '@e22m4u/ts-data-schema';
-import {dsString} from '@e22m4u/ts-data-schema';
-import {ClassToPlain} from '@e22m4u/ts-data-schema';
-import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+import {
+  dsNumber,
+  dsObject,
+  dsString,
+  getDataSchemaFromClass,
+} from '@e22m4u/ts-data-schema';
 
 @dsObject()
 class AuthorSchema {
   @dsNumber({required: true})
   id!: number;
 
-  @dsString({validate: nonEmptyString})
+  @dsString({validate: (name) => name.length > 0 || 'Name cannot be empty'})
   name?: string;
 }
 
-type Author = ClassToPlain<AuthorSchema>;
-// {
-//   id: string,
-//   name?: string | undefined,
-// }
-
 const authorSchema = getDataSchemaFromClass(AuthorSchema);
-console.log(authorSchema);
+console.log(JSON.stringify(authorSchema, null, 2));
 // {
-//   type: "object",
+//   type: 'object',
 //   properties: {
 //     id: {
-//       type: "number",
-//       required: true,
+//       type: 'number',
+//       required: true
 //     },
 //     name: {
-//       type: "string",
-//       validate() {...}
-//     },
-//   },
+//       type: 'string',
+//       validate: '...'
+//     }
+//   }
 // }
 ```
 
-Построение схемы вложенных объектов с помощью декораторов.
+### Вложенные объекты с декораторами
 
 ```ts
-import {dsNumber} from '@e22m4u/ts-data-schema';
-import {dsObject} from '@e22m4u/ts-data-schema';
-import {dsString} from '@e22m4u/ts-data-schema';
-import {ClassToPlain} from '@e22m4u/ts-data-schema';
-import {getDataSchemaFromClass} from '@e22m4u/ts-data-schema';
+import {
+  dsNumber,
+  dsObject,
+  dsString,
+  getDataSchemaFromClass,
+} from '@e22m4u/ts-data-schema';
+
+// AuthorSchema определена в примере выше
 
 @dsObject()
 class PostSchema {
   @dsNumber({required: true})
   id!: number;
 
-  @dsString({validate: nonEmptyString})
+  @dsString()
   title?: string;
 
+  // Использование фабрики `() => AuthorSchema` для ссылки на другой класс
   @dsObject(() => AuthorSchema, {required: true})
-  author!: Author;
-  // AuthorSchema и Author
-  // определены в примере выше
+  author!: AuthorSchema;
 }
 
-type Post = ClassToPlain<PostSchema>;
-// {
-//   id: string,
-//   title?: string | undefined,
-//   author: {
-//     id: string,
-//     name?: string | undefined,
-//   }
-// }
-
 const postSchema = getDataSchemaFromClass(PostSchema);
-console.log(postSchema);
+console.log(JSON.stringify(postSchema, null, 2));
 // {
-//   type: "object"
+//   type: 'object',
 //   properties: {
 //     id: {
-//       type: "number",
-//       required: true,
+//       type: 'number',
+//       required: true
 //     },
 //     title: {
-//       type: "string",
-//       validate() {...},
+//       type: 'string'
 //     },
 //     author: {
-//       type: "object",
+//       type: 'object',
 //       required: true,
 //       properties: {
 //         id: {
-//           type: "number",
-//           required: true,
+//           type: 'number',
+//           required: true
 //         },
 //         name: {
-//           type: "string",
-//           validate() {...},
-//         },
-//       },
+//           type: 'string',
+//           validate: '...'
+//         }
+//       }
 //     }
 //   }
 // }

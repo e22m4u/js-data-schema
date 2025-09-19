@@ -19,7 +19,7 @@ describe('arrayTypeValidator', function () {
     });
     it('throws an error for non-array value in case of array schema', function () {
         const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY }, undefined, SC);
-        const error = (v) => format('Value must be an Array, but %s given.', v);
+        const error = (v) => format('Value must be an Array, but %s was given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
         expect(throwable('')).to.throw(ValidationError, error('""'));
         expect(throwable(10)).to.throw(ValidationError, error('10'));
@@ -32,7 +32,7 @@ describe('arrayTypeValidator', function () {
     describe('with sourcePath', function () {
         it('throws an error for non-array value in case of array schema', function () {
             const throwable = (v) => () => arrayTypeValidator(v, { type: DataType.ARRAY }, 'source.path', SC);
-            const error = (v) => format('Value of "source.path" must be an Array, but %s given.', v);
+            const error = (v) => format('Value of "source.path" must be an Array, but %s was given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));
             expect(throwable('')).to.throw(ValidationError, error('""'));
             expect(throwable(10)).to.throw(ValidationError, error('10'));

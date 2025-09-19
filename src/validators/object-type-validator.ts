@@ -26,13 +26,13 @@ export function objectTypeValidator(
     if (isEmpty) return;
     if (sourcePath) {
       throw new ValidationError(
-        'Value of %v must be a plain Object, but %v given.',
+        'Value of %v must be a plain Object, but %v was given.',
         sourcePath,
         value,
       );
     } else {
       throw new ValidationError(
-        'Value must be a plain Object, but %v given.',
+        'Value must be a plain Object, but %v was given.',
         value,
       );
     }

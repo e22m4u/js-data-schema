@@ -16,10 +16,10 @@ export function arrayTypeValidator(value, schema, sourcePath, container) {
         if (isEmpty)
             return;
         if (sourcePath) {
-            throw new ValidationError('Value of %v must be an Array, but %v given.', sourcePath, value);
+            throw new ValidationError('Value of %v must be an Array, but %v was given.', sourcePath, value);
         }
         else {
-            throw new ValidationError('Value must be an Array, but %v given.', value);
+            throw new ValidationError('Value must be an Array, but %v was given.', value);
         }
     }
 }

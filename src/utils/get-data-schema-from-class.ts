@@ -89,7 +89,7 @@ function convertDataSchemaMetadataOrClassFactoryToDataSchema(
     else {
       throw new Errorf(
         'Properties schema allows a class factory ' +
-          'or a schema object, but %v given.',
+          'or a schema object, but %v was given.',
         input.properties,
       );
     }
@@ -127,7 +127,7 @@ function convertDataSchemaMetadataOrClassFactoryToDataSchema(
     else {
       throw new Errorf(
         'Items schema allows a class factory ' +
-          'or a schema object, but %v given.',
+          'or a schema object, but %v was given.',
         result.items,
       );
     }
@@ -181,6 +181,9 @@ function getClassFromFactory<T extends object>(
   // если результатом фабрики не является
   // класс, то выбрасывается ошибка
   if (!isClass(cls))
-    throw new Errorf('Class factory must return a class, but %v given.', cls);
+    throw new Errorf(
+      'Class factory must return a class, but %v was given.',
+      cls,
+    );
   return cls as Constructor<T>;
 }

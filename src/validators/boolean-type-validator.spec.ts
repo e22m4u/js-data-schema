@@ -25,7 +25,7 @@ describe('booleanTypeValidator', function () {
     const throwable = (v: unknown) => () =>
       booleanTypeValidator(v, {type: DataType.BOOLEAN}, undefined, SC);
     const error = (v: string) =>
-      format('Value must be a Boolean, but %s given.', v);
+      format('Value must be a Boolean, but %s was given.', v);
     expect(throwable('str')).to.throw(ValidationError, error('"str"'));
     expect(throwable('')).to.throw(ValidationError, error('""'));
     expect(throwable(10)).to.throw(ValidationError, error('10'));
@@ -41,7 +41,10 @@ describe('booleanTypeValidator', function () {
       const throwable = (v: unknown) => () =>
         booleanTypeValidator(v, {type: DataType.BOOLEAN}, 'source.path', SC);
       const error = (v: string) =>
-        format('Value of "source.path" must be a Boolean, but %s given.', v);
+        format(
+          'Value of "source.path" must be a Boolean, but %s was given.',
+          v,
+        );
       expect(throwable('str')).to.throw(ValidationError, error('"str"'));
       expect(throwable('')).to.throw(ValidationError, error('""'));
       expect(throwable(10)).to.throw(ValidationError, error('10'));

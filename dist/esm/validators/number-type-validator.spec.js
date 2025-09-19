@@ -19,7 +19,7 @@ describe('numberTypeValidator', function () {
     });
     it('throws an error for non-number value in case of number schema', function () {
         const throwable = (v) => () => numberTypeValidator(v, { type: DataType.NUMBER }, undefined, SC);
-        const error = (v) => format('Value must be a Number, but %s given.', v);
+        const error = (v) => format('Value must be a Number, but %s was given.', v);
         expect(throwable('str')).to.throw(ValidationError, error('"str"'));
         expect(throwable('')).to.throw(ValidationError, error('""'));
         expect(throwable(true)).to.throw(ValidationError, error('true'));
@@ -31,12 +31,12 @@ describe('numberTypeValidator', function () {
     });
     it('throws an error for NaN value in case of number schema', function () {
         const throwable = () => numberTypeValidator(NaN, { type: DataType.NUMBER }, undefined, SC);
-        expect(throwable).to.throw(ValidationError, 'Value must be a Number, but NaN given.');
+        expect(throwable).to.throw(ValidationError, 'Value must be a Number, but NaN was given.');
     });
     describe('with sourcePath', function () {
         it('throws an error for non-number value in case of number schema', function () {
             const throwable = (v) => () => numberTypeValidator(v, { type: DataType.NUMBER }, 'source.path', SC);
-            const error = (v) => format('Value of "source.path" must be a Number, but %s given.', v);
+            const error = (v) => format('Value of "source.path" must be a Number, but %s was given.', v);
             expect(throwable('str')).to.throw(ValidationError, error('"str"'));
             expect(throwable('')).to.throw(ValidationError, error('""'));
             expect(throwable(true)).to.throw(ValidationError, error('true'));
@@ -48,7 +48,7 @@ describe('numberTypeValidator', function () {
         });
         it('throws an error for NaN value in case of number schema', function () {
             const throwable = () => numberTypeValidator(NaN, { type: DataType.NUMBER }, 'source.path', SC);
-            expect(throwable).to.throw(ValidationError, 'Value of "source.path" must be a Number, but NaN given.');
+            expect(throwable).to.throw(ValidationError, 'Value of "source.path" must be a Number, but NaN was given.');
         });
     });
 });

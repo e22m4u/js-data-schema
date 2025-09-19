@@ -16,9 +16,9 @@ export function isRequiredValidator(value, schema, sourcePath, container) {
     if (!isEmpty)
         return;
     if (sourcePath) {
-        throw new ValidationError('Value of %v is required, but %v given.', sourcePath, value);
+        throw new ValidationError('Value of %v is required, but %v was given.', sourcePath, value);
     }
     else {
-        throw new ValidationError('Value is required, but %v given.', value);
+        throw new ValidationError('Value is required, but %v was given.', value);
     }
 }

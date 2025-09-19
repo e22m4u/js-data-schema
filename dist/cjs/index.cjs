@@ -353,9 +353,9 @@ function arrayTypeValidator(value, schema, sourcePath, container) {
     if (isEmpty)
       return;
     if (sourcePath) {
-      throw new ValidationError("Value of %v must be an Array, but %v given.", sourcePath, value);
+      throw new ValidationError("Value of %v must be an Array, but %v was given.", sourcePath, value);
     } else {
-      throw new ValidationError("Value must be an Array, but %v given.", value);
+      throw new ValidationError("Value must be an Array, but %v was given.", value);
     }
   }
 }
@@ -371,9 +371,9 @@ function isRequiredValidator(value, schema, sourcePath, container) {
   if (!isEmpty)
     return;
   if (sourcePath) {
-    throw new ValidationError("Value of %v is required, but %v given.", sourcePath, value);
+    throw new ValidationError("Value of %v is required, but %v was given.", sourcePath, value);
   } else {
-    throw new ValidationError("Value is required, but %v given.", value);
+    throw new ValidationError("Value is required, but %v was given.", value);
   }
 }
 __name(isRequiredValidator, "isRequiredValidator");
@@ -386,9 +386,9 @@ function numberTypeValidator(value, schema, sourcePath, container) {
     if (isEmpty)
       return;
     if (sourcePath) {
-      throw new ValidationError("Value of %v must be a Number, but %v given.", sourcePath, value);
+      throw new ValidationError("Value of %v must be a Number, but %v was given.", sourcePath, value);
     } else {
-      throw new ValidationError("Value must be a Number, but %v given.", value);
+      throw new ValidationError("Value must be a Number, but %v was given.", value);
     }
   }
 }
@@ -402,9 +402,9 @@ function objectTypeValidator(value, schema, sourcePath, container) {
     if (isEmpty)
       return;
     if (sourcePath) {
-      throw new ValidationError("Value of %v must be a plain Object, but %v given.", sourcePath, value);
+      throw new ValidationError("Value of %v must be a plain Object, but %v was given.", sourcePath, value);
     } else {
-      throw new ValidationError("Value must be a plain Object, but %v given.", value);
+      throw new ValidationError("Value must be a plain Object, but %v was given.", value);
     }
   }
 }
@@ -418,9 +418,9 @@ function stringTypeValidator(value, schema, sourcePath, container) {
     if (isEmpty)
       return;
     if (sourcePath) {
-      throw new ValidationError("Value of %v must be a String, but %v given.", sourcePath, value);
+      throw new ValidationError("Value of %v must be a String, but %v was given.", sourcePath, value);
     } else {
-      throw new ValidationError("Value must be a String, but %v given.", value);
+      throw new ValidationError("Value must be a String, but %v was given.", value);
     }
   }
 }
@@ -434,9 +434,9 @@ function booleanTypeValidator(value, schema, sourcePath, container) {
     if (isEmpty)
       return;
     if (sourcePath) {
-      throw new ValidationError("Value of %v must be a Boolean, but %v given.", sourcePath, value);
+      throw new ValidationError("Value of %v must be a Boolean, but %v was given.", sourcePath, value);
     } else {
-      throw new ValidationError("Value must be a Boolean, but %v given.", value);
+      throw new ValidationError("Value must be a Boolean, but %v was given.", value);
     }
   }
 }
@@ -538,6 +538,42 @@ var _DataValidator = class _DataValidator extends DebuggableService {
     return this;
   }
   /**
+   * Invoke validator.
+   *
+   * @param validator
+   * @param value
+   * @param schema
+   * @param sourcePath
+   * @param container
+   */
+  invokeValidator(validator, value, schema, sourcePath, container) {
+    const res = validator(value, schema, sourcePath, container);
+    const validatorName = validator.name !== "validator" && validator.name !== "validate" && validator.name || void 0;
+    if (res === false) {
+      if (sourcePath) {
+        if (validatorName) {
+          throw new ValidationError("Validator %v for path %v rejected the value %v.", validatorName, sourcePath, value);
+        } else {
+          throw new ValidationError("Validation for path %v failed with the value %v.", sourcePath, value);
+        }
+      } else {
+        if (validatorName) {
+          throw new ValidationError("Validator %v rejected the value %v.", validatorName, value);
+        } else {
+          throw new ValidationError("Validation failed with the value %v.", value);
+        }
+      }
+    } else if (res && typeof res === "string") {
+      throw new ValidationError(res);
+    } else if (res instanceof Error) {
+      throw res;
+    } else if (res instanceof Promise) {
+      throw new import_js_format6.InvalidArgumentError("Asynchronous validator is not supported and should not return a Promise.");
+    } else if (res != null && res !== true) {
+      throw new import_js_format6.InvalidArgumentError("User-specified validator should return one of values: Boolean, String, Error instance or undefined, but %v was given.", res);
+    }
+  }
+  /**
    * Validate.
    *
    * @param value
@@ -557,7 +593,7 @@ var _DataValidator = class _DataValidator extends DebuggableService {
     const validators = this.getValidators();
     if (validators.length) {
       debug("%v global validators found.", validators.length);
-      validators.forEach((fn) => fn(value, schema, sourcePath, this.container));
+      validators.forEach((fn) => this.invokeValidator(fn, value, schema, sourcePath, this.container));
       debug("Global validators are passed.");
     } else {
       debug("No global validators found.");
@@ -570,7 +606,7 @@ var _DataValidator = class _DataValidator extends DebuggableService {
     }
     if (localValidators.length) {
       debug("%v local validators found.", localValidators.length);
-      localValidators.forEach((fn) => fn(value, schema, sourcePath, this.container));
+      localValidators.forEach((fn) => this.invokeValidator(fn, value, schema, sourcePath, this.container));
       debug("Local validators are passed.");
     } else {
       debug("No local validators found.");

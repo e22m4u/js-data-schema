@@ -19,7 +19,7 @@ describe('stringTypeValidator', function () {
     });
     it('throws an error for non-string value in case of string schema', function () {
         const throwable = (v) => () => stringTypeValidator(v, { type: DataType.STRING }, undefined, SC);
-        const error = (v) => format('Value must be a String, but %s given.', v);
+        const error = (v) => format('Value must be a String, but %s was given.', v);
         expect(throwable(10)).to.throw(ValidationError, error('10'));
         expect(throwable(0)).to.throw(ValidationError, error('0'));
         expect(throwable(true)).to.throw(ValidationError, error('true'));
@@ -32,7 +32,7 @@ describe('stringTypeValidator', function () {
     describe('with sourcePath', function () {
         it('throws an error for non-string value in case of string schema', function () {
             const throwable = (v) => () => stringTypeValidator(v, { type: DataType.STRING }, 'source.path', SC);
-            const error = (v) => format('Value of "source.path" must be a String, but %s given.', v);
+            const error = (v) => format('Value of "source.path" must be a String, but %s was given.', v);
             expect(throwable(10)).to.throw(ValidationError, error('10'));
             expect(throwable(0)).to.throw(ValidationError, error('0'));
             expect(throwable(true)).to.throw(ValidationError, error('true'));

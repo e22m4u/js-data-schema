@@ -1,4 +1,4 @@
-import { Errorf } from '@e22m4u/js-format';
+import { Errorf, InvalidArgumentError } from '@e22m4u/js-format';
 import { DataType } from './data-schema.js';
 import { createColorizedDump } from '@e22m4u/js-debug';
 import { arrayTypeValidator } from './validators/index.js';
@@ -8,6 +8,7 @@ import { numberTypeValidator } from './validators/index.js';
 import { objectTypeValidator } from './validators/index.js';
 import { stringTypeValidator } from './validators/index.js';
 import { booleanTypeValidator } from './validators/index.js';
+import { ValidationError } from './errors/validation-error.js';
 /**
  * Data validator.
  */
@@ -72,6 +73,55 @@ export class DataValidator extends DebuggableService {
         return this;
     }
     /**
+     * Invoke validator.
+     *
+     * @param validator
+     * @param value
+     * @param schema
+     * @param sourcePath
+     * @param container
+     */
+    invokeValidator(validator, value, schema, sourcePath, container) {
+        const res = validator(value, schema, sourcePath, container);
+        const validatorName = (validator.name !== 'validator' &&
+            validator.name !== 'validate' &&
+            validator.name) ||
+            undefined;
+        if (res === false) {
+            if (sourcePath) {
+                if (validatorName) {
+                    throw new ValidationError('Validator %v for path %v rejected the value %v.', validatorName, sourcePath, value);
+                }
+                else {
+                    throw new ValidationError('Validation for path %v failed with the value %v.', sourcePath, value);
+                }
+            }
+            else {
+                if (validatorName) {
+                    throw new ValidationError('Validator %v rejected the value %v.', validatorName, value);
+                }
+                else {
+                    throw new ValidationError('Validation failed with the value %v.', value);
+                }
+            }
+        }
+        else if (res && typeof res === 'string') {
+            throw new ValidationError(res);
+        }
+        else if (res instanceof Error) {
+            throw res;
+        }
+        else if (res instanceof Promise) {
+            throw new InvalidArgumentError('Asynchronous validator is not supported ' +
+                'and should not return a Promise.');
+        }
+        else if (res != null && res !== true) {
+            throw new InvalidArgumentError('User-specified validator should return one of values: ' +
+                'Boolean, String, Error instance or undefined, ' +
+                'but %v was given.', res);
+        }
+    }
+    /**
      * Validate.
      *
      * @param value
@@ -92,7 +142,7 @@ export class DataValidator extends DebuggableService {
         const validators = this.getValidators();
         if (validators.length) {
             debug('%v global validators found.', validators.length);
-            validators.forEach(fn => fn(value, schema, sourcePath, this.container));
+            validators.forEach(fn => this.invokeValidator(fn, value, schema, sourcePath, this.container));
             debug('Global validators are passed.');
         }
         else {
@@ -108,7 +158,7 @@ export class DataValidator extends DebuggableService {
         }
         if (localValidators.length) {
             debug('%v local validators found.', localValidators.length);
-            localValidators.forEach(fn => fn(value, schema, sourcePath, this.container));
+            localValidators.forEach(fn => this.invokeValidator(fn, value, schema, sourcePath, this.container));
             debug('Local validators are passed.');
         }
         else {

@@ -25,7 +25,7 @@ describe('stringTypeValidator', function () {
     const throwable = (v: unknown) => () =>
       stringTypeValidator(v, {type: DataType.STRING}, undefined, SC);
     const error = (v: string) =>
-      format('Value must be a String, but %s given.', v);
+      format('Value must be a String, but %s was given.', v);
     expect(throwable(10)).to.throw(ValidationError, error('10'));
     expect(throwable(0)).to.throw(ValidationError, error('0'));
     expect(throwable(true)).to.throw(ValidationError, error('true'));
@@ -41,7 +41,7 @@ describe('stringTypeValidator', function () {
       const throwable = (v: unknown) => () =>
         stringTypeValidator(v, {type: DataType.STRING}, 'source.path', SC);
       const error = (v: string) =>
-        format('Value of "source.path" must be a String, but %s given.', v);
+        format('Value of "source.path" must be a String, but %s was given.', v);
       expect(throwable(10)).to.throw(ValidationError, error('10'));
       expect(throwable(0)).to.throw(ValidationError, error('0'));
       expect(throwable(true)).to.throw(ValidationError, error('true'));

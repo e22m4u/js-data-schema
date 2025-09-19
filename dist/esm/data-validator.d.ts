@@ -4,7 +4,7 @@ import { DebuggableService } from './debuggable-service.js';
 /**
  * Callable validator.
  */
-export type CallableValidator = (value: unknown, schema: DataSchema, sourcePath: string | undefined, container: ServiceContainer) => void;
+export type CallableValidator = (value: unknown, schema: DataSchema, sourcePath: string | undefined, container: ServiceContainer) => unknown;
 /**
  * Data validator.
  */
@@ -41,6 +41,16 @@ export declare class DataValidator extends DebuggableService {
      * Remove all validators.
      */
     removeAllValidators(): this;
+    /**
+     * Invoke validator.
+     *
+     * @param validator
+     * @param value
+     * @param schema
+     * @param sourcePath
+     * @param container
+     */
+    protected invokeValidator(validator: CallableValidator, value: unknown, schema: DataSchema, sourcePath: string | undefined, container: ServiceContainer): void;
     /**
      * Validate.
      *

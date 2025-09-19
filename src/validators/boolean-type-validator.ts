@@ -24,13 +24,13 @@ export function booleanTypeValidator(
     if (isEmpty) return;
     if (sourcePath) {
       throw new ValidationError(
-        'Value of %v must be a Boolean, but %v given.',
+        'Value of %v must be a Boolean, but %v was given.',
         sourcePath,
         value,
       );
     } else {
       throw new ValidationError(
-        'Value must be a Boolean, but %v given.',
+        'Value must be a Boolean, but %v was given.',
         value,
       );
     }
