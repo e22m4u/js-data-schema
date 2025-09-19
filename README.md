@@ -29,6 +29,26 @@
   валидаторы и преобразователи типов.
 - Подробная отладка.
 
+## Установка
+
+```bash
+npm install @e22m4u/ts-data-schema
+```
+
+Модуль поддерживает ESM и CommonJS стандарты.
+
+*ESM*
+
+```js
+import {DataValidator} from '@e22m4u/ts-data-schema';
+```
+
+*CommonJS*
+
+```js
+const {DataValidator} = require('@e22m4u/ts-data-schema');
+```
+
 ## Схема данных
 
 `DataSchema` является объектом, определяющим структуру для валидации
