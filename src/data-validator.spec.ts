@@ -1,7 +1,9 @@
 import {expect} from 'chai';
 import {DataType} from './data-schema.js';
 import {DataValidator} from './data-validator.js';
+import {ValidationError} from './errors/index.js';
 import {CallableValidator} from './data-validator.js';
+import {InvalidArgumentError} from '@e22m4u/js-format';
 import {arrayTypeValidator} from './validators/index.js';
 import {isRequiredValidator} from './validators/index.js';
 import {numberTypeValidator} from './validators/index.js';
@@ -1343,6 +1345,104 @@ describe('DataValidator', function () {
           expect(schemaOrder).to.be.eql([schema, schema]);
           expect(sourcePathOrder).to.be.eql([sourcePath, sourcePath]);
         });
+      });
+    });
+
+    describe('handling validator return values', function () {
+      let validator: DataValidator;
+
+      beforeEach(function () {
+        validator = new DataValidator();
+        validator.removeAllValidators();
+      });
+
+      it('should pass if a validator returns true', function () {
+        const schema = {type: DataType.ANY, validate: () => true};
+        expect(() => validator.validate('value', schema)).to.not.throw();
+      });
+
+      it('should pass if a validator returns undefined', function () {
+        const schema = {type: DataType.ANY, validate: () => undefined};
+        expect(() => validator.validate('value', schema)).to.not.throw();
+      });
+
+      it('should pass if a validator returns null', function () {
+        const schema = {type: DataType.ANY, validate: () => null};
+        expect(() => validator.validate('value', schema)).to.not.throw();
+      });
+
+      it('should throw ValidationError if a validator returns false', function () {
+        const schema = {type: DataType.ANY, validate: () => false};
+        const throwable = () => validator.validate('value', schema);
+        expect(throwable).to.throw(
+          ValidationError,
+          'Validation failed with the value "value".',
+        );
+      });
+
+      it('should include sourcePath in error if validator returns false', function () {
+        const schema = {type: DataType.ANY, validate: () => false};
+        const throwable = () => validator.validate('value', schema, 'myPath');
+        expect(throwable).to.throw(
+          ValidationError,
+          'Validation for path "myPath" failed with the value "value".',
+        );
+      });
+
+      it('should include a named validator in error if it returns false', function () {
+        function myRule() {
+          return false;
+        }
+        const schema = {type: DataType.ANY, validate: myRule};
+        const throwable = () => validator.validate(123, schema, 'myPath');
+        expect(throwable).to.throw(
+          ValidationError,
+          'Validator "myRule" for path "myPath" rejected the value 123.',
+        );
+      });
+
+      it('should throw with custom message if validator returns a string', function () {
+        const customMessage = 'Value must be positive.';
+        const schema = {type: DataType.ANY, validate: () => customMessage};
+        const throwable = () => validator.validate(-10, schema);
+        expect(throwable).to.throw(ValidationError, customMessage);
+      });
+
+      it('should throw the exact Error instance returned by a validator', function () {
+        const myError = new ValidationError('This is a specific error.');
+        const schema = {type: DataType.ANY, validate: () => myError};
+        const throwable = () => validator.validate('value', schema);
+        expect(throwable).to.throw(myError);
+      });
+
+      it('should throw InvalidArgumentError for a Promise return value', function () {
+        const schema = {type: DataType.ANY, validate: async function () {}};
+        const throwable = () => validator.validate('value', schema);
+        expect(throwable).to.throw(
+          InvalidArgumentError,
+          'Asynchronous validator is not supported and should not return a Promise.',
+        );
+      });
+
+      it('should throw InvalidArgumentError for a number return value', function () {
+        const schema = {type: DataType.ANY, validate: () => 123};
+        const throwable = () => validator.validate('value', schema);
+        expect(throwable).to.throw(
+          InvalidArgumentError,
+          /User-specified validator should return one of values/,
+        );
+      });
+
+      it('should still catch errors thrown by a validator (backward compatibility)', function () {
+        const errorMessage = 'Classic throw error';
+        const schema = {
+          type: DataType.ANY,
+          validate: function () {
+            throw new ValidationError(errorMessage);
+          },
+        };
+        const throwable = () => validator.validate('value', schema);
+        expect(throwable).to.throw(ValidationError, errorMessage);
       });
     });
   });
