@@ -5,7 +5,6 @@ import {DataSchema} from './data-schema.js';
 import {toPascalCase} from './utils/index.js';
 import {dataTypeFrom} from './data-schema.js';
 import {TypeCastError} from './errors/index.js';
-import {createColorizedDump} from '@e22m4u/js-debug';
 import {typeCastToArray} from './type-casters/index.js';
 import {typeCastToNumber} from './type-casters/index.js';
 import {typeCastToString} from './type-casters/index.js';
@@ -79,12 +78,9 @@ export class DataTypeCaster extends DebuggableService {
    */
   cast(value: unknown, schema: DataSchema, options?: TypeCastOptions): unknown {
     const debug = this.getDebuggerFor(this.cast);
-    const debugWo1 = debug.withOffset(1);
     debug('Converting value type based on the given schema.');
-    debug('Schema:');
-    debugWo1(createColorizedDump(schema));
-    debug('Value:');
-    debugWo1(createColorizedDump(value));
+    debug.inspect('Schema:', schema);
+    debug.inspect('Value:', value);
     const sourcePath = options?.sourcePath;
     if (sourcePath) debug('Source path is %v.', sourcePath);
     const noTypeCastError = options?.noTypeCastError ?? false;
@@ -200,8 +196,7 @@ export class DataTypeCaster extends DebuggableService {
         toPascalCase(sourceType),
         toPascalCase(targetType),
       );
-    debug('New value:');
-    debugWo1(createColorizedDump(newValue));
+    debug.inspect('New value:', newValue);
     return newValue;
   }
 }

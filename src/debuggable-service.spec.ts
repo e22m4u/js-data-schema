@@ -1,6 +1,6 @@
 import {expect} from 'chai';
-import {Service} from '@e22m4u/js-service';
 import {DebuggableService} from './debuggable-service.js';
+import {DebuggableService as BaseDebuggableService} from '@e22m4u/js-service';
 
 describe('DebuggableService', function () {
   it('has the debug method', function () {
@@ -9,9 +9,9 @@ describe('DebuggableService', function () {
   });
 
   describe('constructor', function () {
-    it('extends the Service class', function () {
+    it('extends the DebuggableService class', function () {
       const res = new DebuggableService();
-      expect(res).to.be.instanceof(Service);
+      expect(res).to.be.instanceof(BaseDebuggableService);
     });
   });
 });

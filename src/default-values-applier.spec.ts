@@ -1,16 +1,10 @@
 import {expect} from 'chai';
 import {DataType} from './data-schema.js';
-import {Service} from '@e22m4u/js-service';
 import {DataSchema} from './data-schema.js';
 import {EmptyValuesService} from '@e22m4u/js-empty-values';
 import {DefaultValuesApplier} from './default-values-applier.js';
 
 describe('DefaultValuesApplier', function () {
-  it('extends Service class', function () {
-    const res = new DefaultValuesApplier();
-    expect(res).to.be.instanceOf(Service);
-  });
-
   describe('applyDefaultValuesIfNeeded', function () {
     it('does nothing if no default value in the given schema', function () {
       const s = new DefaultValuesApplier();

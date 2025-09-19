@@ -129,12 +129,6 @@ function cloneDeep(value) {
 }
 __name(cloneDeep, "cloneDeep");
 
-// dist/esm/utils/to-camel-case.js
-function toCamelCase(input) {
-  return input.replace(/(^\w|[A-Z]|\b\w)/g, (c) => c.toUpperCase()).replace(/\W+/g, "").replace(/(^\w)/g, (c) => c.toLowerCase());
-}
-__name(toCamelCase, "toCamelCase");
-
 // dist/esm/utils/to-pascal-case.js
 function toPascalCase(input) {
   if (!input)
@@ -343,7 +337,7 @@ var DecoratorTargetError = _DecoratorTargetError;
 
 // dist/esm/data-validator.js
 var import_js_format6 = require("@e22m4u/js-format");
-var import_js_debug2 = require("@e22m4u/js-debug");
+var import_js_format7 = require("@e22m4u/js-format");
 
 // dist/esm/validators/array-type-validator.js
 var import_js_empty_values = require("@e22m4u/js-empty-values");
@@ -444,33 +438,14 @@ __name(booleanTypeValidator, "booleanTypeValidator");
 
 // dist/esm/debuggable-service.js
 var import_js_service = require("@e22m4u/js-service");
-var import_js_debug = require("@e22m4u/js-debug");
-var _DebuggableService = class _DebuggableService extends import_js_service.Service {
-  /**
-   * Debug.
-   */
-  debug;
-  /**
-   * Возвращает функцию-отладчик с сегментом пространства имен
-   * указанного в параметре метода.
-   *
-   * @param method
-   * @protected
-   */
-  getDebuggerFor(method) {
-    return this.debug.withHash().withNs(method.name);
-  }
+var _DebuggableService = class _DebuggableService extends import_js_service.DebuggableService {
   /**
    * Constructor.
    *
    * @param container
    */
   constructor(container) {
-    super(container);
-    const serviceName = toCamelCase(this.constructor.name);
-    this.debug = (0, import_js_debug.createDebugger)("tsDataSchema", serviceName).withoutEnvNs();
-    const debug = this.debug.withNs("constructor").withHash();
-    debug("Service created.");
+    super(container, { noEnvNs: true, namespace: "tsDataSchema" });
   }
 };
 __name(_DebuggableService, "DebuggableService");
@@ -568,9 +543,9 @@ var _DataValidator = class _DataValidator extends DebuggableService {
     } else if (res instanceof Error) {
       throw res;
     } else if (res instanceof Promise) {
-      throw new import_js_format6.InvalidArgumentError("Asynchronous validator is not supported and should not return a Promise.");
+      throw new import_js_format7.InvalidArgumentError("Asynchronous validator is not supported and should not return a Promise.");
     } else if (res != null && res !== true) {
-      throw new import_js_format6.InvalidArgumentError("User-specified validator should return one of values: Boolean, String, Error instance or undefined, but %v was given.", res);
+      throw new import_js_format7.InvalidArgumentError("User-specified validator should return one of values: Boolean, String, Error instance or undefined, but %v was given.", res);
     }
   }
   /**
@@ -582,12 +557,9 @@ var _DataValidator = class _DataValidator extends DebuggableService {
    */
   validate(value, schema, sourcePath) {
     const debug = this.getDebuggerFor(this.validate);
-    const debugWo1 = debug.withOffset(1);
     debug("Validating a value against the given schema.");
-    debug("Schema:");
-    debugWo1((0, import_js_debug2.createColorizedDump)(schema));
-    debug("Value:");
-    debugWo1((0, import_js_debug2.createColorizedDump)(value));
+    debug.inspect("Schema:", schema);
+    debug.inspect("Value:", value);
     if (sourcePath)
       debug("Source path is %v.", sourcePath);
     const validators = this.getValidators();
@@ -644,8 +616,7 @@ __name(_DataValidator, "DataValidator");
 var DataValidator = _DataValidator;
 
 // dist/esm/data-type-caster.js
-var import_js_format7 = require("@e22m4u/js-format");
-var import_js_debug3 = require("@e22m4u/js-debug");
+var import_js_format8 = require("@e22m4u/js-format");
 
 // dist/esm/type-casters/type-cast-to-array.js
 function typeCastToArray(value) {
@@ -768,7 +739,7 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
     const typeCaster = this.typeCasterMap.get(type);
     if (typeCaster)
       return typeCaster;
-    throw new import_js_format7.Errorf("No type caster found for %s type.", type);
+    throw new import_js_format8.Errorf("No type caster found for %s type.", type);
   }
   /**
    * Cast.
@@ -780,12 +751,9 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
   cast(value, schema, options) {
     var _a;
     const debug = this.getDebuggerFor(this.cast);
-    const debugWo1 = debug.withOffset(1);
     debug("Converting value type based on the given schema.");
-    debug("Schema:");
-    debugWo1((0, import_js_debug3.createColorizedDump)(schema));
-    debug("Value:");
-    debugWo1((0, import_js_debug3.createColorizedDump)(value));
+    debug.inspect("Schema:", schema);
+    debug.inspect("Value:", value);
     const sourcePath = options == null ? void 0 : options.sourcePath;
     if (sourcePath)
       debug("Source path is %v.", sourcePath);
@@ -871,8 +839,7 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
     }
     if (sourceType !== targetType)
       debug("Value cast from %s to %s.", toPascalCase(sourceType), toPascalCase(targetType));
-    debug("New value:");
-    debugWo1((0, import_js_debug3.createColorizedDump)(newValue));
+    debug.inspect("New value:", newValue);
     return newValue;
   }
 };
@@ -880,7 +847,6 @@ __name(_DataTypeCaster, "DataTypeCaster");
 var DataTypeCaster = _DataTypeCaster;
 
 // dist/esm/default-values-applier.js
-var import_js_debug4 = require("@e22m4u/js-debug");
 var import_js_empty_values7 = require("@e22m4u/js-empty-values");
 var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableService {
   /**
@@ -893,16 +859,13 @@ var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableServic
   applyDefaultValuesIfNeeded(value, schema, sourcePath) {
     var _a;
     const debug = this.getDebuggerFor(this.applyDefaultValuesIfNeeded);
-    const debugWo1 = debug.withOffset(1);
     debug("Applying default values by the given schema.");
-    debug("Schema:");
-    debugWo1((0, import_js_debug4.createColorizedDump)(schema));
-    debug("Value:");
-    debugWo1((0, import_js_debug4.createColorizedDump)(value));
+    debug.inspect("Schema:", schema);
+    debug.inspect("Value:", value);
     if (sourcePath)
       debug("Source path is %v.", sourcePath);
     const valueType = (_a = schema.type) != null ? _a : DataType.ANY;
-    debug("Value type is %v.", toPascalCase(valueType));
+    debug("Value type is %s.", toPascalCase(valueType));
     const isEmpty = this.getService(import_js_empty_values7.EmptyValuesService).isEmptyByType(valueType, value);
     let resValue;
     if (isEmpty) {
@@ -914,8 +877,7 @@ var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableServic
           defaultValue = schema.default();
         }
         resValue = cloneDeep(defaultValue);
-        debug("Default value:");
-        debug.withOffset(1)((0, import_js_debug4.createColorizedDump)(resValue));
+        debug.inspect("Default value:", resValue);
       } else {
         debug("No default value specified.");
         resValue = cloneDeep(value);

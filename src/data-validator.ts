@@ -1,9 +1,9 @@
 import {PlainObject} from './types.js';
-import {Errorf, InvalidArgumentError} from '@e22m4u/js-format';
+import {Errorf} from '@e22m4u/js-format';
 import {DataType} from './data-schema.js';
 import {DataSchema} from './data-schema.js';
 import {ServiceContainer} from '@e22m4u/js-service';
-import {createColorizedDump} from '@e22m4u/js-debug';
+import {InvalidArgumentError} from '@e22m4u/js-format';
 import {arrayTypeValidator} from './validators/index.js';
 import {DebuggableService} from './debuggable-service.js';
 import {isRequiredValidator} from './validators/index.js';
@@ -172,12 +172,9 @@ export class DataValidator extends DebuggableService {
    */
   validate(value: unknown, schema: DataSchema, sourcePath?: string): void {
     const debug = this.getDebuggerFor(this.validate);
-    const debugWo1 = debug.withOffset(1);
     debug('Validating a value against the given schema.');
-    debug('Schema:');
-    debugWo1(createColorizedDump(schema));
-    debug('Value:');
-    debugWo1(createColorizedDump(value));
+    debug.inspect('Schema:', schema);
+    debug.inspect('Value:', value);
     if (sourcePath) debug('Source path is %v.', sourcePath);
     // выполнение глобальных валидаторов
     const validators = this.getValidators();

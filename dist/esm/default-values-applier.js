@@ -1,7 +1,6 @@
 import { DataType } from './data-schema.js';
 import { cloneDeep } from './utils/index.js';
 import { toPascalCase } from './utils/index.js';
-import { createColorizedDump } from '@e22m4u/js-debug';
 import { DebuggableService } from './debuggable-service.js';
 import { EmptyValuesService } from '@e22m4u/js-empty-values';
 /**
@@ -17,16 +16,13 @@ export class DefaultValuesApplier extends DebuggableService {
      */
     applyDefaultValuesIfNeeded(value, schema, sourcePath) {
         const debug = this.getDebuggerFor(this.applyDefaultValuesIfNeeded);
-        const debugWo1 = debug.withOffset(1);
         debug('Applying default values by the given schema.');
-        debug('Schema:');
-        debugWo1(createColorizedDump(schema));
-        debug('Value:');
-        debugWo1(createColorizedDump(value));
+        debug.inspect('Schema:', schema);
+        debug.inspect('Value:', value);
         if (sourcePath)
             debug('Source path is %v.', sourcePath);
         const valueType = schema.type ?? DataType.ANY;
-        debug('Value type is %v.', toPascalCase(valueType));
+        debug('Value type is %s.', toPascalCase(valueType));
         const isEmpty = this.getService(EmptyValuesService).isEmptyByType(valueType, value);
         let resValue;
         // если входящее значение является пустым,
@@ -43,8 +39,7 @@ export class DefaultValuesApplier extends DebuggableService {
                     defaultValue = schema.default();
                 }
                 resValue = cloneDeep(defaultValue);
-                debug('Default value:');
-                debug.withOffset(1)(createColorizedDump(resValue));
+                debug.inspect('Default value:', resValue);
             }
             else {
                 debug('No default value specified.');
