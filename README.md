@@ -131,7 +131,7 @@ const schema = {
 Если валидация прошла успешно, функция должна вернуть `true` или
 ничего (`undefined`).
 
-**Пример с возвратом строки:**
+Пример с возвратом строки:
 
 ```ts
 const schema = {
@@ -142,7 +142,7 @@ const schema = {
 }
 ```
 
-**Пример с `throw` (для более сложной логики):**
+Пример с `throw` (для более сложной логики):
 
 ```ts
 import {DataSchema, ValidationError} from '@e22m4u/ts-data-schema';
