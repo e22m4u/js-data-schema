@@ -50,6 +50,18 @@ import {DataValidator} from '@e22m4u/ts-data-schema';
 const {DataValidator} = require('@e22m4u/ts-data-schema');
 ```
 
+#### Поддержка декораторов
+
+Для включения поддержки декораторов, добавьте указанные
+ниже опции в файл `tsconfig.json` вашего проекта.
+
+```json
+{
+  "emitDecoratorMetadata": true,
+  "experimentalDecorators": true
+}
+```
+
 ## Схема данных
 
 `DataSchema` является объектом, определяющим структуру для валидации

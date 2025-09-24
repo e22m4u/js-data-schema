@@ -1,6 +1,7 @@
 import {expect} from 'chai';
 import {DataType} from '../data-schema.js';
 import {Reflector} from '@e22m4u/ts-reflector';
+import {DataSchemaMetadata} from './data-schema-metadata.js';
 import {DataSchemaReflector} from './data-schema-reflector.js';
 import {DATA_SCHEMA_CLASS_METADATA_KEY} from './data-schema-metadata.js';
 import {DATA_SCHEMA_PROPERTIES_METADATA_KEY} from './data-schema-metadata.js';
@@ -86,7 +87,7 @@ describe('DataSchemaReflector', function () {
       class MyTarget {}
       const md1 = {type: DataType.STRING};
       const md2 = {type: DataType.NUMBER};
-      const mdMap = new Map([
+      const mdMap = new Map<string, DataSchemaMetadata>([
         ['myProp1', md1],
         ['myProp2', md2],
       ]);

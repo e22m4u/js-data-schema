@@ -3,14 +3,19 @@ import {CallableValidator} from './data-validator.js';
 /**
  * Data type.
  */
-export enum DataType {
-  ANY = 'any',
-  STRING = 'string',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  ARRAY = 'array',
-  OBJECT = 'object',
-}
+export const DataType = {
+  ANY: 'any',
+  STRING: 'string',
+  NUMBER: 'number',
+  BOOLEAN: 'boolean',
+  ARRAY: 'array',
+  OBJECT: 'object',
+} as const;
+
+/**
+ * Type of DataType.
+ */
+export type DataType = (typeof DataType)[keyof typeof DataType];
 
 /**
  * Data schema.

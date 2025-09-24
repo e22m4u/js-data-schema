@@ -1,15 +1,14 @@
 /**
  * Data type.
  */
-export var DataType;
-(function (DataType) {
-    DataType["ANY"] = "any";
-    DataType["STRING"] = "string";
-    DataType["NUMBER"] = "number";
-    DataType["BOOLEAN"] = "boolean";
-    DataType["ARRAY"] = "array";
-    DataType["OBJECT"] = "object";
-})(DataType || (DataType = {}));
+export const DataType = {
+    ANY: 'any',
+    STRING: 'string',
+    NUMBER: 'number',
+    BOOLEAN: 'boolean',
+    ARRAY: 'array',
+    OBJECT: 'object',
+};
 /**
  * Data type from value.
  *

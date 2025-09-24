@@ -58,15 +58,14 @@ __export(index_exports, {
 module.exports = __toCommonJS(index_exports);
 
 // dist/esm/data-schema.js
-var DataType;
-(function(DataType2) {
-  DataType2["ANY"] = "any";
-  DataType2["STRING"] = "string";
-  DataType2["NUMBER"] = "number";
-  DataType2["BOOLEAN"] = "boolean";
-  DataType2["ARRAY"] = "array";
-  DataType2["OBJECT"] = "object";
-})(DataType || (DataType = {}));
+var DataType = {
+  ANY: "any",
+  STRING: "string",
+  NUMBER: "number",
+  BOOLEAN: "boolean",
+  ARRAY: "array",
+  OBJECT: "object"
+};
 function dataTypeFrom(value) {
   if (value == null)
     return DataType.ANY;
