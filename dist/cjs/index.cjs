@@ -444,7 +444,7 @@ var _DebuggableService = class _DebuggableService extends import_js_service.Debu
    * @param container
    */
   constructor(container) {
-    super(container, { noEnvNs: true, namespace: "tsDataSchema" });
+    super(container, { namespace: "tsDataSchema", noEnvironmentNamespace: true });
   }
 };
 __name(_DebuggableService, "DebuggableService");

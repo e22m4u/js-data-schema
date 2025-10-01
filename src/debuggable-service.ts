@@ -11,6 +11,6 @@ export class DebuggableService extends BaseDebuggableService {
    * @param container
    */
   constructor(container?: ServiceContainer) {
-    super(container, {noEnvNs: true, namespace: 'tsDataSchema'});
+    super(container, {namespace: 'tsDataSchema', noEnvironmentNamespace: true});
   }
 }
