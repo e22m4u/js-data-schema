@@ -180,10 +180,18 @@ export class DataTypeCaster extends DebuggableService {
           const propSourcePath = sourcePath
             ? `${sourcePath}.${propName}`
             : propName;
-          valueAsObject[propName] = this.cast(propValue, propSchema, {
+          const newPropValue = this.cast(propValue, propSchema, {
             sourcePath: propSourcePath,
             noTypeCastError,
           });
+          // исходный объект может не иметь ключа данного свойства,
+          // и чтобы избежать его добавления, выполняется проверка
+          // на отличие старого и нового значения, таким образом,
+          // значение undefined не будет присвоено свойству,
+          // которого нет (новый ключ не будет добавлен)
+          if (valueAsObject[propName] !== newPropValue) {
+            valueAsObject[propName] = newPropValue;
+          }
         }
         debug('Properties type casting completed.');
       } else {

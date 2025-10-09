@@ -1,5 +1,6 @@
 import {expect} from 'chai';
 import {DataType} from './data-schema.js';
+import {DataSchema} from './data-schema.js';
 import {TypeCastError} from './errors/index.js';
 import {DataTypeCaster} from './data-type-caster.js';
 import {typeCastToArray} from './type-casters/index.js';
@@ -609,6 +610,22 @@ describe('DataTypeCaster', function () {
                 rty: 'lorem',
               },
             });
+          });
+
+          it('should not add a property key if no property value changed', function () {
+            const s = new DataTypeCaster();
+            const value = {foo: 'val'};
+            const options = {noTypeCastError: true};
+            const schema: DataSchema = {
+              type: DataType.OBJECT,
+              properties: {
+                foo: {type: DataType.STRING},
+                bar: {type: DataType.STRING},
+              },
+            };
+            const res = s.cast(value, schema, options);
+            expect(res).to.be.eql(value);
+            expect(res).to.not.have.property('bar');
           });
         });
       });

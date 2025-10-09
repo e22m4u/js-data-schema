@@ -101,11 +101,19 @@ export class DefaultValuesApplier extends DebuggableService {
           const propSourcePath = sourcePath
             ? `${sourcePath}.${propName}`
             : propName;
-          valueAsObject[propName] = this.applyDefaultValuesIfNeeded(
+          const newPropValue = this.applyDefaultValuesIfNeeded(
             propValue,
             propSchema,
             propSourcePath,
           );
+          // исходный объект может не иметь ключа данного свойства,
+          // и чтобы избежать его добавления, выполняется проверка
+          // на отличие старого и нового значения, таким образом,
+          // значение undefined не будет присвоено свойству,
+          // которого нет (новый ключ не будет добавлен)
+          if (valueAsObject[propName] !== newPropValue) {
+            valueAsObject[propName] = newPropValue;
+          }
         }
         debug('Default values applied to properties.');
       } else {

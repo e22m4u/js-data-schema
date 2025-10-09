@@ -194,6 +194,25 @@ describe('DefaultValuesApplier', function () {
         expect(res1).to.be.eql({p1: 'myDefaultString', p2: 'bar'});
         expect(res2).to.be.eql({p1: 'myDefaultString', p2: 'myDefaultString'});
       });
+
+      it('should not add a property key if no default value will be set', function () {
+        const s = new DefaultValuesApplier();
+        s.getService(EmptyValuesService).setEmptyValuesOf(DataType.STRING, [
+          null,
+          undefined,
+        ]);
+        const ds: DataSchema = {
+          type: DataType.OBJECT,
+          properties: {
+            foo: {type: DataType.STRING},
+            bar: {type: DataType.STRING},
+          },
+        };
+        const input = {foo: 'val'};
+        const res = s.applyDefaultValuesIfNeeded(input, ds);
+        expect(res).to.be.eql(input);
+        expect(res).to.not.have.property('bar');
+      });
     });
   });
 });

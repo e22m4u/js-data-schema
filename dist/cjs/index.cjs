@@ -826,10 +826,13 @@ var _DataTypeCaster = class _DataTypeCaster extends DebuggableService {
           const propSchema = schema.properties[propName];
           const propValue = valueAsObject[propName];
           const propSourcePath = sourcePath ? `${sourcePath}.${propName}` : propName;
-          valueAsObject[propName] = this.cast(propValue, propSchema, {
+          const newPropValue = this.cast(propValue, propSchema, {
             sourcePath: propSourcePath,
             noTypeCastError
           });
+          if (valueAsObject[propName] !== newPropValue) {
+            valueAsObject[propName] = newPropValue;
+          }
         }
         debug("Properties type casting completed.");
       } else {
@@ -908,7 +911,10 @@ var _DefaultValuesApplier = class _DefaultValuesApplier extends DebuggableServic
           const propSchema = schema.properties[propName];
           const propValue = valueAsObject[propName];
           const propSourcePath = sourcePath ? `${sourcePath}.${propName}` : propName;
-          valueAsObject[propName] = this.applyDefaultValuesIfNeeded(propValue, propSchema, propSourcePath);
+          const newPropValue = this.applyDefaultValuesIfNeeded(propValue, propSchema, propSourcePath);
+          if (valueAsObject[propName] !== newPropValue) {
+            valueAsObject[propName] = newPropValue;
+          }
         }
         debug("Default values applied to properties.");
       } else {
