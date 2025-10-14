@@ -1,7 +1,7 @@
 {
   "name": "@e22m4u/js-data-schema",
   "version": "0.4.5",
-  "description": "Инструменты проверки данных и приведения типов",
+  "description": "Инструменты для проверки данных и приведения типов",
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
