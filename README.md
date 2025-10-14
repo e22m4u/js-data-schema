@@ -1,6 +1,6 @@
-# @e22m4u/ts-data-schema
+# @e22m4u/js-data-schema
 
-Валидация данных и приведение типов для TypeScript.
+Инструменты проверки данных и приведения типов.
 
 ## Содержание
 
@@ -14,18 +14,24 @@
   - [default](#default)
   - [validate](#validate)
 - [Пустые значения](#пустые-значения)
-- [Декораторы](#декораторы)
 - [Примеры](#примеры)
+  - [Проверка простых значений](#проверка-простых-значений)
+  - [Пользовательская функция-валидатор](#пользовательская-функция-валидатор)
+  - [Конвертация значений](#конвертация-значений)
+  - [Значения по умолчанию](#значения-по-умолчанию)
+  - [Заполнение объекта значениями по умолчанию](#заполнение-объекта-значениями-по-умолчанию)
+- [TypeScript декораторы](#typescript-декораторы)
+  - [@dsObject](#dsobject)
+  - [Примеры с декораторами](#примеры-с-декораторами)
 - [Отладка](#отладка)
 - [Тесты](#тесты)
+- [Лицензия](#лицензия)
 
 ## Особенности
 
-- **DataValidator** - сервис валидации со встроенной проверкой типов
-  и системой пользовательских правил.
+- **DataValidator** - сервис проверки типов согласно схеме данных.
 - **DataTypeCaster** - сервис конвертации значений согласно схеме данных.
-- **DefaultValuesApplier** - сервис, заполняющий данные значениями
-  по-умолчанию.
+- **DefaultValuesApplier** - сервис заполнения данных значениями по-умолчанию.
 - Расширяемая архитектура, позволяющая добавлять пользовательские
   валидаторы и преобразователи типов.
 - Подробная отладка.
@@ -33,7 +39,7 @@
 ## Установка
 
 ```bash
-npm install @e22m4u/ts-data-schema
+npm install @e22m4u/js-data-schema
 ```
 
 Модуль поддерживает ESM и CommonJS стандарты.
@@ -41,16 +47,16 @@ npm install @e22m4u/ts-data-schema
 *ESM*
 
 ```js
-import {DataValidator} from '@e22m4u/ts-data-schema';
+import {DataValidator} from '@e22m4u/js-data-schema';
 ```
 
 *CommonJS*
 
 ```js
-const {DataValidator} = require('@e22m4u/ts-data-schema');
+const {DataValidator} = require('@e22m4u/js-data-schema');
 ```
 
-#### Поддержка декораторов
+#### Поддержка декораторов (для TypeScript)
 
 Для включения поддержки декораторов, добавьте указанные
 ниже опции в файл `tsconfig.json` вашего проекта.
@@ -91,7 +97,7 @@ type DataSchema = {
 - `DataType.OBJECT` - объекты (не экземпляры);
 
 ```ts
-import {DataType} from '@e22m4u/ts-data-schema';
+import {DataType} from '@e22m4u/js-data-schema';
 
 const schema = {
   type: DataType.STRING,
@@ -156,6 +162,7 @@ const schema = {
 правил. Может быть одной функцией или массивом функций.
 
 Валидатор может сигнализировать об ошибке несколькими способами:
+
 1. Вернуть строку с сообщением об ошибке (рекомендуется для простых случаев).
 2. Вернуть `false` для генерации стандартного сообщения об ошибке.
 3. Вернуть экземпляр `Error` (например, `new ValidationError(...)`).
@@ -178,7 +185,7 @@ const schema = {
 Пример с `throw` (для более сложной логики):
 
 ```ts
-import {DataSchema, ValidationError} from '@e22m4u/ts-data-schema';
+import {DataSchema, ValidationError} from '@e22m4u/js-data-schema';
 // import {ServiceContainer} from '@e22m4u/js-service';
 
 function nonEmptyString(
@@ -228,55 +235,6 @@ const schema = {
 В первой колонке указаны константы каждого типа, которые могут быть
 использованы вместо строки названия типа (вторая колонка).
 
-## Декораторы
-
-Декораторы предоставляют удобный способ определения схем данных
-с использованием классов.
-
-Общие декораторы:
-
-- `@dataSchema` - базовый декоратор для определения схемы данных
-- `@dsProperty` - декоратор для определения свойств схемы
-
-Декораторы конкретных типов данных:
-
-- `@dsAny` - для значений любого типа
-- `@dsString` - для строковых значений
-- `@dsNumber` - для числовых значений
-- `@dsBoolean` - для логических значений
-- `@dsArray` - для массивов
-- `@dsObject` - для объектов
-
-#### @dsObject
-
-Декоратор `@dsObject` определяет класс как схему объекта. Он позволяет
-генерировать объект схемы через утилиту `getDataSchemaFromClass`.
-
-```ts
-import {
-  dsObject,
-  dsString,
-  getDataSchemaFromClass,
-} from '@e22m4u/ts-data-schema';
-
-@dsObject()
-class PostSchema {
-  @dsString()
-  title: string;
-}
-
-const postSchema = getDataSchemaFromClass(PostSchema);
-console.log(postSchema);
-// {
-//   type: 'object',
-//   properties: {
-//     "title": {
-//       type: 'string'
-//     }
-//   }
-// }
-```
-
 ## Примеры
 
 #### Проверка простых значений
@@ -286,7 +244,7 @@ import {
   DataType,
   DataValidator,
   ValidationError,
-} from '@e22m4u/ts-data-schema';
+} from '@e22m4u/js-data-schema';
 
 const validator = new DataValidator();
 
@@ -315,7 +273,7 @@ import {
   DataType,
   DataValidator,
   ValidationError,
-} from '@e22m4u/ts-data-schema';
+} from '@e22m4u/js-data-schema';
 
 const validator = new DataValidator();
 
@@ -344,7 +302,7 @@ import {
   DataType,
   DataTypeCaster,
   TypeCastError,
-} from '@e22m4u/ts-data-schema';
+} from '@e22m4u/js-data-schema';
 
 const typeCaster = new DataTypeCaster();
 
@@ -377,7 +335,7 @@ const res2 = typeCaster.cast('foo', schema, {noTypeCastError: true}); // "foo"
 import {
   DataType,
   DefaultValuesApplier,
-} from '@e22m4u/ts-data-schema';
+} from '@e22m4u/js-data-schema';
 
 const defaultsApplier = new DefaultValuesApplier();
 
@@ -400,7 +358,7 @@ const res3 = defaultsApplier.applyDefaultValuesIfNeeded(undefined, schema); // 1
 import {
   DataType,
   DefaultValuesApplier,
-} from '@e22m4u/ts-data-schema';
+} from '@e22m4u/js-data-schema';
 
 const defaultsApplier = new DefaultValuesApplier();
 
@@ -432,7 +390,58 @@ console.log(res);
 // }
 ```
 
-#### Использование декораторов
+## TypeScript декораторы
+
+Декораторы предоставляют удобный способ определения схем данных
+с использованием классов.
+
+Общие декораторы:
+
+- `@dataSchema` - базовый декоратор для определения схемы данных
+- `@dsProperty` - декоратор для определения свойств схемы
+
+Декораторы конкретных типов данных:
+
+- `@dsAny` - для значений любого типа
+- `@dsString` - для строковых значений
+- `@dsNumber` - для числовых значений
+- `@dsBoolean` - для логических значений
+- `@dsArray` - для массивов
+- `@dsObject` - для объектов
+
+#### @dsObject
+
+Декоратор `@dsObject` определяет класс как схему объекта. Он позволяет
+генерировать объект схемы через утилиту `getDataSchemaFromClass`.
+
+```ts
+import {
+  dsObject,
+  dsString,
+  getDataSchemaFromClass,
+} from '@e22m4u/js-data-schema';
+
+@dsObject()
+class PostSchema {
+  @dsString()
+  title: string;
+}
+
+const postSchema = getDataSchemaFromClass(PostSchema);
+console.log(postSchema);
+// {
+//   type: 'object',
+//   properties: {
+//     "title": {
+//       type: 'string'
+//     }
+//   }
+// }
+```
+
+### Примеры с декораторами
+
+#### Извлечение схемы данных из мета-данных класса
 
 ```ts
 import {
@@ -440,7 +449,7 @@ import {
   dsObject,
   dsString,
   getDataSchemaFromClass,
-} from '@e22m4u/ts-data-schema';
+} from '@e22m4u/js-data-schema';
 
 @dsObject()
 class AuthorSchema {
@@ -468,7 +477,7 @@ console.log(JSON.stringify(authorSchema, null, 2));
 // }
 ```
 
-#### Вложенные объекты с декораторами
+#### Определение вложенного объекта через ссылку на другой класс
 
 ```ts
 import {
@@ -476,7 +485,7 @@ import {
   dsObject,
   dsString,
   getDataSchemaFromClass,
-} from '@e22m4u/ts-data-schema';
+} from '@e22m4u/js-data-schema';
 
 // AuthorSchema определена в примере выше
 
@@ -488,7 +497,8 @@ class PostSchema {
   @dsString()
   title?: string;
 
-  // Использование фабрики `() => AuthorSchema` для ссылки на другой класс
+  // Использование фабрики `() => AuthorSchema`
+  // (ссылка на другой класс)
   @dsObject(() => AuthorSchema, {required: true})
   author!: AuthorSchema;
 }
@@ -528,7 +538,7 @@ console.log(JSON.stringify(postSchema, null, 2));
 Установка переменной `DEBUG` включает вывод логов.
 
 ```bash
-DEBUG=tsDataSchema* npm run test
+DEBUG=jsDataSchema* npm run test
 ```
 
 ## Тесты

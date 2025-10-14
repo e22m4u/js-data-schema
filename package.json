@@ -1,7 +1,7 @@
 {
-  "name": "@e22m4u/ts-data-schema",
+  "name": "@e22m4u/js-data-schema",
   "version": "0.4.5",
-  "description": "Валидация данных и приведение типов для TypeScript",
+  "description": "Инструменты проверки данных и приведения типов",
   "author": "Mikhail Evstropov <e22m4u@yandex.ru>",
   "license": "MIT",
   "keywords": [
@@ -11,10 +11,10 @@
     "validation",
     "standardization"
   ],
-  "homepage": "https://github.com/e22m4u/ts-data-schema",
+  "homepage": "https://github.com/e22m4u/js-data-schema",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/e22m4u/ts-data-schema.git"
+    "url": "git+https://github.com/e22m4u/js-data-schema.git"
   },
   "type": "module",
   "types": "./dist/esm/index.d.ts",
